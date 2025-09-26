@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     ## apps criado
     'usuario'
     # novo app aqui
+    'sushiemcasa.apps.SushiemcasaConfig',
 ]
 
 MIDDLEWARE = [
