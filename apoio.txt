@@ -1,0 +1,42 @@
+# Material de apoio 
+
+Ao chegar aqui, você deverá criar um banco de dados para o seu repositório local.
+Segue o passo a passo,
+
+Abra o Powershell **Indicado** (NÃO USE OUTRO TERMINAL)
+OBS: Será necessário abrir o Powershell como administrador e digitar o seguinte comando. 
+
+Set-ExecutionPolicy -Scope CurrentUser Unrestricted
+Concorde com todos (Digite: A)
+
+Após isso, feche e abra o terminal normalmente... 
+
+# Logo será necessário criar um ambiente virtual para você instalar as dependências necessárias. Então, crie um ambiente virtual com esse comando. 
+python -m venv venv
+
+# Após criar o ambiente virtual, ative ele para que possa instalar as dependências...
+Abra o terminal (Windows Powershell) e Digite o seguinte comando, 
+./venv/Scripts/activate
+
+# Ativando o ambiente virtual, vamos instalar todas as dependências
+pip install -r requirements.txt
+
+# Toda vez que você for rodar o seu projeto, sempre vai ter que ativar o ambiente virtual, sendo um processo chato...
+# Para que isso não seja necessário, o VSCODE tem uma opção de ativar automaticamente, fazendo o seguinte passo a passo.
+
+Clique em:
+Ctrl + Shift + P
+
+Digite:
+Python:Select Interpreter
+
+Selecione a opção:
+Python 3.13.3 ('venv') (ou a versão que esteja usando, portanto que possua o ('venv'))
+
+Após isso, não será necessário ativar manualmente toda vez tiver que abrir o terminal, pois ele já vai ativar automaticamente :)
+
+# Dica
+Abrir terminal do VSCODE: Ctrl + ' ou Ctrl + J
+
+** Após realizar todos esses comandos, poderá apagar esse documento "apoio.txt" para que não desorganize o seu projeto **
+** Caso deseje ficar com ele em seu projeto para consultas futuras, não tem problema, ele não afetará o seu projeto **
