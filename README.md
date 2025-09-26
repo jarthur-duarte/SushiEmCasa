@@ -44,6 +44,8 @@
 
 </details>
 
+---
+
 ### 👥 Grupo 02 (FDS - 2025.2)
 Arthur Reis Gomes de Mello Queiroz - argmq@cesar.school<br>
 Bernardo Guimarães Nunes Palhares - bgnp@cesar.school<br>
