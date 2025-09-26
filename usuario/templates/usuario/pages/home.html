@@ -1,11 +1,58 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Sushi em Casa - O melhor da culinária japonesa</title>
+    <link rel="stylesheet" href="{% static 'usuario/css/style.css'%}">
+    <link rel="shortcut icon" type="imagem/png" href="{%static 'usuario/images/LOGO.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    
+
+    <header class="barra-navegacao">
+        <div class="logo">
+            <img src="{%static 'images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" class="ativo">Home</a></li>
+                <li><a href="#">Cesta</a></li>
+                <li><a href="#">Pedidos</a></li>
+                <li><a href="#">Contato</a></li>
+            </ul>
+        </nav>
+        <div class="icone-usuario">
+            <a href="#">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+    </header>
+
+    <main>
+        
+    </main>
+
+    <footer class="rodape">
+        <div class="logo">
+            <img src="{%static 'images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+        </div>
+        <div class="links-rodape">
+            <h4>Navegação</h4>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Menu</a></li>
+                <li><a href="#">Contato</a></li>
+                <li><a href="#">Pedidos</a></li>
+            </ul>
+        </div>
+        <div class="contato-rodape">
+            <h4>Contato</h4>
+            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
+            <p>+1(239)7719811</p>
+        </div>
+    </footer>
+
 </body>
 </html>
