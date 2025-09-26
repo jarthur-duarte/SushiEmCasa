@@ -34,8 +34,15 @@
 </details>
 
 ---
-### 📄 Relatório pair programming:
+<details>
+  
+<summary><h2><strong>Entrega 2</strong></h2></summary>
+
+  ### 📄 Relatório pair programming:
 [Relatório](https://docs.google.com/document/d/1-1bv8ZYlfFCx1aReTNn32o2GdtT8bA9dXtX_iEPZScg/edit?tab=t.0#heading=h.ogxvglc6hy7r)
+
+
+</details>
 
 ### 👥 Grupo 02 (FDS - 2025.2)
 Arthur Reis Gomes de Mello Queiroz - argmq@cesar.school<br>
