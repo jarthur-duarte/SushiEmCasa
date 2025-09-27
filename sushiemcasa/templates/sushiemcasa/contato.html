@@ -11,51 +11,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-       .contact-main-container {
-            max-width: 800px; /* Define a largura máxima do conteúdo */
-            margin: 40px auto; /* Centraliza o container na página */
+     .contact-main-container {
+            max-width: 800px;
+            margin: 40px auto;
             padding: 0 20px;
             font-family: sans-serif;
         }
 
-       .contact-list {
-            list-style: none; /* Remove os pontos da lista */
+     .contact-list {
+            list-style: none;
             padding: 0;
             margin: 0;
-            border-top: 1px solid #e0e0e0; /* Linha no topo */
+            border-top: 1px solid #e0e0e0;
         }
 
-       .contact-list li {
+     .contact-list li {
             display: flex;
             align-items: center;
-            padding: 20px 10px;
-            border-bottom: 1px solid #e0e0e0; /* Linha separadora */
+            border-bottom: 1px solid #e0e0e0;
             font-size: 1.1rem;
+            transition: background-color 0.2s ease;
         }
 
-       .contact-list.icon {
+     .contact-list li:hover {
+            background-color: #f9f9f9;
+       }
+
+     .contact-list a {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 20px 10px;
+            text-decoration: none;
+            color: inherit;
+       }
+
+     .contact-list.icon {
             font-size: 1.5rem;
             color: #555;
-            width: 50px; /* Garante alinhamento dos ícones */
+            width: 50px;
             text-align: center;
             margin-right: 15px;
         }
 
-       .contact-list.label {
+     .contact-list.label {
             font-weight: bold;
-            min-width: 100px; /* Garante alinhamento dos textos */
+            min-width: 100px;
             color: #333;
         }
 
-       .contact-list.info {
+     .contact-list.info {
             color: #666;
         }
 
-       .feedback-section {
+     .feedback-section {
             margin-top: 50px;
         }
 
-       .feedback-section label {
+     .feedback-section label {
             font-weight: bold;
             font-size: 1.2rem;
             color: #333;
@@ -63,18 +76,18 @@
             margin-bottom: 15px;
         }
 
-       .feedback-section textarea {
+     .feedback-section textarea {
             width: 100%;
             height: 150px;
             border: 1px solid #e0e0e0;
             border-radius: 5px;
             padding: 15px;
             font-size: 1rem;
-            resize: vertical; /* Permite que o usuário redimensione verticalmente */
-            box-sizing: border-box; /* Garante que o padding não afete a largura */
+            resize: vertical;
+            box-sizing: border-box;
         }
         
-       .feedback-section button {
+     .feedback-section button {
             display: inline-block;
             background-color: #000;
             color: #fff;
@@ -88,7 +101,7 @@
             transition: background-color 0.3s ease;
         }
 
-       .feedback-section button:hover {
+     .feedback-section button:hover {
             background-color: #333;
         }
     </style>
@@ -120,24 +133,32 @@
         
         <ul class="contact-list">
             <li>
-                <i class="fas fa-phone icon"></i>
-                <span class="label">Phone</span>
-                <span class="info">+1 (239) 771-9811</span>
+                <div style="display: flex; align-items: center; width: 100%; padding: 20px 10px;">
+                    <i class="fas fa-phone icon"></i>
+                    <span class="label">Phone</span>
+                    <span class="info">+1 (239) 771-9811</span>
+                </div>
             </li>
             <li>
-                <i class="fab fa-instagram icon"></i>
-                <span class="label">Instagram</span>
-                <span class="info">@Sushiemcasausa</span>
+                <a href="https://www.instagram.com/Sushiemcasausa" target="_blank">
+                    <i class="fab fa-instagram icon"></i>
+                    <span class="label">Instagram</span>
+                    <span class="info">@Sushiemcasausa</span>
+                </a>
             </li>
             <li>
-                <i class="fas fa-envelope icon"></i>
-                <span class="label">Email</span>
-                <span class="info">sushiemcasausa@gmail.com</span>
+                <div style="display: flex; align-items: center; width: 100%; padding: 20px 10px;">
+                    <i class="fas fa-envelope icon"></i>
+                    <span class="label">Email</span>
+                    <span class="info">sushiemcasausa@gmail.com</span>
+                </div>
             </li>
             <li>
-                <i class="fab fa-whatsapp icon"></i>
-                <span class="label">WhatsApp</span>
-                <span class="info">+1 (239) 771-9811</span>
+                <a href="https://wa.me/12397719811?text=Ola%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20o%20meu%20pedido." target="_blank">
+                    <i class="fab fa-whatsapp icon"></i>
+                    <span class="label">WhatsApp</span>
+                    <span class="info">+1 (239) 771-9811</span>
+                </a>
             </li>
         </ul>
 
