@@ -297,3 +297,23 @@ main {
         transform: translateY(0);
     }
 }
+
+
+.precos {
+    display: flex; 
+    align-items: center; 
+    gap: 0.75rem; 
+    margin-top: 0.5rem; 
+}
+
+.preco-antigo {
+    text-decoration: line-through; 
+    color: #888; 
+    font-size: 1rem; 
+}
+
+.preco-novo {
+    color: #1a1a1a; 
+    font-weight: bold; 
+    font-size: 1.2rem; 
+}
