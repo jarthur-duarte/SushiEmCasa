@@ -12,4 +12,5 @@ urlpatterns = [
     # Você pode adicionar outras URLs deste app aqui no futuro
     # path('cardapio/', views.mostrar_cardapio, name='cardapio'),
     # path('pedidos/', views.listar_pedidos, name='pedidos'),
+    path('orders/', views.pagina_orders, name = 'orders'),
 ]
