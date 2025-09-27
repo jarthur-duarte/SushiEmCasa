@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi em Casa - Meus Pedidos</title>
+    <link rel="stylesheet" href="{% static 'usuario/css/styleorders.css' %}">
+    <link rel="stylesheet" href="{% static 'usuario/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <header class="barra-navegacao">
+        <div class="logo">
+            <img src="{% static 'usuario/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="#">Cesta</a></li>
+                <li><a href="#" class="ativo">Pedidos</a></li>
+                <li><a href="#">Contato</a></li>
+            </ul>
+        </nav>
+        <div class="icone-usuario">
+            <a href="#">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="container-pedidos">
+        <h1>Meus Pedidos</h1>
+
+        {% if pedidos %}
+            {% for pedido in pedidos %}
+                <div class="pedido">
+                    <div class="pedido-header">
+                        <h2>Pedido #{{ pedido.id }}</h2>
+                        <span class="pedido-status status-{{ pedido.status|slugify }}">{{ pedido.get_status_display }}</span>
+                    </div>
+                    <p><strong>Cliente:</strong> {{ pedido.user.username }}</p>
+                    <p><strong>Data:</strong> {{ pedido.created_at|date:"d/m/Y H:i" }}</p> 
+                    <h4>Itens:</h4>
+                    {% for item in pedido.items.all %}
+                        <div class="item-pedido">
+                            <span>{{ item.quantity }}x {{ item.item_name }}</span>
+                            <span>R$ {{ item.price }}</span>
+                        </div>
+                    {% endfor %}
+                    <hr>
+                    <p><strong>Total: R$ {{ pedido.total_price }}</strong></p>
+                    {% if pedido.status != 'Cancelado' %}
+                        <div class="stepper-wrapper">
+                            <div class="stepper-item {% if pedido.status == 'Pendente' or pedido.status == 'Em preparo' or pedido.status == 'A caminho' or pedido.status == 'Entregue' %}completed{% endif %}">
+                                <div class="step-counter"><i class="fas fa-check"></i></div>
+                                <div class="step-name">Pedido Aceito</div>
+                            </div>
+                            <div class="stepper-item {% if pedido.status == 'Em preparo' or pedido.status == 'A caminho' or pedido.status == 'Entregue' %}completed{% endif %}">
+                                <div class="step-counter"><i class="fas fa-utensils"></i></div>
+                                <div class="step-name">Em Preparo</div>
+                            </div>
+                            <div class="stepper-item {% if pedido.status == 'A caminho' or pedido.status == 'Entregue' %}completed{% endif %}">
+                                <div class="step-counter"><i class="fas fa-truck"></i></div>
+                                <div class="step-name">A Caminho</div>
+                            </div>
+                            <div class="stepper-item {% if pedido.status == 'Entregue' %}completed entregue{% endif %}">
+                                <div class="step-counter"><i class="fas fa-box-open"></i></div>
+                                <div class="step-name">Entregue</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Ainda não há pedidos registrados.</p>
+        {% endif %}
+    </main>
+
+    <footer class="rodape">
+        <div class="logo">
+            <img src="{% static 'usuario/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+        </div>
+        <div class="links-rodape">
+            <h4>Navegação</h4>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Menu</a></li>
+                <li><a href="#">Contato</a></li>
+                <li><a href="#">Pedidos</a></li>
+            </ul>
+        </div>
+        <div class="contato-rodape">
+            <h4>Contato</h4>
+            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
+            <p>+1(239)7719811</p>
+        </div>
+    </footer>
+</body>
+</html>
