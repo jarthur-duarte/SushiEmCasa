@@ -1,0 +1,133 @@
+.container-pedidos {
+    padding: 2rem 5%;
+    background-color: #f9f9f9;
+}
+
+.pedido {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.pedido-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pedido-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.pedido-status {
+font-weight: bold;
+padding: 0.5rem 1rem;
+border-radius: 20px;
+color: #fff;
+}
+
+.status-pendente { background-color: #f0ad4e; }
+.status-em-preparo { background-color: #337ab7; }
+.status-a-caminho { background-color: #5bc0de; }
+.status-entregue { background-color: #5cb85c; }
+.status-cancelado { background-color: #d9534f; }
+
+.item-pedido {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+/* Estilos para a Barra de Progresso do Pedido */
+.stepper-wrapper {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.stepper-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.stepper-item::before {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 20px;
+  left: -50%;
+  z-index: 2;
+}
+
+.stepper-item::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #ccc;
+  width: 100%;
+  top: 20px;
+  left: 50%;
+  z-index: 2;
+}
+
+.stepper-item .step-counter {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ccc;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
+.stepper-item.active {
+  font-weight: bold;
+}
+
+.stepper-item.completed .step-counter {
+  background-color: #007bff;
+}
+
+.stepper-item.completed::after {
+  position: absolute;
+  content: "";
+  border-bottom: 2px solid #007bff;
+  width: 100%;
+  top: 20px;
+  left: 50%;
+  z-index: 3;
+}
+
+.stepper-item.active {
+    font-weight: bold;
+}
+
+.stepper-item.completed.entregue .step-counter {
+    background-color: #007bff;
+}
+
+.stepper-item.completed.entregue::after {
+    border-bottom-color: #007bff;
+}
+
+.stepper-item:first-child::before {
+  content: none;
+}
+.stepper-item:last-child::after {
+  content: none;
+}
