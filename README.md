@@ -124,11 +124,10 @@
 ![Issues](https://github.com/user-attachments/assets/93fe0867-aea6-4b6d-8f73-89cdcf51a76f)
 
 
-</details>
-
-
 ### ▶️ Screencast da implementação das histórias no youtube
 [Screencast](https://youtu.be/cHm_dSqf8RY)
+
+</details>
 
 ---
 
