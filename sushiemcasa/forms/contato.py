@@ -1,7 +1,4 @@
-# sushiemcasa/forms/contato.py
-
 from django import forms
-# O import do modelo também precisa seguir sua estrutura customizada
 from sushiemcasa.models.contato import MensagemFeedback 
 
 class FeedbackForm(forms.ModelForm):
