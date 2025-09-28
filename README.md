@@ -126,6 +126,10 @@
 
 </details>
 
+
+### ▶️ Screencast da implementação das histórias no youtube
+[Screencast](https://youtu.be/cHm_dSqf8RY)
+
 ---
 
 ### 👥 Grupo 02 (FDS - 2025.2)
