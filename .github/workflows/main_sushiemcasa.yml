@@ -35,7 +35,7 @@ jobs:
       - name: Cleaning testing files
         run: |
             rm -f db.sqlite3
-            rm -f.env
+            rm -f .env
 
       - name: Zip artifact for deployment
         run: zip -r release.zip. -x ".git/*" ".vscode/*" "venv/*" ".github/*" "staticfiles/*" "*/__pycache__/*"     
