@@ -1,4 +1,3 @@
-# sushiemcasa/models.py
 from django.db import models
 
 class MensagemFeedback(models.Model):
@@ -10,4 +9,3 @@ class MensagemFeedback(models.Model):
     def __str__(self):
         return f"Mensagem de {self.nome or 'Anônimo'}"
 
-# Se você tiver outros modelos (como Pedido, Produto), eles também virão para este arquivo.
