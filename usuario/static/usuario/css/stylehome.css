@@ -1,4 +1,3 @@
-/* Reset básico e fontes */
 body, html {
     margin: 0;
     padding: 0;
@@ -7,7 +6,6 @@ body, html {
     color: #333;
 }
 
-/* Header e Barra de Navegação */
 .barra-navegacao {
     display: flex;
     justify-content: space-between;
@@ -49,12 +47,10 @@ body, html {
     color: #333;
 }
 
-/* Conteúdo Principal */
 main {
     padding: 2rem 5%;
 }
 
-/* Seção de Promoções */
 .secao-promocoes h2, .secao-menu h2 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
@@ -98,14 +94,12 @@ main {
     color: #555;
 }
 
-/* Separador */
 .separador {
     border: none;
     border-top: 1px solid #eee;
     margin: 3rem 0;
 }
 
-/* Seção do Menu */
 .cabecalho-menu {
     display: flex;
     justify-content: space-between;
@@ -137,11 +131,10 @@ main {
     background-color: #eee;
 }
 
-/* Rodapé */
 .rodape {
     display: flex;
     justify-content: space-around;
-    padding: 2rem 5%; /* reduz altura */
+    padding: 2rem 5%; 
     background-color: #333;
     color: #f1f1f1;
     margin-top: 3rem;
@@ -204,7 +197,6 @@ main {
     border-radius: 8px;
 }
 
-/* Ajuste nas setas */
 .seta {
     background: transparent;
     border: none;
@@ -218,7 +210,6 @@ main {
     color: #000;
 }
 
-/* Icone wpp */
 .whatsapp-float {
     position: fixed;
     bottom: 20px;
@@ -254,29 +245,25 @@ main {
     width: 35px;
     height: 35px;
 }
-/* Estilos para o botão de filtro ativo */
 .botao-filtro.ativo {
     background-color: #333;
     color: #fff;
     border-color: #333;
 }
 
-/* Container para os painéis de opções */
 .container-opcoes {
     margin-top: 1.5rem;
 }
 
-/* Estilo do painel de opções de cada filtro */
 .painel-opcoes {
-    display: none; /* Começa escondido */
+    display: none; 
     padding: 1.5rem;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fafafa;
-    animation: fadeIn 0.5s ease-in-out; /* Animação suave */
+    animation: fadeIn 0.5s ease-in-out; 
 }
 
-/* Estilo de cada item dentro do painel */
 .item-menu {
     padding: 0.5rem 0;
     border-bottom: 1px solid #eee;
@@ -286,7 +273,6 @@ main {
     border-bottom: none;
 }
 
-/* Animação para o painel aparecer */
 @keyframes fadeIn {
     from {
         opacity: 0;
