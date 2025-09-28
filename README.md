@@ -42,71 +42,71 @@
   ### 📄 Relatório pair programming:
 <details>
 
-## Homepage (História 1) 
+## 🏠Homepage (História 1) 
 ### Como Cliente, quero acessar o cardápio por categoria, com descrição de cada produto individualmente. 
 **Responsáveis:**  
 - **Maria Eduarda Souza de Oliveira** – Desenvolvimento e Interface  
 - **Arthur Reis Gomes De Mello Queiroz** – Desenvolvimento e Interface  
 
-### 🔹 Divisão de Tarefas  
+###  🔺 Divisão de Tarefas  
 - Ambos trabalharam juntos na implementação da homepage, alternando funções para equilibrar responsabilidades.  
 - Cada sessão de desenvolvimento foi dividida entre **lógica** (estrutura do código) e **estilo** (apresentação visual).  
 
-### 🔹 Estratégia de Colaboração  
+### 🔺 Estratégia de Colaboração  
 - Reuniões semanais presenciais para programação em dupla.  
 - Alternância de papéis de **piloto** e **navegador**, permitindo detectar erros de sintaxe e lógica rapidamente.  
 - Decisões de layout e fluxo da página validadas em conjunto durante as sessões.  
 
-### 🔹 Ferramentas Utilizadas  
+### 🔺 Ferramentas Utilizadas  
 - **Frontend:** HTML, CSS, JavaScript  
 - **Comunicação:** encontros presenciais  
 - **Gestão:** Jira  
 
-### 🔹 Aprendizados e Benefícios  
+### 🔺 Aprendizados e Benefícios  
 - O pair programming acelerou a detecção de erros e economizou tempo.  
 - Maior troca de conhecimento entre os integrantes, que compreenderam melhor os métodos e a forma de trabalho um do outro.  
 
 ---
 
-## Contatos (História 7)
+## ☎️ Contatos (História 7)
 ### Como cliente, quero uma aba/serviço que me garanta contato com o estabelecimento/vendedor.
 **Responsáveis:**  
 - **Luiza Barbosa Almeida da Silva** – Backend (Regras de Negócio)  
 - **João Arthur Gomes Duarte** – Frontend (Interface Visual – HTML/CSS)  
 
-### 🔹 Divisão de Tarefas  
+### 🔺 Divisão de Tarefas  
 - **Luiza:** Implementação das regras de negócio, validações e integração com o banco de dados.  
 - **João Arthur:** Construção da interface visual em HTML/CSS, mantendo fidelidade ao protótipo aprovado.  
 
-### 🔹 Estratégia de Colaboração  
+### 🔺 Estratégia de Colaboração  
 - Reuniões semanais com alternância de papéis de piloto e navegador.  
 - Codificação colaborativa pelo **Discord**.  
 - Referência ao protótipo validado no **Jira**, garantindo coesão entre design e funcionalidades.  
 
-### 🔹 Ferramentas Utilizadas  
+### 🔺 Ferramentas Utilizadas  
 - **Backend:** Python/Django  
 - **Frontend:** HTML, CSS, Figma (protótipo)  
 - **Comunicação:** Discord  
 - **Gestão:** Jira  
 
-### 🔹 Aprendizados e Benefícios  
+### 🔺 Aprendizados e Benefícios  
 - Melhor alinhamento entre a parte funcional e visual do sistema.  
 - Troca de papéis proporcionou aprendizado mútuo em áreas diferentes (frontend e backend).  
 - Redução de erros e conflitos de integração.  
 
 ---
 
-## Pedidos (História 9)
+## 🍙 Pedidos (História 9)
 ### Como cliente eu gostaria de ter acesso ao tempo de preparo do meu pedido com uma estimativa de tempo de preparo. 
 **Responsáveis:**  
 - **Bernardo Guimarães** – Desenvolvimento de Funcionalidades  
 - **Cauã Parente** – Desenvolvimento de Funcionalidades  
 
-### 🔹 Divisão de Tarefas  
+### 🔺 Divisão de Tarefas  
 - Ambos se dedicaram à implementação da área de pedidos, distribuindo tarefas de forma equilibrada entre as camadas de código.  
 - Discussão prévia em reuniões para definir responsabilidades antes de cada sessão.  
 
-### 🔹 Estratégia de Colaboração  
+### 🔺 Estratégia de Colaboração  
 - Programação em dupla por chamadas no **Discord**, evitando conflitos de código.  
 - Sessões semanais para revisão conjunta e resolução imediata de problemas.
 
@@ -121,6 +121,7 @@
 
 ### 🚩 ISSUE/Bug Tracker atualizado:
 ![Issues](https://github.com/user-attachments/assets/f47d58bb-6803-4ae4-b6a4-05b4c3b34c68)
+![Issues](https://github.com/user-attachments/assets/93fe0867-aea6-4b6d-8f73-89cdcf51a76f)
 
 
 </details>
