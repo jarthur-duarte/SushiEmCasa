@@ -31,6 +31,14 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Cleaning testing files
+        run: |
+            rm -f db.sqlite3
+            rm -f.env
+
+      - name: Zip artifact for deployment
+        run: zip -r release.zip. -x ".git/*" ".vscode/*" "venv/*" ".github/*" "staticfiles/*" "*/__pycache__/*"     
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
