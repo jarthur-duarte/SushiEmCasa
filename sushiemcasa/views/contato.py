@@ -1,14 +1,13 @@
-
 # sushiemcasa/views/contato.py
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-# Lembre-se que o caminho deste import depende de onde você criou seus formulários
-from sushiemcasa.forms.contato import FeedbackForm 
+from sushiemcasa.forms.contato import FeedbackForm
 
-# ATENÇÃO: Verifique se o nome da função é o mesmo que você usa no seu urls.py
 def pagina_contato(request):
-    # Dicionário com as informações estáticas de contato
+    # ADICIONE APENAS ESTA LINHA:
+    print(f"MÉTODO DA REQUISIÇÃO: {request.method}")
+
     info_contato = {
         'telefone': '+1(239)7719811',
         'instagram': '@sushiemcasausa',
@@ -22,10 +21,12 @@ def pagina_contato(request):
             form.save()
             messages.success(request, 'Seu feedback foi enviado com sucesso!')
             return redirect('sushiemcasa:contato')
+        else:
+            messages.error(request, 'Não foi possível enviar seu feedback. Por favor, corrija os erros abaixo.')
+            print("ERROS DE VALIDAÇÃO DO FORMULÁRIO:", form.errors)
     else:
         form = FeedbackForm()
 
-    # Este 'context' envia o formulário e as infos para o template
     context = {
         'form': form,
         'info_contato': info_contato
