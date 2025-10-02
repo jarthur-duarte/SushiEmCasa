@@ -34,7 +34,6 @@ jobs:
 
       - name: Cleaning testing files
         run: |
-            rm -f db.sqlite3
             rm -f.env
 
       - name: Zip artifact for deployment
