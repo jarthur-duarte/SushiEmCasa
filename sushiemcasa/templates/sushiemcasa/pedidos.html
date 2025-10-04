@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sushi em Casa - Meus Pedidos</title>
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
-    <link rel="stylesheet" href="{% static 'usuario/css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="shortcut icon" type="imagem/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
 
@@ -87,10 +87,10 @@
         <div class="links-rodape">
             <h4>Navegação</h4>
             <ul>
-                <li><a href="#">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:homepage' %}">Home</a></li>
                 <li><a href="#">Menu</a></li>
-                <li><a href="#">Contato</a></li>
-                <li><a href="#">Pedidos</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contato</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}">Pedidos</a></li>
             </ul>
         </div>
         <div class="contato-rodape">
