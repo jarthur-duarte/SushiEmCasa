@@ -37,7 +37,7 @@ jobs:
             rm -f.env
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip. -x ".git/*" ".vscode/*" "venv/*" ".github/*" "staticfiles/*" "*/__pycache__/*"     
+        run: zip -r release.zip.
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 

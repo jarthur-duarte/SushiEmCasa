@@ -124,6 +124,19 @@
 ![Issues](https://github.com/user-attachments/assets/93fe0867-aea6-4b6d-8f73-89cdcf51a76f)
 
 
+### ▶️ Screencast da implementação das histórias no youtube
+[Screencast](https://youtu.be/cHm_dSqf8RY)
+
+### 📷 Sprint  e Backlog
+
+![Sprint](https://github.com/user-attachments/assets/0870372f-4632-4da6-9f48-8728c9022e11)
+
+![Sprint](https://github.com/user-attachments/assets/5ac3f81a-357a-457f-83df-434eb5fb3343)
+
+### 📌 Link do deployment
+
+[SushiEmCasa](https://sushiemcasa-atgpdfcggsdccvbs.brazilsouth-01.azurewebsites.net/)
+
 </details>
 
 ---
