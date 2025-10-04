@@ -34,7 +34,7 @@ jobs:
 
       - name: Cleaning testing files
         run: |
-            rm -f.env
+            rm -f .env
 
       - name: Zip artifact for deployment
         run: zip -r release.zip.
