@@ -19,13 +19,13 @@
 
     <header class="barra-navegacao">
         <div class="logo">
-            <a href="{% url 'sushiemcasa:homepage' %}">
+            <a href="{% url 'sushiemcasa:cardapio' %}">
                 <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
             </a>
         </div>
         <nav>
             <ul>
-                <li><a href="{% url 'sushiemcasa:homepage' %}">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
                 <li><a href="#">Basket</a></li>
                 <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
                 <li><a href="{% url 'sushiemcasa:contato' %}" class="ativo">Contact</a></li>
@@ -114,7 +114,7 @@
         <div class="links-rodape">
             <h4>Navegação</h4>
             <ul>
-                <li><a href="{% url 'sushiemcasa:homepage' %}">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
                 <li><a href="#">Menu</a></li>
                 <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
                 <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
