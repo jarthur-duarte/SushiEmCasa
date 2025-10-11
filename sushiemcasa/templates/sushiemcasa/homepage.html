@@ -7,9 +7,61 @@
     
     <title>Sushi em Casa - O melhor da culinária japonesa</title>
     
-    <link rel="shortcut icon" type="imagem/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
+    <link rel="shortcut icon" type="image/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        .categoria-secao {
+            margin-top: 50px;
+            padding: 0 5%;
+        }
+        .produtos-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .produto-card {
+            width: 300px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .produto-card:hover {
+            transform: translateY(-5px);
+        }
+        .produto-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block; /* O link ocupa todo o card */
+        }
+        .produto-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .produto-info {
+            padding: 15px;
+        }
+        .produto-info h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .produto-descricao {
+            font-size: 0.85em;
+            color: #777;
+            margin-bottom: 10px;
+            min-height: 40px; 
+        }
+        .produto-preco {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #e63946;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,7 +71,7 @@
         </div>
         <nav>
             <ul>
-                <li><a href="#" class="ativo">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}" class="ativo">Home</a></li> 
                 <li><a href="#">Basket</a></li>
                 <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
                 <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
@@ -34,118 +86,103 @@
 
     <main>
         <section class="secao-promocoes">
-    <h2>Promoções</h2>
-    <div class="carrossel-container">
-        <button class="seta seta-esquerda"><i class="fas fa-chevron-left"></i></button>
+            <h2>Promoções</h2>
+            <div class="carrossel-container">
+                <button class="seta seta-esquerda"><i class="fas fa-chevron-left"></i></button>
 
-        <div class="carrossel-viewport">
-            <div class="carrossel-track">
+                <div class="carrossel-viewport">
+                    <div class="carrossel-track">
+                        <div class="cartao-promocao">
+                            <div class="imagem-promocao">
+                                <img src="{%static 'sushiemcasa/images/hot.png'%}" alt="hot filadélfia">
+                            </div>
+                            <div class="descricao-promocao">
+                                <h3>Hot Filadélfia</h3>
+                                <p>20 peças fritas de arroz, salmão, cebolinha, cream cheese, tarê e gergelim.</p>
+                                <div class="precos">    
+                                    <span class="preco-antigo">$20</span>
+                                    <span class="preco-novo"> $14</span>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="cartao-promocao">
-                    <div class="imagem-promocao">
-                        <img src="{%static 'sushiemcasa/images/hot.png'%}" alt="hot filadélfia">
-                    </div>
-                    <div class="descricao-promocao">
-                        <h3>Hot Filadélfia</h3>
-                        <p>20 peças fritas de arroz, salmão, cebolinha, cream cheese, tarê e gergelim.</p>
-                        <div class="precos">    
-                            <span class="preco-antigo">$20</span>
-                            <span class="preco-novo"> $14</span>
+                        <div class="cartao-promocao">
+                            <div class="imagem-promocao">
+                                <img src="{%static 'sushiemcasa/images/salmao.png' %}" alt="Promoção Combinado Salmão">
+                            </div>
+                            <div class="descricao-promocao">
+                                <h3>Combinado Salmão</h3>
+                                <p>25 peças frescas de salmão, incluindo sashimis, california rolls e joys.</p>
+                                <div class="precos">
+                                    <span class="preco-antigo">$24</span>
+                                    <span class="preco-novo">$18</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cartao-promocao">
+                            <div class="imagem-promocao">
+                                <img src="{%static 'sushiemcasa/images/temaki.png' %}" alt="Promoção Festival Vegano">
+                            </div>
+                            <div class="descricao-promocao">
+                                <h3>Temaki hot</h3>
+                                <p>Temaki de salmão frito, cream cheese, arroz e alga.</p>
+                                <p><strong>$14</strong></p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="cartao-promocao">
-                    <div class="imagem-promocao">
-                        <img src="{%static 'sushiemcasa/images/salmao.png' %}" alt="Promoção Combinado Salmão">
-                    </div>
-                    <div class="descricao-promocao">
-                        <h3>Combinado Salmão</h3>
-                        <p>25 peças frescas de salmão, incluindo sashimis, california rolls e joys.</p>
-                        <div class="precos">
-
-                            <span class="preco-antigo">$24</span>
-                            <span class="preco-novo">$18</span>
-
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cartao-promocao">
-                    <div class="imagem-promocao">
-                        <img src="{%static 'sushiemcasa/images/temaki.png' %}" alt="Promoção Festival Vegano">
-                    </div>
-                    <div class="descricao-promocao">
-                        <h3>Temaki hot</h3>
-                        <p>Temaki de salmão frito, cream cheese, arroz e alga.</p>
-                        <p><strong>$14</strong></p>
-                    </div>
-                </div>
-
+                <button class="seta seta-direita"><i class="fas fa-chevron-right"></i></button>
             </div>
-        </div>
+        </section>
 
-        <button class="seta seta-direita"><i class="fas fa-chevron-right"></i></button>
-    </div>
-</section>
+        <div class="cardapio-container">
+        
+            {% for categoria in categorias %}
+                
+                <section class="categoria-secao">
+                    <h2>{{ categoria.nome|upper }}</h2>
 
-        <hr class="separador">
+                    <div class="produtos-grid">
+                        
+                        {% for produto in categoria.produtos.all %} 
+                        
+                            <div class="produto-card">
+                                
+                                <a href="#" 
+                                   title="{{ produto.nome }}"
+                                   class="link-detalhe-produto">
+                                
+                                    {% if produto.imagem %}
+                                        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                                    {% endif %}
+                                    
+                                    <div class="produto-info">
+                                        <h3>{{ produto.nome|upper }}</h3>
+                                        
+                                        <p class="produto-descricao">{{ produto.descricao|truncatechars:70 }}</p>
 
-        <section class="secao-menu">
-    <div class="cabecalho-menu">
-        <h2>Menu</h2>
-        <a href="#">Ver tudo <i class="fas fa-chevron-right"></i></a>
-    </div>
-    <div class="filtros-menu">
-        <button class="botao-filtro" data-filter="salmao">Salmão</button>
-        <button class="botao-filtro" data-filter="hots">Hots</button>
-        <button class="botao-filtro" data-filter="frescos">Frescos</button>
-        <button class="botao-filtro" data-filter="doces">Doces</button>
-        <button class="botao-filtro" data-filter="temakis">Temakis</button>
-    </div>
+                                        <p class="produto-preco">R$ {{ produto.preco|floatformat:2 }}</p>
+                                    </div>
+                                    
+                                </a> 
 
-    <div class="container-opcoes">
-        <div id="salmao" class="painel-opcoes">
-            <div class="item-menu">Niguiri de Salmão (Unidade) - $1.75</div>
-            <div class="item-menu">Joe Tartar (Unidade) - $2.25</div>
-            <div class="item-menu">Joe Tradicional e Maçaricado (Unidade) - $2</div>
-            <div class="item-menu">Philadélfia (8 peças) - $12</div>
-            <div class="item-menu">Salmão Grill (9 peças) - $14</div>
-            <div class="item-menu">Salmão Spicy - $14</div>
-            <div class="item-menu">Hossomaki de Salmão (8 peças) - $11</div>
+                            </div>
+                            
+                        {% empty %}
+                            <p style="padding: 15px;">Nenhum produto cadastrado nesta categoria ({{ categoria.nome }}).</p>
+                        {% endfor %}
+                        
+                    </div>
+                </section>
+                
+            {% empty %}
+                <p style="padding: 20px; color: red;">⚠️ **Atenção:** Nenhuma categoria cadastrada no painel Admin.</p>
+            {% endfor %}
 
         </div>
-        <div id="hots" class="painel-opcoes">
-            <div class="item-menu">Hot-Philadélfia (10 peças) - $14  </div>
-            <div class="item-menu">Kani Hot (12 peças) - $14</div>
-        </div>
-        <div id="frescos" class="painel-opcoes">
-            <div class="item-menu">California (10 peças) - $10</div>
-            <div class="item-menu">Makisushi (10 peças)- $12</div>
-            <div class="item-menu">Fucamaki (10 peças)- $14</div>
-            <div class="item-menu">Uramaki Trio (9 peças) - $10</div>
-            <div class="item-menu">Uramaki Especial (10 peças) - $10</div>
-            <div class="item-menu">Uramaki Blend (9 peças) - $10</div>
-            <div class="item-menu">Uramaki Skin (8 peças) - $12</div>
-            <div class="item-menu">Uramaki Mix (9 peças) - $14</div>
-            <div class="item-menu">Uramaki Grelhado (9 peças) - $12</div>
-            <div class="item-menu">Uramaki Especial Grelhado (10 peças) - $14</div>
-            
-        </div>
-        <div id="doces" class="painel-opcoes">
-            <div class="item-menu">Romeu e julieta (8 peças) - $8</div>
-            <div class="item-menu">Banana Roll (10 peças) - $14</div>
-            <div class="item-menu">Joe Romeu e julieta (Unidade) - $1.75</div>
-        </div>
-        <div id="temakis" class="painel-opcoes">
-            <div class="item-menu">Temaki salmão - $12</div>
-            <div class="item-menu">Temaki kani - $10</div>
-            <div class="item-menu">Temaki hot - $14</div>
-        </div>
-    </div>
-</section>
-
-    </main>
+        </main>
 
     <a href="https://web.whatsapp.com/send?phone=12397719811&text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
         <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
@@ -158,10 +195,10 @@
         <div class="links-rodape">
             <h4>Navegação</h4>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Menu</a></li>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}">Menu</a></li>
                 <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="#">Pedidos</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}">Pedidos</a></li>
             </ul>
         </div>
         <div class="contato-rodape">
@@ -170,8 +207,9 @@
             <p>+1(239)7719811</p>
         </div>
     </footer>
-        <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
-        <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script>
-</body>
+    
+    <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
+    <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script>
 
+</body>
 </html>
