@@ -11,57 +11,6 @@
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <style>
-        .categoria-secao {
-            margin-top: 50px;
-            padding: 0 5%;
-        }
-        .produtos-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        .produto-card {
-            width: 300px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-        .produto-card:hover {
-            transform: translateY(-5px);
-        }
-        .produto-card a {
-            text-decoration: none;
-            color: inherit;
-            display: block; /* O link ocupa todo o card */
-        }
-        .produto-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-        .produto-info {
-            padding: 15px;
-        }
-        .produto-info h3 {
-            margin-top: 0;
-            font-size: 1.2em;
-            color: #333;
-        }
-        .produto-descricao {
-            font-size: 0.85em;
-            color: #777;
-            margin-bottom: 10px;
-            min-height: 40px; 
-        }
-        .produto-preco {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #e63946;
-        }
-    </style>
 </head>
 <body>
 
@@ -71,7 +20,7 @@
         </div>
         <nav>
             <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}" class="ativo">Home</a></li> 
+                <li><a href="{% url 'sushiemcasa:cardapio' %}" class="ativo">Home>
                 <li><a href="#">Basket</a></li>
                 <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
                 <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
