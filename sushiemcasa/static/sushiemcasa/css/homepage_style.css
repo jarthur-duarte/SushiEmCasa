@@ -648,3 +648,52 @@ body.modal-aberto {
     font-weight: bold;
     color: #e63946; /* Cor de destaque (vermelho/coral) */
 }
+.categoria-secao {
+            margin-top: 50px;
+            padding: 0 5%;
+        }
+        .produtos-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .produto-card {
+            width: 300px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        .produto-card:hover {
+            transform: translateY(-5px);
+        }
+        .produto-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block; /* O link ocupa todo o card */
+        }
+        .produto-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .produto-info {
+            padding: 15px;
+        }
+        .produto-info h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .produto-descricao {
+            font-size: 0.85em;
+            color: #777;
+            margin-bottom: 10px;
+            min-height: 40px; 
+        }
+        .produto-preco {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #e63946;
+        }
