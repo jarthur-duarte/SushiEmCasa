@@ -5,7 +5,7 @@ from django.contrib import messages
 from sushiemcasa.forms.contato import FeedbackForm
 
 def pagina_contato(request):
-    # ADICIONE APENAS ESTA LINHA:
+
     print(f"MÉTODO DA REQUISIÇÃO: {request.method}")
 
     info_contato = {

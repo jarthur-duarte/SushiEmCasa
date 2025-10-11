@@ -1,13 +1,24 @@
-
-
 from django.urls import path
-from . import views  
-app_name = 'sushiemcasa'
-urlpatterns = [
-    
-    path('', views.homepage, name='homepage'),
-    path('contato/', views.pagina_contato, name='contato'),
 
+# IMPORTAÇÃO LIMPA: Apenas o que existe no cardapio.py
+from .views.cardapio import exibir_cardapio
+
+# Importa as views de outros módulos (mantidas)
+from .views.contato import pagina_contato 
+from .views.pedidos import pagina_orders 
+
+app_name = 'sushiemcasa'
+
+urlpatterns = [
+    # 1. HOMEPAGE/CARDÁPIO (rota raiz)
+    path('', exibir_cardapio, name='cardapio'),
     
-    path('orders/', views.pagina_orders, name = 'orders'),
+    # 2. FILTRO POR CATEGORIA
+    path('categoria/<slug:categoria_slug>/', exibir_cardapio, name='lista_por_categoria'), 
+    
+    # NOTA: ROTA DE DETALHE DO PRODUTO FOI REMOVIDA
+    
+    # 3. OUTRAS ROTAS
+    path('contato/', pagina_contato, name='contato'),
+    path('orders/', pagina_orders, name='orders'),
 ]
