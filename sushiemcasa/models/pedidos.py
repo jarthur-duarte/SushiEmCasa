@@ -31,7 +31,7 @@ class Order(models.Model):
             now_plus_24h = timezone.now() + datetime.timedelta(hours=24)
             if self.delivery_datetime < now_plus_24h:
                 raise ValidationError({
-                    'delivery_datetime': 'A data e hora de entrega devem ser pelo menos 24 horas a partir de agora.'
+                    'delivery_datetime': 'Delivery date and time must be at least 24 hours from now.'
                 })
 
 class OrderItem(models.Model):
@@ -49,4 +49,5 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
+        product_name = self.produto.nome if self.produto else self.item_name
         return f"{self.quantity}x {self.item_name} (Order #{self.order.id})"
