@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %} {# Required for number formatting #}
 
-{% block title %}Seu Carrinho - Sushi em Casa{% endblock %}
+{% block title %}Your basket - Sushi em Casa{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'sushiemcasa/css/basket_style.css' %}">
@@ -10,7 +10,7 @@
 
 {% block content %}
 <main class="container-carrinho">
-    <h1>Seu Carrinho de Compras</h1>
+    <h1>Your basket</h1>
     <hr>
 
     {% if messages %}
@@ -23,11 +23,11 @@
         <table class="tabela-carrinho">
             <thead>
                 <tr>
-                    <th colspan="2">Produto</th>
-                    <th>Preço Unitário</th>
-                    <th>Quantidade</th>
+                    <th colspan="2">Product</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
                     <th>Subtotal</th>
-                    <th>Ações</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,13 +62,13 @@
         </table>
 
         <div class="resumo-carrinho">
-            <h3>Total: R$ {{ cart_total|stringformat:".2f" }}</h3>
-            <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalizar Compra</a>
+            <h3>Total: $ {{ cart_total|stringformat:".2f" }}</h3>
+            <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalize Order</a>
         </div>
 
     {% else %}
-        <p>Seu carrinho está vazio.</p>
-        <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn-primary">Voltar ao Cardápio</a></p>
+        <p>Your basket is empty.</p>
+        <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn-primary">Back to Menu</a></p>
     {% endif %}
 </main>
 {% endblock %}
