@@ -45,6 +45,11 @@ if NOT_PROD:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+    # Media files (Desenvolvimento) - Servidos localmente
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 else:
     # --- CONFIGURAÇÕES DE PRODUÇÃO ---
     print(">>> Ambiente de Produção Ativado <<<")
@@ -88,6 +93,32 @@ else:
         }
     }
 
+    # --- INÍCIO DA CONFIGURAÇÃO DO AZURE BLOB STORAGE ---
+    
+    AZURE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
+    
+    # O nome da conta de armazenamento que você criou (ex: 'sushiemcasastorage')
+    AZURE_ACCOUNT_NAME = 'sushiemcasastorage' 
+    
+    # O nome do contêiner que você criou (ex: 'media')
+    AZURE_CONTAINER_NAME = 'media'
+
+    if not AZURE_CONNECTION_STRING:
+        raise ImproperlyConfigured("A variável AZURE_STORAGE_CONNECTION_STRING não foi definida!")
+
+    # Define o "motor" de armazenamento padrão para o Azure
+    DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
+    
+    # Garante que os arquivos não sejam sobrescritos
+    AZURE_OVERWRITE_FILES = False
+
+    # Media files (Produção) - Servidos pelo Azure
+    # O MEDIA_ROOT não é necessário, pois os arquivos não ficam no servidor web
+    MEDIA_URL = f'https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER_NAME}/'
+    
+    # --- FIM DA CONFIGURAÇÃO DO AZURE BLOB STORAGE ---
+
+
 # --- RESTANTE DAS CONFIGURAÇÕES DO DJANGO ---
 
 # Application definition
@@ -101,7 +132,8 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     # apps criados
     'usuario',
-    'sushiemcasa'
+    'sushiemcasa',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -156,9 +188,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# As configurações de MEDIA_URL e MEDIA_ROOT foram movidas
+# para dentro dos blocos 'if NOT_PROD:' e 'else:'
