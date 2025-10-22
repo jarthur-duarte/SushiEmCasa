@@ -1,0 +1,129 @@
+{% load static %}
+{% load l10n %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sushi em Casa - Finalizar Pedido</title>
+    
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'sushiemcasa/images/LOGO.ico' %}">
+</head>
+<body>
+
+    <header class="barra-navegacao">
+        <div class="logo">
+            <a href="{% url 'sushiemcasa:cardapio' %}">
+                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}" class="ativo">Basket</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="icone-usuario">
+            <a href="#">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="container-pedidos">
+        <h1>Finalizar Pedido</h1>
+
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="pedido">
+            <h2>Resumo do Pedido</h2>
+            {% if cart_items %}
+                <ul class="items-list">
+                    {% for item in cart_items %}
+                        <li class="item-pedido">
+                            <span>{{ item.quantity }}x {{ item.product.nome }}</span>
+                            <span>R$ {{ item.total|floatformat:2 }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <p><strong>Total: R$ {{ cart_total|floatformat:2 }}</strong></p>
+            {% else %}
+                <p>Seu carrinho está vazio.</p>
+                <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn-submit">Voltar ao Cardápio</a></p>
+            {% endif %}
+        </div>
+
+        {% if cart_items %}
+        <div class="pedido">
+            <h2>Detalhes da Entrega</h2>
+            <form method="post" action="{% url 'sushiemcasa:checkout' %}">
+                {% csrf_token %}
+
+                <div class="form-field">
+                    {{ form.delivery_datetime.label_tag }}
+                    {{ form.delivery_datetime }}
+                    {% if form.delivery_datetime.help_text %}
+                        <small style="color: #666; display: block; margin-top: 5px;">{{ form.delivery_datetime.help_text }}</small>
+                    {% endif %}
+                    {% if form.delivery_datetime.errors %}
+                        <div class="errorlist">
+                            {% for error in form.delivery_datetime.errors %}
+                                <p style="color: red;">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %} 
+                    <div class="errorlist">
+                        {% for error in form.non_field_errors %}
+                            <p style="color: red;">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="btn-submit">Confirmar Pedido</button>
+            </form>
+        </div>
+        {% endif %}
+
+    </main>
+
+    <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
+        <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
+    </a>
+
+    <footer class="rodape">
+        <div class="logo">
+            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa"> 
+        </div>
+        <div class="links-rodape">
+            <h4>Navegação</h4>
+            <ul>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
+            </ul>
+        </div>
+        <div class="contato-rodape">
+            <h4>Contact</h4>
+            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
+            <p>+1(239)7719811</p>
+        </div>
+    </footer>
+
+</body>
+</html>
