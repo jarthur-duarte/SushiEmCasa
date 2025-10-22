@@ -116,7 +116,7 @@
             <div class="cabecalho-menu">
                 <h2>Menu</h2>
                 {% if categoria_selecionada %}
-                    <a href="{% url 'sushiemcasa:cardapio' %}">Ver tudo</a>
+                    <a href="{% url 'sushiemcasa:cardapio' %}">All Sushis</a>
                 {% endif %}
             </div>
             <div class="filtros-menu">
@@ -139,7 +139,7 @@
                         <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post" class="add-to-cart-form">
                             {% csrf_token %}
                             <input type="number" name="quantity" value="1" min="1" class="quantity-input" style="width: 50px; text-align: center; margin-right: 10px;">
-                            <button type="submit" class="add-to-cart-button">Adicionar</button>
+                            <button type="submit" class="add-to-cart-button">Add</button>
                         </form>
                         </div>
                 </div>
@@ -159,7 +159,7 @@
             <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
         </div>
         <div class="links-rodape">
-            <h4>Navegação</h4>
+            <h4>Tabs</h4>
             <ul>
                 <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
                 <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
