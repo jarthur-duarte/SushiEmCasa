@@ -133,7 +133,7 @@ INSTALLED_APPS = [
     # apps criados
     'usuario',
     'sushiemcasa',
-    'storages',
+    #'storages',
 ]
 
 MIDDLEWARE = [

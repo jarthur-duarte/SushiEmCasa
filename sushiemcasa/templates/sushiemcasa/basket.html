@@ -1,64 +1,74 @@
+{% extends 'sushiemcasa/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sushi em Casa - Meu Carrinho</title>
-    
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" type="imagem/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
+{% load i18n %} {# Required for number formatting #}
 
-</head>
-<body>
+{% block title %}Seu Carrinho - Sushi em Casa{% endblock %}
 
-    <header class="barra-navegacao">
-        <div class="logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
-        </div>
-        <nav>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" class="ativo">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-            </ul>
-        </nav>
-        <div class="icone-usuario">
-            <a href="#">
-                <i class="fas fa-user-circle"></i>
-            </a>
-        </div>
-    </header>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'sushiemcasa/css/basket_style.css' %}">
+{% endblock %}
 
-    <main class="container-pedidos" style="text-align: center;">
-        <h1>Meu Carrinho</h1>
-        <hr>
-        <p style="margin-top: 20px; margin-bottom: 30px;">Seu carrinho de compras está vazio no momento.</p>
-        
-        <a href="{% url 'sushiemcasa:cardapio' %}" class="btn-submit">Voltar ao Cardápio</a>
-    </main>
+{% block content %}
+<main class="container-carrinho">
+    <h1>Seu Carrinho de Compras</h1>
+    <hr>
 
-    <footer class="rodape">
-        <div class="logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if cart_items %}
+        <table class="tabela-carrinho">
+            <thead>
+                <tr>
+                    <th colspan="2">Produto</th>
+                    <th>Preço Unitário</th>
+                    <th>Quantidade</th>
+                    <th>Subtotal</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr class="item-carrinho">
+                    <td class="imagem-item">
+                        {% if item.image_url %}
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" width="60">
+                        {% else %}
+                            <img src="{% static 'sushiemcasa/images/placeholder.png' %}" alt="Sem imagem" width="60"> {# Add a placeholder image if needed #}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.name }}</td>
+                    <td>R$ {{ item.price|stringformat:".2f" }}</td>
+                    <td>
+                        <form action="{% url 'sushiemcasa:update_cart' item.product_id %}" method="post" class="form-atualizar-quantidade">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantidade-input-carrinho">
+                            <button type="submit" class="btn-atualizar"><i class="fas fa-sync-alt"></i></button>
+                        </form>
+                    </td>
+                    <td>R$ {{ item.total|stringformat:".2f" }}</td>
+                    <td>
+                        <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-remover"><i class="fas fa-trash-alt"></i> Remover</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="resumo-carrinho">
+            <h3>Total: R$ {{ cart_total|stringformat:".2f" }}</h3>
+            <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalizar Compra</a>
         </div>
-        <div class="links-rodape">
-            <h4>Navegação</h4>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" class="ativo">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-            </ul>
-        </div>
-        <div class="contato-rodape">
-            <h4>Contact</h4>
-            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
-            <p>+1(239)7719811</p>
-        </div>
-    </footer>
-</body>
-</html>
+
+    {% else %}
+        <p>Seu carrinho está vazio.</p>
+        <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn-primary">Voltar ao Cardápio</a></p>
+    {% endif %}
+</main>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sushi em Casa{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="shortcut icon" type="image/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <header class="barra-navegacao">
+        <div class="logo">
+             <a href="{% url 'sushiemcasa:cardapio' %}">
+                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if request.resolver_match.url_name == 'cardapio' %}class="ativo"{% endif %}>Home</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}" {% if request.resolver_match.url_name == 'basket' %}class="ativo"{% endif %}>Cesta</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}" {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %}class="ativo"{% endif %}>Pedidos</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}" {% if request.resolver_match.url_name == 'contato' %}class="ativo"{% endif %}>Contato</a></li>
+            </ul>
+        </nav>
+        <div class="icone-usuario">
+            <a href="#">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
+        <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
+    </a>
+
+    <footer class="rodape">
+        <div class="logo">
+            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+        </div>
+        <div class="links-rodape">
+            <h4>Navegação</h4>
+            <ul>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}">Cesta</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contato</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}">Pedidos</a></li>
+            </ul>
+        </div>
+        <div class="contato-rodape">
+            <h4>Contato</h4>
+            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
+            <p>+1(239)7719811</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
+    <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

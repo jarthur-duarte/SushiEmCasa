@@ -94,6 +94,7 @@ def pagina_checkout(request):
     return render(request, 'sushiemcasa/checkout.html', context)
 
 def order_detail(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order = get_object_or_404(Order, id=order_id, user=request.user) # Ensure user check remains if needed
     context = {'order': order}
-    return render(request, 'sushiemcasa/templates/sushiemcasa/detalhe_pedidos.html', context)
+    # Correct template path
+    return render(request, 'sushiemcasa/detalhe_pedidos.html', context)
