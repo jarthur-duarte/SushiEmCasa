@@ -21,9 +21,9 @@
         <nav>
             <ul>
                 <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if request.resolver_match.url_name == 'cardapio' %}class="ativo"{% endif %}>Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" {% if request.resolver_match.url_name == 'basket' %}class="ativo"{% endif %}>Cesta</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}" {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %}class="ativo"{% endif %}>Pedidos</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}" {% if request.resolver_match.url_name == 'contato' %}class="ativo"{% endif %}>Contato</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}" {% if request.resolver_match.url_name == 'basket' %}class="ativo"{% endif %}>Basket</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}" {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %}class="ativo"{% endif %}>Orders</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}" {% if request.resolver_match.url_name == 'contato' %}class="ativo"{% endif %}>Contact</a></li>
             </ul>
         </nav>
         <div class="icone-usuario">
