@@ -1,0 +1,119 @@
+/* sushiemcasa/static/sushiemcasa/css/basket_style.css */
+
+.container-carrinho {
+    padding: 2rem 5%;
+    max-width: 960px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.container-carrinho h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.tabela-carrinho {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.tabela-carrinho th,
+.tabela-carrinho td {
+    border-bottom: 1px solid #ddd;
+    padding: 12px 8px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.tabela-carrinho th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+}
+
+.imagem-item img {
+    max-width: 60px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.form-atualizar-quantidade {
+    display: flex;
+    align-items: center;
+}
+
+.quantidade-input-carrinho {
+    width: 50px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.btn-atualizar, .btn-remover {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #007bff; /* Example blue color */
+    font-size: 1rem;
+}
+
+.btn-remover {
+    color: #dc3545; /* Example red color */
+}
+
+.btn-atualizar:hover, .btn-remover:hover {
+    opacity: 0.7;
+}
+
+.resumo-carrinho {
+    text-align: right;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.resumo-carrinho h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.btn-checkout {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #28a745; /* Example green color */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-checkout:hover {
+    background-color: #218838;
+}
+
+/* Alert styles for messages */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}

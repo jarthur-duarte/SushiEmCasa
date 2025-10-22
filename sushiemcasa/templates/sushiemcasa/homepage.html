@@ -4,62 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Sushi em Casa - O melhor da culinária japonesa</title>
-    
-    <link rel="shortcut icon" type="image/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
+    <title>Sushi em Casa - Cardápio</title> {# Updated title #}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'sushiemcasa/images/LOGO.jpg' %}">
     <style>
-        .categoria-secao {
-            margin-top: 50px;
-            padding: 0 5%;
-        }
-        .produtos-grid {
+        /* ... (keep existing styles) ... */
+
+        /* Add styles for the quantity input and add button if needed */
+        .add-to-cart-form {
             display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 20px;
+            align-items: center;
+            margin-top: 10px;
         }
-        .produto-card {
-            width: 300px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.2s;
+
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+            margin-right: 10px;
         }
-        .produto-card:hover {
-            transform: translateY(-5px);
+
+        .add-to-cart-button {
+            padding: 8px 12px;
+            background-color: #4CAF50; /* Green */
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
         }
-        .produto-card a {
-            text-decoration: none;
-            color: inherit;
-            display: block; /* O link ocupa todo o card */
-        }
-        .produto-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-        .produto-info {
-            padding: 15px;
-        }
-        .produto-info h3 {
-            margin-top: 0;
-            font-size: 1.2em;
-            color: #333;
-        }
-        .produto-descricao {
-            font-size: 0.85em;
-            color: #777;
-            margin-bottom: 10px;
-            min-height: 40px; 
-        }
-        .produto-preco {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #e63946;
+
+        .add-to-cart-button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -67,14 +43,17 @@
 
     <header class="barra-navegacao">
         <div class="logo">
-            <img src="{%static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+            <a href="{% url 'sushiemcasa:cardapio' %}">
+                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+            </a>
         </div>
         <nav>
             <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}" class="ativo">Home</a></li> 
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li> 
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
+                {# Use url template tag for dynamic URLs #}
+                <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if not categoria_selecionada %}class="ativo"{% endif %}>Home</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}">Cesta</a></li> {# Changed Basket to Cesta #}
+                <li><a href="{% url 'sushiemcasa:orders' %}">Meus Pedidos</a></li> {# Changed Orders to Meus Pedidos #}
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contato</a></li> {# Changed Contact to Contato #}
             </ul>
         </nav>
         <div class="icone-usuario">
@@ -89,125 +68,114 @@
             <h2>Promoções</h2>
             <div class="carrossel-container">
                 <button class="seta seta-esquerda"><i class="fas fa-chevron-left"></i></button>
-
                 <div class="carrossel-viewport">
                     <div class="carrossel-track">
                         <div class="cartao-promocao">
                             <div class="imagem-promocao">
-                                <img src="{%static 'sushiemcasa/images/hot.png'%}" alt="hot filadélfia">
+                                <img src="{% static 'sushiemcasa/images/hot.png' %}" alt="hot filadélfia">
                             </div>
                             <div class="descricao-promocao">
                                 <h3>Hot Filadélfia</h3>
                                 <p>20 peças fritas de arroz, salmão, cebolinha, cream cheese, tarê e gergelim.</p>
-                                <div class="precos">    
-                                    <span class="preco-antigo">$20</span>
-                                    <span class="preco-novo"> $14</span>
+                                <div class="precos">
+                                    <span class="preco-antigo">R$ 55,00</span>
+                                    <span class="preco-novo">R$ 49,90</span>
                                 </div>
                             </div>
                         </div>
-
                         <div class="cartao-promocao">
                             <div class="imagem-promocao">
-                                <img src="{%static 'sushiemcasa/images/salmao.png' %}" alt="Promoção Combinado Salmão">
+                                <img src="{% static 'sushiemcasa/images/salmao.png' %}" alt="Promoção Combinado Salmão">
                             </div>
                             <div class="descricao-promocao">
                                 <h3>Combinado Salmão</h3>
                                 <p>25 peças frescas de salmão, incluindo sashimis, california rolls e joys.</p>
                                 <div class="precos">
-                                    <span class="preco-antigo">$24</span>
-                                    <span class="preco-novo">$18</span>
+                                    <span class="preco-antigo">R$ 75,00</span>
+                                    <span class="preco-novo">R$ 69,90</span>
                                 </div>
                             </div>
                         </div>
-
                         <div class="cartao-promocao">
                             <div class="imagem-promocao">
-                                <img src="{%static 'sushiemcasa/images/temaki.png' %}" alt="Promoção Festival Vegano">
+                                <img src="{% static 'sushiemcasa/images/temaki.png' %}" alt="Promoção Temaki Hot">
                             </div>
                             <div class="descricao-promocao">
-                                <h3>Temaki hot</h3>
+                                <h3>Temaki Hot</h3>
                                 <p>Temaki de salmão frito, cream cheese, arroz e alga.</p>
-                                <p><strong>$14</strong></p>
+                                <p><strong>R$ 45,00</strong></p>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <button class="seta seta-direita"><i class="fas fa-chevron-right"></i></button>
             </div>
         </section>
 
-        <div class="cardapio-container">
-        
-            {% for categoria in categorias %}
-                
-                <section class="categoria-secao">
-                    <h2>{{ categoria.nome|upper }}</h2>
+        <hr class="separador">
 
-                    <div class="produtos-grid">
-                        
-                        {% for produto in categoria.produtos.all %} 
-                        
-                            <div class="produto-card">
-                                
-                                <a href="#" 
-                                   title="{{ produto.nome }}"
-                                   class="link-detalhe-produto">
-                                
-                                    {% if produto.imagem %}
-                                        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
-                                    {% endif %}
-                                    
-                                    <div class="produto-info">
-                                        <h3>{{ produto.nome|upper }}</h3>
-                                        
-                                        <p class="produto-descricao">{{ produto.descricao|truncatechars:70 }}</p>
+        <section class="secao-menu">
+            <div class="cabecalho-menu">
+                <h2>Cardápio</h2>
+                {% if categoria_selecionada %}
+                    <a href="{% url 'sushiemcasa:cardapio' %}">Ver tudo</a>
+                {% endif %}
+            </div>
+            <div class="filtros-menu">
+                {% for categoria in categorias %}
+                    <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}" class="botao-filtro {% if categoria.nome == categoria_selecionada %}ativo{% endif %}">{{ categoria.nome }}</a>
+                {% endfor %}
+            </div>
 
-                                        <p class="produto-preco">$ {{ produto.preco|floatformat:2 }}</p>
-                                    </div>
-                                    
-                                </a> 
+            <div class="produtos-grid">
+                {% for produto in produtos %}
+                <div class="produto-card">
+                    {% if produto.imagem %}
+                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                    {% endif %}
+                    <div class="produto-info">
+                        <h3>{{ produto.nome|upper }}</h3>
+                        <p class="produto-descricao">{{ produto.descricao }}</p>
+                        <p class="produto-preco">R$ {{ produto.preco|floatformat:2 }}</p>
 
-                            </div>
-                            
-                        {% empty %}
-                            <p style="padding: 15px;">Nenhum produto cadastrado nesta categoria ({{ categoria.nome }}).</p>
-                        {% endfor %}
-                        
-                    </div>
-                </section>
-                
-            {% empty %}
-                <p style="padding: 20px; color: red;">⚠️ **Atenção:** Nenhuma categoria cadastrada no painel Admin.</p>
-            {% endfor %}
+                        <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post" class="add-to-cart-form">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input" style="width: 50px; text-align: center; margin-right: 10px;">
+                            <button type="submit" class="add-to-cart-button">Adicionar</button>
+                        </form>
+                        </div>
+                </div>
+                {% empty %}
+                <p>Nenhum produto encontrado nesta categoria.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
 
-        </div>
-        </main>
-
-    <a href="https://web.whatsapp.com/send?phone=12397719811&text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
+    <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
         <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
     </a>
 
     <footer class="rodape">
         <div class="logo">
-            <img src="{%static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
         </div>
         <div class="links-rodape">
             <h4>Navegação</h4>
             <ul>
                 <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" class="ativo">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}">Cesta</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contato</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}">Pedidos</a></li>
             </ul>
         </div>
         <div class="contato-rodape">
-            <h4>Contact</h4>
+            <h4>Contato</h4>
             <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
             <p>+1(239)7719811</p>
         </div>
     </footer>
-    
+
     <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
     <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script>
 
