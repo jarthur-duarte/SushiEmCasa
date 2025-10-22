@@ -4,40 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sushi em Casa - Cardápio</title> {# Updated title #}
+    <title>Sushi em Casa - Menu</title> 
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="shortcut icon" type="image/jpg" href="{% static 'sushiemcasa/images/LOGO.jpg' %}">
-    <style>
-        /* ... (keep existing styles) ... */
-
-        /* Add styles for the quantity input and add button if needed */
-        .add-to-cart-form {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .quantity-input {
-            width: 40px;
-            text-align: center;
-            margin-right: 10px;
-        }
-
-        .add-to-cart-button {
-            padding: 8px 12px;
-            background-color: #4CAF50; /* Green */
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .add-to-cart-button:hover {
-            background-color: #45a049;
-        }
-    </style>
 </head>
 <body>
 
@@ -112,16 +82,16 @@
 
         <hr class="separador">
 
-        <section class="secao-menu">
+        <section id="menu-principal" class="secao-menu">
             <div class="cabecalho-menu">
                 <h2>Menu</h2>
                 {% if categoria_selecionada %}
-                    <a href="{% url 'sushiemcasa:cardapio' %}">All Sushis</a>
+                    <a href="{% url 'sushiemcasa:cardapio' %}#menu-principal">All Sushis</a>
                 {% endif %}
             </div>
             <div class="filtros-menu">
                 {% for categoria in categorias %}
-                    <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}" class="botao-filtro {% if categoria.nome == categoria_selecionada %}ativo{% endif %}">{{ categoria.nome }}</a>
+                    <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}#menu-principal" class="botao-filtro {% if categoria.nome == categoria_selecionada %}ativo{% endif %}">{{ categoria.nome }}</a>
                 {% endfor %}
             </div>
 
@@ -138,7 +108,7 @@
 
                         <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post" class="add-to-cart-form">
                             {% csrf_token %}
-                            <input type="number" name="quantity" value="1" min="1" class="quantity-input" style="width: 50px; text-align: center; margin-right: 10px;">
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input"> {# Estilo inline removido #}
                             <button type="submit" class="add-to-cart-button">Add</button>
                         </form>
                         </div>
@@ -175,7 +145,7 @@
     </footer>
 
     <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
-    <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script>
+    <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script> 
 
 </body>
 </html>
