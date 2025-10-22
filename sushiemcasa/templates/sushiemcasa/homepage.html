@@ -51,9 +51,9 @@
             <ul>
                 {# Use url template tag for dynamic URLs #}
                 <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if not categoria_selecionada %}class="ativo"{% endif %}>Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Cesta</a></li> {# Changed Basket to Cesta #}
-                <li><a href="{% url 'sushiemcasa:orders' %}">Meus Pedidos</a></li> {# Changed Orders to Meus Pedidos #}
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contato</a></li> {# Changed Contact to Contato #}
+                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li> {# Changed Basket to Cesta #}
+                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li> {# Changed Orders to Meus Pedidos #}
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li> {# Changed Contact to Contato #}
             </ul>
         </nav>
         <div class="icone-usuario">
@@ -65,7 +65,7 @@
 
     <main>
         <section class="secao-promocoes">
-            <h2>Promoções</h2>
+            <h2>Deals</h2>
             <div class="carrossel-container">
                 <button class="seta seta-esquerda"><i class="fas fa-chevron-left"></i></button>
                 <div class="carrossel-viewport">
@@ -75,11 +75,10 @@
                                 <img src="{% static 'sushiemcasa/images/hot.png' %}" alt="hot filadélfia">
                             </div>
                             <div class="descricao-promocao">
-                                <h3>Hot Filadélfia</h3>
-                                <p>20 peças fritas de arroz, salmão, cebolinha, cream cheese, tarê e gergelim.</p>
-                                <div class="precos">
-                                    <span class="preco-antigo">R$ 55,00</span>
-                                    <span class="preco-novo">R$ 49,90</span>
+                                <h3>Hot philladelphia</h3>
+                                    <p>20 pieces of fries with rice, salmon, chives, cream cheese, tare and sesame.</p>                                <div class="precos">
+                                    <span class="preco-antigo">$ 23</span>
+                                    <span class="preco-novo">$ 20</span>
                                 </div>
                             </div>
                         </div>
@@ -88,11 +87,10 @@
                                 <img src="{% static 'sushiemcasa/images/salmao.png' %}" alt="Promoção Combinado Salmão">
                             </div>
                             <div class="descricao-promocao">
-                                <h3>Combinado Salmão</h3>
-                                <p>25 peças frescas de salmão, incluindo sashimis, california rolls e joys.</p>
-                                <div class="precos">
-                                    <span class="preco-antigo">R$ 75,00</span>
-                                    <span class="preco-novo">R$ 69,90</span>
+                                <h3>Salmon Combination</h3>
+                                <p>25 fresh pieces of salmon, including sashimi, California rolls and joys.</p>                                <div class="precos">
+                                    <span class="preco-antigo">$ 28</span>
+                                    <span class="preco-novo">$ 24</span>
                                 </div>
                             </div>
                         </div>
@@ -102,8 +100,8 @@
                             </div>
                             <div class="descricao-promocao">
                                 <h3>Temaki Hot</h3>
-                                <p>Temaki de salmão frito, cream cheese, arroz e alga.</p>
-                                <p><strong>R$ 45,00</strong></p>
+                                <p>Fried salmon temaki, cream cheese, rice and seaweed.</p>
+                                <p><strong>$ 20</strong></p>
                             </div>
                         </div>
                     </div>
@@ -116,7 +114,7 @@
 
         <section class="secao-menu">
             <div class="cabecalho-menu">
-                <h2>Cardápio</h2>
+                <h2>Menu</h2>
                 {% if categoria_selecionada %}
                     <a href="{% url 'sushiemcasa:cardapio' %}">Ver tudo</a>
                 {% endif %}
@@ -164,13 +162,13 @@
             <h4>Navegação</h4>
             <ul>
                 <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Cesta</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contato</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Pedidos</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
             </ul>
         </div>
         <div class="contato-rodape">
-            <h4>Contato</h4>
+            <h4>Contatc</h4>
             <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
             <p>+1(239)7719811</p>
         </div>

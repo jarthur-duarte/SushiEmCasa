@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sushi em Casa - Finalizar Pedido</title>
+    <title>Sushi em Casa - Finalize Order</title>
     
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
@@ -36,7 +36,7 @@
     </header>
 
     <main class="container-pedidos">
-        <h1>Finalizar Pedido</h1>
+        <h1>Finalize Order</h1>
 
         {% if messages %}
             <ul class="messages">
@@ -47,7 +47,7 @@
         {% endif %}
 
         <div class="pedido">
-            <h2>Resumo do Pedido</h2>
+            <h2>Order resume</h2>
             {% if cart_items %}
                 <ul class="items-list">
                     {% for item in cart_items %}
@@ -58,16 +58,16 @@
                     {% endfor %}
                 </ul>
                 <hr>
-                <p><strong>Total: R$ {{ cart_total|floatformat:2 }}</strong></p>
+                <p><strong>Total: $ {{ cart_total|floatformat:2 }}</strong></p>
             {% else %}
-                <p>Seu carrinho está vazio.</p>
+                <p>Your basket is empty .</p>
                 <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn-submit">Voltar ao Cardápio</a></p>
             {% endif %}
         </div>
 
         {% if cart_items %}
         <div class="pedido">
-            <h2>Detalhes da Entrega</h2>
+            <h2>Orders details</h2>
             <form method="post" action="{% url 'sushiemcasa:checkout' %}">
                 {% csrf_token %}
 
@@ -94,7 +94,7 @@
                     </div>
                 {% endif %}
 
-                <button type="submit" class="btn-submit">Confirmar Pedido</button>
+                <button type="submit" class="btn-submit">Confirm order</button>
             </form>
         </div>
         {% endif %}
