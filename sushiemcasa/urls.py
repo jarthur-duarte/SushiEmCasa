@@ -3,6 +3,8 @@ from .views.cardapio import exibir_cardapio
 from .views.contato import pagina_contato
 from .views.pedidos import pagina_orders
 from .views.basket import pagina_basket 
+from django.conf import settings
+from django.conf.urls.static import static
 from .views.checkout import pagina_checkout, order_detail
 
 app_name = 'sushiemcasa'
@@ -16,3 +18,5 @@ urlpatterns = [
     path('checkout/', pagina_checkout, name='checkout'), 
     path('order/<int:order_id>/', order_detail, name='detalhe_pedidos'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
