@@ -143,7 +143,118 @@
 <details>
 <summary><h2><strong>Entrega 3</strong></h2></summary>
 
+  
+### 📄 Relatório pair programming:
+
 <details>
+
+## 🛒 Carrinho de Compras (História 1)
+
+### Como usuário, quero poder acessar meu carrinho de compras para revisar os itens selecionados, alterar quantidades ou remover produtos antes de finalizar o pedido.
+
+**Responsáveis:**
+
+- **Luiza Barbosa Almeida da Silva** – Desenvolvimento e Interface
+- **João Arthur Gomes Duarte** – Desenvolvimento e Interface
+
+### 🔺 Divisão de Tarefas
+
+- Ambos trabalharam juntos na implementação da lógica e da interface visual do carrinho de compras, alternando funções para garantir um *design* responsivo e funcionalidade robusta.
+- As sessões foram divididas em **lógica de estado** (gerenciamento de adições, remoções e atualização de quantidades) e **estilo/apresentação** (garantindo a experiência do usuário – UX).
+
+### 🔺 Estratégia de Colaboração
+
+- Reuniões semanais presenciais para programação em dupla, utilizando um único computador.
+- Alternância rigorosa de papéis de **piloto** (quem codifica) e **navegador** (quem revisa e direciona), o que permitiu detectar erros de manipulação de dados em tempo real.
+- As decisões de layout (localização dos botões de remover e atualizar) e fluxo (navegação para a finalização da compra) foram validadas em conjunto.
+
+### 🔺 Ferramentas Utilizadas
+
+- **Frontend:** HTML, CSS (com SASS), JavaScript 
+- **Comunicação:** encontros presenciais
+- **Gestão:** Jira para acompanhar o progresso da *feature*
+
+### 🔺 Aprendizados e Benefícios
+
+- O *pair programming* acelerou a detecção de *bugs* de lógica na manipulação de dados do carrinho, como a dessincronização de quantidades, resultando em economia de tempo de *debugging*.
+- Maior troca de conhecimento sobre o uso de *hooks* do React para gerenciamento de estado global, fortalecendo as habilidades técnicas de ambos.
+
+---
+
+## 📅 Agendamento de Entrega (História 2)
+
+### Como cliente, quero poder escolher uma data e hora para a entrega do meu pedido com o mínimo de 24h de antecedência, para que eu possa garantir o recebimento no momento mais conveniente para mim.
+
+**Responsáveis:**
+
+- **Cauã Parente** – Backend 
+- **Arthur Reis Gomes De Mello Queiroz** – Frontend 
+
+### 🔺 Divisão de Tarefas
+
+- **Cauã:** Implementação do *endpoint* de agendamento e das regras de negócio, incluindo a validação de datas (garantindo o mínimo de 24h de antecedência a partir do momento do pedido).
+- **Arthur Queiroz:** Construção da interface do seletor de data e hora em HTML/CSS/JavaScript, incluindo validação inicial no *frontend* para melhorar a experiência do usuário.
+
+### 🔺 Estratégia de Colaboração
+
+- Codificação colaborativa assíncrona com *check-ins* diários via *chat* para sincronização, complementada por reuniões semanais no Discord para sessões de *pair programming*.
+- Alternância de papéis focada na integração: Cauã atuou como **navegador** enquanto Arthur implementava o *call* da API, e vice-versa, garantindo que a comunicação *frontend-backend* estivesse perfeita.
+- Referência constante ao protótipo de *design* no **Figma** para garantir a coesão visual e funcional.
+
+### 🔺 Ferramentas Utilizadas
+
+- **Backend:** Python/Django (para a API de agendamento)
+- **Frontend:** HTML, CSS, JavaScript (para o seletor de data)
+- **Design:** Figma (protótipo da tela de agendamento)
+- **Comunicação:** Discord e E-mail
+
+### 🔺 Aprendizados e Benefícios
+
+- A divisão de papéis proporcionou aprendizado mútuo em áreas distintas (Cauã ganhou *insights* sobre a usabilidade do seletor de data; Arthur aprofundou-se nas validações de data do *backend*).
+- Redução significativa de erros de conflito entre as regras de negócio e a interface, garantindo que o usuário só pudesse selecionar datas válidas.
+
+---
+
+## 💻 Modelagem de Produto e Home (História 3)
+
+### Como administrador, quero ter um modelo de dados robusto de produtos e exibir as principais categorias na Homepage, para que os usuários possam navegar de forma eficiente.
+
+**Responsáveis:**
+
+- **Bernardo Guimarães** – Backend (Modelagem de Dados)
+- **Maria Eduarda Souza de Oliveira** – Frontend (Visualização da Home)
+
+### 🔺 Divisão de Tarefas
+
+- **Bernardo:** Definição e implementação do *schema* de Produto no banco de dados, incluindo atributos como preço, estoque, descrição e imagem.
+- **Maria Eduarda:** Desenvolvimento do componente da Homepage que consome a lista de produtos em destaque e categorias do *backend*.
+
+### 🔺 Estratégia de Colaboração
+
+- Sessões de *pair programming* presenciais com foco inicial na **modelagem de dados** (Bernardo como Piloto, Maria Eduarda como Navegadora) para garantir que os campos necessários para a *Home* estivessem disponíveis.
+- Inversão de papéis para a **implementação do *frontend***, garantindo que o consumo da API fosse eficiente e que o layout da *Home* estivesse otimizado para a exibição de produtos.
+
+### 🔺 Ferramentas Utilizadas
+
+- **Backend:** PostgreSQL (Banco de Dados), Node.js/Express (API)
+- **Frontend:** HTML, CSS, JavaScript
+- **Gestão:** Jira
+
+### 🔺 Aprendizados e Benefícios
+
+- O trabalho em dupla garantiu que o modelo de dados fosse **coerente** desde o início com as necessidades visuais do *frontend*, evitando retrabalho na API.
+- Bernardo aprimorou o conhecimento sobre a otimização de consultas de banco de dados para *homepage* (performance), e Maria Eduarda se familiarizou com a estrutura de dados para futuras iterações.
+
+---
+
+## 📚 Aprendizados e Benefícios Gerais
+
+- O *pair programming* provou ser uma estratégia eficaz para acelerar a detecção e correção de erros de lógica e sintaxe nas funcionalidades centrais do e-commerce.
+- A troca de papéis entre *piloto* e *navegador* proporcionou aprendizado mútuo e um entendimento mais holístico das diferentes áreas do sistema (do *frontend* ao *backend*).
+- O trabalho em dupla reduziu o retrabalho, aumentou a coesão do código e fortaleceu a colaboração e a comunicação clara na equipe, aspectos cruciais para a integração do sistema de e-commerce.
+- As práticas colaborativas ajudaram a manter a fidelidade ao protótipo e aos requisitos do cliente, unindo **design** e **funcionalidade** de forma consistente em todas as histórias.
+
+</details>
   
 
 </details>
