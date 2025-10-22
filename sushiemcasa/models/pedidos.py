@@ -7,11 +7,11 @@ from django.core.exceptions import ValidationError
 
 class Order(models.Model):
     STATUS_CHOICES = (
-        ('Pending', 'Pending'),
-        ('In Preparation', 'In Preparation'),
-        ('Out for Delivery', 'Out for Delivery'),
-        ('Delivered', 'Delivered'),
-        ('Cancelled', 'Cancelled'),
+        ('Pending', 'Pendente'),
+        ('In Preparation', 'Em preparo'),
+        ('Out for Delivery', 'A caminho'),
+        ('Delivered', 'Entregue'),
+        ('Cancelled', 'Cancelado'),
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -29,10 +29,12 @@ class Order(models.Model):
     def clean(self):
         if self.delivery_datetime:
             now_plus_24h = timezone.now() + datetime.timedelta(hours=24)
-            if self.delivery_datetime < now_plus_24h:
-                raise ValidationError({
-                    'delivery_datetime': 'Delivery date and time must be at least 24 hours from now.'
-                })
+            if timezone.is_naive(self.delivery_datetime):  
+                delivery_dt_aware = timezone.make_aware(self.delivery_datetime, timezone.get_current_timezone())
+            else:
+                delivery_dt_aware = self.delivery_datetime
+            if delivery_dt_aware < now_plus_24h:
+                raise ValidationError({'delivery_datetime': 'Delivery date and time must be at least 24 hours in advance.'})
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
