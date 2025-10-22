@@ -134,7 +134,7 @@
                     <div class="produto-info">
                         <h3>{{ produto.nome|upper }}</h3>
                         <p class="produto-descricao">{{ produto.descricao }}</p>
-                        <p class="produto-preco">R$ {{ produto.preco|floatformat:2 }}</p>
+                        <p class="produto-preco">$ {{ produto.preco|floatformat:2 }}</p>
 
                         <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post" class="add-to-cart-form">
                             {% csrf_token %}

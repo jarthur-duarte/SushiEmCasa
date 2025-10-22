@@ -17,7 +17,7 @@ body, html {
 
 .barra-navegacao .logo img {
     height: 100px;
-    
+
 }
 
 .barra-navegacao nav ul {
@@ -121,16 +121,16 @@ main {
 }
 
 .botao-filtro {
-    text-decoration: none;
-    color: #333;
+    text-decoration: none; 
+    color: #333; 
     background-color: #ffffff; 
     padding: 12px 28px; 
     border-radius: 50px; 
-    font-weight: 500;
+    font-weight: 500; 
     font-size: 0.95rem; 
     transition: all 0.3s ease; 
     border: 1px solid #ddd; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .botao-filtro:hover {
@@ -140,19 +140,19 @@ main {
     transform: translateY(-2px); 
 }
 
-
 .botao-filtro.ativo {
-    background-color: #d32f2f; 
+    background-color: #d32f2f;
     color: #ffffff; 
-    border-color: #d32f2f;
+    border-color: #d32f2f; 
     box-shadow: 0 2px 6px rgba(211, 47, 47, 0.3); 
     transform: translateY(-2px);
 }
 
+
 .rodape {
     display: flex;
     justify-content: space-around;
-    padding: 2rem 5%; 
+    padding: 2rem 5%;
     background-color: #333;
     color: #f1f1f1;
     margin-top: 3rem;
@@ -187,25 +187,25 @@ main {
 .carrossel-container {
     position: relative;
     width: 100%;
-    max-width: 600px; 
-    margin: 0 auto; 
+    max-width: 600px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .carrossel-viewport {
-    overflow: hidden; 
+    overflow: hidden;
     width: 100%;
 }
 
 .carrossel-track {
-    display: flex; 
-    transition: transform 0.5s ease-in-out; 
+    display: flex;
+    transition: transform 0.5s ease-in-out;
 }
 
 .cartao-promocao {
-    min-width: 100%; 
+    min-width: 100%;
     box-sizing: border-box;
     padding: 1.5rem;
     display: flex;
@@ -265,23 +265,19 @@ main {
     width: 35px;
     height: 35px;
 }
-.botao-filtro.ativo {
-    background-color: #333;
-    color: #fff;
-    border-color: #333;
-}
+
 
 .container-opcoes {
     margin-top: 1.5rem;
 }
 
 .painel-opcoes {
-    display: none; 
+    display: none;
     padding: 1.5rem;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fafafa;
-    animation: fadeIn 0.5s ease-in-out; 
+    animation: fadeIn 0.5s ease-in-out;
 }
 
 .item-menu {
@@ -306,42 +302,25 @@ main {
 
 
 .precos {
-    display: flex; 
-    align-items: center; 
-    gap: 0.75rem; 
-    margin-top: 0.5rem; 
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
 }
 
 .preco-antigo {
-    text-decoration: line-through; 
-    color: #888; 
-    font-size: 1rem; 
+    text-decoration: line-through;
+    color: #888;
+    font-size: 1rem;
 }
 
 .preco-novo {
-    color: #1a1a1a; 
-    font-weight: bold; 
-    font-size: 1.2rem; 
+    color: #1a1a1a;
+    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 
-/* ===== ESTILOS PARA CARDS DE PRODUTOS ===== */
-
-.produto-card {
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    border-radius: 8px;
-    overflow: hidden;
-    background: white;
-}
-
-.produto-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Overlay escuro quando card está expandido */
 .overlay-escuro {
     display: none;
     position: fixed;
@@ -360,7 +339,6 @@ main {
     opacity: 1;
 }
 
-/* Card expandido - Modal */
 .produto-card.expandido {
     position: fixed;
     top: 50%;
@@ -388,7 +366,6 @@ main {
     }
 }
 
-/* Botão de voltar/fechar */
 .btn-fechar-modal {
     position: absolute;
     top: 15px;
@@ -419,7 +396,6 @@ main {
     stroke-width: 2;
 }
 
-/* Imagem do produto no modal */
 .produto-card.expandido .produto-imagem {
     width: 100%;
     height: 250px;
@@ -427,7 +403,6 @@ main {
     border-radius: 12px 12px 0 0;
 }
 
-/* Conteúdo do modal */
 .produto-modal-conteudo {
     padding: 20px;
 }
@@ -453,7 +428,6 @@ main {
     margin-bottom: 20px;
 }
 
-/* Detalhes extras (ocultos por padrão) */
 .produto-detalhes-extras {
     display: none;
 }
@@ -462,7 +436,6 @@ main {
     display: block;
 }
 
-/* Contador de quantidade */
 .quantidade-controls {
     display: flex;
     align-items: center;
@@ -506,7 +479,6 @@ main {
     text-align: center;
 }
 
-/* Botão adicionar */
 .btn-adicionar {
     width: 100%;
     padding: 16px;
@@ -540,7 +512,7 @@ main {
     height: 20px;
 }
 
-/* Informações adicionais */
+
 .info-adicional {
     margin-top: 15px;
     padding: 15px;
@@ -557,32 +529,29 @@ main {
     margin-bottom: 5px;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .produto-card.expandido {
         width: 95%;
         max-width: none;
     }
-    
+
     .produto-card.expandido .produto-imagem {
         height: 200px;
     }
-    
+
     .produto-card.expandido .produto-nome {
         font-size: 20px;
     }
-    
+
     .produto-card.expandido .produto-preco {
         font-size: 24px;
     }
 }
 
-/* Prevenir scroll do body quando modal está aberto */
 body.modal-aberto {
     overflow: hidden;
 }
 
-/* Acessibilidade */
 .produto-card:focus-visible {
     outline: 2px solid #d32f2f;
     outline-offset: 2px;
@@ -593,23 +562,21 @@ body.modal-aberto {
     outline: 2px solid #d32f2f;
     outline-offset: 2px;
 }
-/* Container de Seção e Grid */
 .categoria-secao {
-    padding: 0 5%; /* Padding lateral para o conteúdo */
+    padding: 0 5%; 
     margin-top: 50px;
 }
 
 .produtos-grid {
     display: flex;
-    flex-wrap: wrap; /* Permite que os cards quebrem a linha */
-    gap: 30px; /* Espaço entre os cards */
+    flex-wrap: wrap; 
+    gap: 30px; 
     margin-top: 20px;
+    justify-content: center;
 }
 
-/* O CARD INDIVIDUAL */
 .produto-card {
-    /* Ajuste a largura para caber 3 ou 4 cards na linha, dependendo do container */
-    width: 300px; 
+    width: 300px;
     min-height: 250px;
     background-color: white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -617,99 +584,111 @@ body.modal-aberto {
     overflow: hidden;
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
+    display: flex; 
+    flex-direction: column; 
 }
 
-/* Efeito Hover (ao passar o mouse) */
 .produto-card:hover {
-    transform: translateY(-5px); /* Levanta um pouco o card */
+    transform: translateY(-5px); 
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-/* O LINK que envolve o card */
 .link-detalhe-produto {
-    text-decoration: none; /* Remove o sublinhado do link */
-    color: inherit; /* Mantém as cores do texto como estão */
-    display: block; /* Garante que o link ocupe toda a área do card */
-    height: 100%; /* Garante que o link cubra toda a altura do card */
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+    height: 100%; 
 }
 
-/* IMAGEM */
 .produto-card img {
     width: 100%;
-    height: 150px; /* Altura fixa para as imagens */
-    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+    height: 180px;
+    object-fit: cover;
 }
 
-/* INFORMAÇÕES DO TEXTO */
 .produto-info {
-    padding: 15px;
+    padding: 20px; 
+    display: flex; 
+    flex-direction: column; 
+    flex-grow: 1; 
 }
 
 .produto-info h3 {
     margin-top: 0;
-    margin-bottom: 5px;
-    font-size: 1.2em;
+    margin-bottom: 8px; 
+    font-size: 1.3em; 
     color: #333;
 }
 
 .produto-descricao {
-    font-size: 0.85em;
-    color: #777;
-    margin: 5px 0 10px 0;
-    min-height: 40px; /* Garante que os cards com descrições curtas tenham altura consistente */
+    font-size: 0.9em; 
+    color: #666; 
+    line-height: 1.5; 
+    margin: 0 0 15px 0; 
+    flex-grow: 1; 
 }
 
 .produto-preco {
-    font-size: 1.3em;
+    font-size: 1.4em;
     font-weight: bold;
-    color: #e63946; /* Cor de destaque (vermelho/coral) */
+    color: #d32f2f; 
+    margin-top: auto;
 }
-.categoria-secao {
-            margin-top: 50px;
-            padding: 0 5%;
-        }
-        .produtos-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        .produto-card {
-            width: 300px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-        .produto-card:hover {
-            transform: translateY(-5px);
-        }
-        .produto-card a {
-            text-decoration: none;
-            color: inherit;
-            display: block; /* O link ocupa todo o card */
-        }
-        .produto-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-        .produto-info {
-            padding: 15px;
-        }
-        .produto-info h3 {
-            margin-top: 0;
-            font-size: 1.2em;
-            color: #333;
-        }
-        .produto-descricao {
-            font-size: 0.85em;
-            color: #777;
-            margin-bottom: 10px;
-            min-height: 40px; 
-        }
-        .produto-preco {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #000000;
-        }
+
+
+.add-to-cart-form {
+    display: flex; 
+    align-items: center;
+    margin-top: 15px; 
+    border: 1px solid #ddd; 
+    border-radius: 50px; 
+    overflow: hidden; 
+    width: fit-content; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); 
+    transition: all 0.3s ease;
+}
+
+.add-to-cart-form:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+
+
+.quantity-input {
+    width: 50px;
+    padding: 10px 0 10px 15px; 
+    text-align: center;
+    border: none; 
+    background-color: #fff; 
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
+    outline: none; 
+}
+
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.quantity-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.add-to-cart-button {
+    padding: 12px 24px; 
+    background-color: #d32f2f; 
+    color: white;
+    border: none;
+    border-radius: 0; 
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-cart-button:hover {
+    background-color: #b71c1c; 
+}
