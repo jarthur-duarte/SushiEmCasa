@@ -265,7 +265,7 @@
 📄 Backlog das histórias
   <img width="2752" height="1384" alt="image" src="https://github.com/user-attachments/assets/e3735410-7432-4868-b4b2-911eeee341fb" />
 
-  ### ▶️ Screencast do Deploy e Bluid
+  ### ▶️ Screencast do Deploy e Buid
   [Screencast](https://www.youtube.com/watch?v=G5fLzXbcffI)
 
 
