@@ -255,7 +255,19 @@
 - As práticas colaborativas ajudaram a manter a fidelidade ao protótipo e aos requisitos do cliente, unindo **design** e **funcionalidade** de forma consistente em todas as histórias.
 
 </details>
+🚩ISSUES?Bug Tracker
+  <img width="2718" height="1350" alt="image" src="https://github.com/user-attachments/assets/d93e7f6a-2414-42a9-ad04-dd512803e706" />
+
+✅ Quadro da sprint
+  <img width="2752" height="1368" alt="image" src="https://github.com/user-attachments/assets/115ed2f4-eb63-4fdf-86e6-47fd592cea2e" />
+
   
+📄 Backlog das histórias
+  <img width="2752" height="1384" alt="image" src="https://github.com/user-attachments/assets/e3735410-7432-4868-b4b2-911eeee341fb" />
+
+  ### ▶️ Screencast da implementação das histórias no youtube
+  [Screencast](https://www.youtube.com/watch?v=G5fLzXbcffI)
+
 
 </details>
 
