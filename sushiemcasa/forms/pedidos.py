@@ -21,12 +21,12 @@ class OrderForm(forms.ModelForm):
         if delivery_dt:
             now_plus_24h = timezone.now() + datetime.timedelta(hours=24)
             if delivery_dt < now_plus_24h:
-                raise forms.ValidationError("A data de entrega deve ter pelo menos 24 horas de antecedência.")
+                raise forms.ValidationError("Delivery date must be at least 24 hours in advance.")
             if delivery_dt.weekday() == 6:
-                raise forms.ValidationError("Desculpe, não realizamos entregas aos domingos.")
+                raise forms.ValidationError("Sorry, we do not deliver on Sundays.")
             hora = delivery_dt.time()
             if hora < datetime.time(10, 0) or hora >= datetime.time(20, 0):
-                raise forms.ValidationError("Nosso horário de entrega é entre 10:00 e 20:00.")
+                raise forms.ValidationError("Our delivery times are between 10:00 and 20:00.")
             feriados = [
                     datetime.date(2024, 12, 25),
                     datetime.date(2025, 1, 1),
