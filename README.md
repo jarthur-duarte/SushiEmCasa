@@ -265,8 +265,11 @@
 📄 Backlog das histórias
   <img width="2752" height="1384" alt="image" src="https://github.com/user-attachments/assets/e3735410-7432-4868-b4b2-911eeee341fb" />
 
-  ### ▶️ Screencast do Deploy e Buid
+  ### ▶️ Screencast do Deploy e Build
   [Screencast](https://www.youtube.com/watch?v=G5fLzXbcffI)
+  
+  ### ▶️ Screencast dos testes automatizados das novas histórias no youtube
+  [Screencast](https://www.youtube.com/watch?v=AbHJrqiWYWs)
 
 
 </details>
