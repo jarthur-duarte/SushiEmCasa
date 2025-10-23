@@ -8,3 +8,5 @@ psycopg2-binary
 gunicorn
 whitenoise
 django-storages
+selenium
+webdriver-manager

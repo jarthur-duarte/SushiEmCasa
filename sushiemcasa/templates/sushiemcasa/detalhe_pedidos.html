@@ -35,6 +35,17 @@
     </header>
 
     <main class="container-pedidos">
+        {% if messages %}
+            <ul class="messages" style="list-style-type: none; padding: 10px; margin: 10px 0; background-color: #f0f0f0; border: 1px solid #ddd;">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}" 
+                        style="color: {% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}black{% endif %};">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
         <h1>Order Detail #{{ order.id }}</h1>
         <div class="pedido">
             <div class="pedido-header">
