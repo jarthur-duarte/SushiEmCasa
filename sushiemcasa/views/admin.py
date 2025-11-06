@@ -25,4 +25,4 @@ class ProdutoUpdateView(StaffRequiredMixin, UpdateView):
     
     fields = ['nome', 'descricao', 'preco'] 
 
-    success_url = reverse_lazy('listar_produtos')
+    success_url = reverse_lazy('sushiemcasa:listar_produtos')
