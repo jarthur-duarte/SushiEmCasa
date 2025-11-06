@@ -2,6 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import cardapio, contato, pedidos, basket, checkout
+from .views import admin as admin_views
 
 app_name = 'sushiemcasa'
 
@@ -20,6 +21,10 @@ urlpatterns = [
     # Checkout URL
     path('checkout/', checkout.pagina_checkout, name='checkout'),
     path('order/<int:order_id>/', checkout.order_detail, name='order_detail'),
+
+    #url do admin q lista e edita
+    path('gerenciar/produtos/', admin_views.GerenciarProdutosListView.as_view(), name='listar_produtos'),
+    path('gerenciar/produto/<int:pk>/editar/',admin_views.ProdutoUpdateView.as_view(), name='editar_produto'),
 ]
 
 if settings.DEBUG:
