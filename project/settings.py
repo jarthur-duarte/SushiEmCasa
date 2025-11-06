@@ -30,10 +30,13 @@ if NOT_PROD:
     print(">>> Ambiente de Desenvolvimento Ativado <<<")
 
     # A chave secreta pode ficar aqui para facilitar o desenvolvimento local.
-    SECRET_KEY = 'django-insecure-d2vpcx=+s#db%2^0jx21&+zyu=$zg@eq-+-4-i%0$nc^df_gz#'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
 
     # O modo Debug é ativado para mostrar erros detalhados.
-    DEBUG = True
+    DEBUG = os.environ.get('DEBUG') == 'True'
+
+    if not SECRET_KEY and not DEBUG:
+        raise ImproperlyConfigured("A variável de ambiente SECRET_KEY não foi definida em produção!")
 
     # Permite acesso de qualquer host localmente.
     ALLOWED_HOSTS = []
