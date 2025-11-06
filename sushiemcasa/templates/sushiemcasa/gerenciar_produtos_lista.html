@@ -1,0 +1,30 @@
+{% extends 'sushiemcasa/base.html' %} {% load static %} {% block content %}
+  <h2>Gerenciar Produtos</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Preço</th>
+        <th>Ação</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for produto in produtos %}
+        <tr>
+          <td>{{ produto.nome }}</td>
+          <td>R$ {{ produto.preco }}</td>
+          <td>
+            <a href="{% url 'sushiemcasa:editar_produto' produto.pk %}" class="btn">
+              Editar
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">Nenhum produto cadastrado.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
