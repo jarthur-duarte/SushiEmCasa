@@ -94,7 +94,7 @@
                     </div>
                 {% endif %}
 
-                <button type="submit" class="btn-submit">Confirm order</button>
+                <button type="submit" class="btn-submit" {% if not is_store_open %}disabled{% endif %} >Confirm order</button>
             </form>
         </div>
         {% endif %}

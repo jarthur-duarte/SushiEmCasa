@@ -16,7 +16,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import TimeoutException
 
 # Importe seus modelos
-from sushiemcasa.models import Produto, Categoria, Order # Adicionado Order
+from sushiemcasa.models import Produto, Categoria, Order, HorarioDeFuncionamento # Adicionado Order
 
 User = get_user_model()
 
@@ -58,6 +58,20 @@ class TestBasketCheckoutFlows(StaticLiveServerTestCase):
             descricao='Descrição de teste.',
             imagem='' 
         )
+        
+        HorarioDeFuncionamento.objects.all().delete()
+        
+        abertura = datetime.strptime('00:00', '%H:%M').time()
+        fechamento = datetime.strptime('23:59', '%H:%M').time()
+
+        for i in range(7): # 0=Segunda, 1=Terça, ..., 6=Domingo
+            HorarioDeFuncionamento.objects.create(
+                day_of_week=i,
+                is_open=True,
+                open_time=abertura,
+                close_time=fechamento
+            )
+        
         self._login_helper()
 
     def _login_helper(self):
@@ -106,8 +120,6 @@ class TestBasketCheckoutFlows(StaticLiveServerTestCase):
         input_quantity.clear()
         input_quantity.send_keys('3')
         btn_update.click()
-
-        wait.until(EC.staleness_of(item_no_carrinho)) 
         
         input_quantity_updated = wait.until(
             EC.presence_of_element_located((By.NAME, 'quantity'))
@@ -210,3 +222,356 @@ class TestBasketCheckoutFlows(StaticLiveServerTestCase):
         )
         carrinho_vazio_msg = carrinho_vazio_msg_element.text
         self.assertIn('Your basket is empty', carrinho_vazio_msg)
+
+class HorarioFuncionamentoSeleniumTests(StaticLiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Inicia o driver UMA VEZ para todos os testes desta classe.
+        """
+        super().setUpClass()
+        options = webdriver.ChromeOptions()
+        # options.add_argument('--headless') 
+        options.add_argument('--disable-gpu')
+        options.add_argument('--window-size=1920,1080')
+        
+        service = ChromeService(ChromeDriverManager().install())
+        cls.driver = webdriver.Chrome(service=service, options=options)
+        cls.driver.implicitly_wait(10) # Usar uma espera um pouco maior é bom
+
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Fecha o driver UMA VEZ após todos os testes rodarem.
+        """
+        cls.driver.quit()
+        super().tearDownClass()
+
+    # REMOVA o método tearDown(self)
+    # def tearDown(self): ...
+
+    # --- Funções Auxiliares ---
+    
+    def _login_admin(self):
+        """Uma função helper para logar como admin."""
+        # MUDANÇA: de 'self.browser' para 'self.driver'
+        self.driver.get(self.live_server_url + '/admin/login/')
+        
+        self.driver.find_element(By.ID, 'id_username').send_keys(self.admin_user.username)
+        self.driver.find_element(By.ID, 'id_password').send_keys('adminpassword')
+        self.driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]').click()
+        
+        WebDriverWait(self.driver, 10).until( # Aumentei para 10s
+            EC.presence_of_element_located((By.ID, 'user-tools'))
+        )
+        
+    def test_cenario_5_horario_fechamento_anterior_abertura(self):
+        # Dado que a administradora está logada
+        self._login_admin()
+
+        # --- CORREÇÃO: Encontrar o objeto "Quinta-feira" (day_of_week=3) ---
+        try:
+            quinta = HorarioDeFuncionamento.objects.get(day_of_week=3)
+        except HorarioDeFuncionamento.DoesNotExist:
+            self.fail("O setUp não criou o registro para Quinta-feira (day_of_week=3).")
+
+        # Quando ela acessa a página de EDIÇÃO deste objeto
+        url_admin_horario = f'{self.live_server_url}/admin/sushiemcasa/horariodefuncionamento/{quinta.pk}/change/'
+        self.driver.get(url_admin_horario)
+
+        # E ela insere o horário de abertura como "18:00" e o de fechamento como "16:00"
+        # Os nomes dos campos no admin do Django são padronizados
+        
+        campo_abertura = self.driver.find_element(By.ID, 'id_open_time')
+        campo_fechamento = self.driver.find_element(By.ID, 'id_close_time')
+        # Precisamos marcar a caixa "Aberto?"
+        campo_status = self.driver.find_element(By.ID, 'id_is_open')
+
+        if not campo_status.is_selected():
+             campo_status.click() # Marca a caixa "Aberto?"
+
+        campo_abertura.clear()
+        campo_abertura.send_keys('18:00:00')
+        campo_fechamento.clear()
+        campo_fechamento.send_keys('16:00:00')
+
+        # E clica em salvar
+        self.driver.find_element(By.NAME, '_save').click()
+        
+        # Então o sistema deve exibir uma mensagem de erro
+        # (A lógica de verificação de erro permanece a mesma)
+        
+        # NOTA: A sua validação está no método clean(). Erros de clean()
+        # podem aparecer em 'errornote' (geral) ou perto do campo.
+        # Vamos procurar em ambos.
+        
+        try:
+            WebDriverWait(self.driver, 5).until(
+                # Procura ou um 'errornote' geral ou um erro de campo
+                EC.presence_of_element_located((
+                    By.CSS_SELECTOR, '.errornote, .errorlist'
+                ))
+            )
+            
+            error_elements = self.driver.find_elements(By.CSS_SELECTOR, '.errornote, .errorlist')
+            
+            # Junta o texto de todos eles
+            all_error_text = " ".join([e.text for e in error_elements])
+            
+            # Verifica se a sua mensagem específica está no texto combinado
+            self.assertIn('O horário de fechamento não pode ser anterior ou igual ao de abertura', all_error_text)
+
+        except TimeoutException:
+            self.fail("A página não exibiu uma mensagem de erro (errornote ou errorlist) após 5 segundos.")
+        
+    def _login_cliente(self):
+        """
+        Faz login do cliente (self.client_user) via cookie injection.
+        É muito mais rápido que preencher o formulário de login.
+        """
+        # 1. Usa o 'self.client' do Django para fazer o login no backend
+        #    Usamos o 'username' que definimos no setUp
+        login_success = self.client.login(
+            username=self.client_user.username, 
+            password='clientpassword'
+        )
+        
+        # Garante que o login funcionou
+        self.assertTrue(login_success, "Login do cliente no backend falhou.")
+        
+        # 2. Pega o cookie da sessão
+        cookie = self.client.cookies.get('sessionid')
+        
+        if not cookie:
+            self.fail("Não foi possível fazer login e pegar o sessionid cookie.")
+
+        # 3. Injeta o cookie no driver do Selenium
+        #    Primeiro, precisamos visitar uma página do domínio
+        #    Vou usar 'cardapio' como no seu outro teste
+        try:
+            cardapio_url = self.live_server_url + reverse('sushiemcasa:cardapio')
+        except Exception as e:
+            self.fail(f"Não foi possível reverter a URL 'sushiemcasa:cardapio'. Verifique seu urls.py. Erro: {e}")
+            
+        self.driver.get(cardapio_url) 
+        
+        self.driver.add_cookie({
+            'name': 'sessionid',
+            'value': cookie.value,
+            'path': '/',
+            # Ajuste de domínio como no seu outro teste
+            'domain': self.live_server_url.split(':')[1].replace("//","") 
+        })
+        
+        # 4. Recarrega a página, agora logado
+        self.driver.get(cardapio_url)
+        
+        # Pequena espera para garantir que a página logada carregou
+        WebDriverWait(self.driver, 5).until(
+            EC.presence_of_element_located((By.TAG_NAME, 'body'))
+        )
+    
+    def setUp(self):
+        """
+        Configuração inicial de DADOS que roda antes de CADA teste.
+        O driver (self.driver) já existe e será reutilizado.
+        """
+        super().setUp() # Importante
+
+        # --- Crie os dados necessários para os testes ---
+
+        # 1. Crie um Superusuário (Admin)
+        self.admin_user = User.objects.create_superuser(
+            email='admin@sushi.com',
+            password='adminpassword',
+            username='adminuser'
+        )
+
+        # 2. Crie um Cliente
+        self.client_user = User.objects.create_user(
+            email='cliente@email.com',
+            password='clientpassword',
+            username='clientuser'
+        )
+        
+        HorarioDeFuncionamento.objects.all().delete()
+
+        # 3. Crie a configuração de horário PADRÃO (FECHADO)
+        for i in range(7): # 0=Segunda, 1=Terça, ..., 6=Domingo
+            HorarioDeFuncionamento.objects.create(
+                day_of_week=i,
+                is_open=False,
+                open_time=None,  # Como no seu método clean()
+                close_time=None
+        )
+
+        # --- 4. ADICIONE DADOS PARA O TESTE DE CHECKOUT ---
+        # (Necessário para o Cenário 2)
+        
+        self.categoria = Categoria.objects.create(nome='Test Categoria', slug='test-categoria')
+        
+        self.produto1 = Produto.objects.create(
+            nome='Produto Teste Loja Fechada',
+            preco=Decimal('25.00'),
+            categoria=self.categoria,
+            descricao='Desc teste.',
+            imagem='' # Adicione se for obrigatório
+        )
+    
+    # (Dentro da classe HorarioFuncionamentoSeleniumTests)
+
+    def test_cenario_2_e_3_cliente_ve_loja_fechada_e_pedido_bloqueado(self):
+        # Dado que a loja está fechada (feito no self.setUp)
+        # E que o cliente está logado
+        self._login_cliente() # Usa a nova função helper
+        
+        # O helper de login já nos leva para a página do cardápio
+
+        # === Verificação do Cenário 3 (Aviso na Página) ===
+        
+        # O seletor correto agora é para a mensagem do Django
+        aviso_seletor = (By.CSS_SELECTOR, 'li.message') 
+        
+        try:
+            aviso = WebDriverWait(self.driver, 5).until(
+                EC.visibility_of_element_located(aviso_seletor)
+            )
+            # Verifica se a view 'cardapio' enviou a mensagem correta
+            self.assertIn('loja fechada', aviso.text.lower())
+            
+        except TimeoutException:
+            self.fail(f"NÃO FOI POSSÍVEL ENCONTRAR O AVISO DE 'LOJA FECHADA' (seletor: li.message).\n"
+                      f"Verifique se sua view 'cardapio' está enviando uma 'messages.warning' quando a loja está fechada.")
+
+        # === Verificação do Cenário 2 (Bloqueio no Checkout) ===
+        
+        # 1. Adicionar o item ao carrinho
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto1.id]), {'quantity': 1})
+
+        # 2. Quando um cliente tenta realizar um pedido (vai para o checkout)
+        checkout_url = self.live_server_url + reverse('sushiemcasa:checkout')
+        self.driver.get(checkout_url)
+
+        # 3. Então o sistema deve impedir a finalização
+        # (O seletor .btn-submit está correto)
+        botao_seletor = (By.CSS_SELECTOR, '.btn-submit') 
+
+        try:
+            botao_finalizar = WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located(botao_seletor)
+            )
+            
+            # Checa se o botão tem o atributo 'disabled'
+            is_disabled = botao_finalizar.get_attribute('disabled')
+            
+            self.assertTrue(
+                is_disabled, 
+                "O botão 'Finalizar Pedido' deveria estar desabilitado (ter o atributo 'disabled'), mas não está."
+            )
+            
+        except TimeoutException:
+            self.fail(f"NÃO FOI POSSÍVEL ENCONTRAR O BOTÃO 'FINALIZAR PEDIDO'.\n"
+                      f"Verifique o seletor: {botao_seletor}")
+
+    def test_cliente_pode_finalizar_pedido_com_loja_aberta(self):
+        # 1. Dado: A loja está ABERTA
+        # O setUp() cria a loja como 'fechado', então
+        # precisamos ativamente ABRIR a loja para este teste.
+        
+        abertura = datetime.strptime('09:00', '%H:%M').time()
+        fechamento = datetime.strptime('23:00', '%H:%M').time()
+        
+        try:
+            # Pega todos os 7 registros criados no setUp
+            horarios = HorarioDeFuncionamento.objects.all()
+            for horario_dia in horarios:
+                horario_dia.is_open = True
+                horario_dia.open_time = abertura
+                horario_dia.close_time = fechamento
+                horario_dia.save() # Salva cada objeto
+        
+        except Exception as e:
+            self.fail(f"Falha ao atualizar horários para 'aberto' no banco de dados. Erro: {e}")
+
+        # O resto do teste (do ponto 2 em diante) permanece
+        # EXATAMENTE IGUAL, pois ele testa a interface do cliente,
+        # que não mudou.
+
+        # 2. Quando: O cliente faz login
+        self._login_cliente()
+
+        # 3. Então: Ele NÃO deve ver o aviso de loja fechada
+        aviso_seletor = (By.CSS_SELECTOR, 'li.message')
+        
+        try:
+            WebDriverWait(self.driver, 5).until(
+                EC.invisibility_of_element_located(aviso_seletor)
+            )
+        except TimeoutException:
+            self.fail(f"O AVISO DE 'LOJA FECHADA' FOI ENCONTRADO, mas a loja deveria estar aberta.")
+
+        # 4. E Quando: Ele adiciona um item e vai para o checkout
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto1.id]), {'quantity': 1})
+        checkout_url = self.live_server_url + reverse('sushiemcasa:checkout')
+        self.driver.get(checkout_url)
+
+        # 5. Então: O botão de finalizar pedido deve estar ATIVADO
+        botao_seletor = (By.CSS_SELECTOR, '.btn-submit')
+        try:
+            botao_finalizar = WebDriverWait(self.driver, 5).until(
+                EC.presence_of_element_located(botao_seletor)
+            )
+            is_disabled = botao_finalizar.get_attribute('disabled')
+            self.assertFalse(
+                is_disabled, 
+                "O botão 'Finalizar Pedido' deveria estar HABILITADO, mas está desabilitado."
+            )
+        except TimeoutException:
+            self.fail(f"Não foi possível encontrar o botão 'Finalizar Pedido'. Seletor: {botao_seletor}")
+
+        # 6. E: Ele pode finalizar o pedido com sucesso
+        
+        # --- Gera uma data de entrega válida ---
+        now_aware = timezone.now()
+        
+        # 1. Garante que está 25h no futuro
+        valid_datetime_aware = now_aware + timedelta(hours=25)
+        valid_local_datetime = timezone.localtime(valid_datetime_aware)
+
+        # 2. Garante que está dentro da janela de entrega (ex: 10:00 - 20:00)
+        #    (Usei a janela 10-20 do seu outro teste, ajuste se necessário)
+        delivery_hour = valid_local_datetime.hour
+        if not (10 <= delivery_hour < 20):
+            # Se a hora caiu fora, ajusta para o próximo dia às 14:00
+            valid_local_datetime += timedelta(days=1)
+            while valid_local_datetime.weekday() == 6: # 6 é Domingo
+                valid_local_datetime += timedelta(days=1)
+            
+            valid_local_datetime = valid_local_datetime.replace(hour=14, minute=0, second=0, microsecond=0)
+
+        datetime_string = valid_local_datetime.strftime('%Y-%m-%dT%H:%M')
+        # --- Fim da geração de data ---
+
+        # Preenche o formulário
+        campo_data = self.driver.find_element(By.ID, 'id_delivery_datetime')
+        self.driver.execute_script("arguments[0].value = arguments[1]", campo_data, datetime_string)
+
+        self.driver.find_element(By.CSS_SELECTOR, '.btn-submit').click()
+
+        # Verifica o sucesso
+        try:
+            wait = WebDriverWait(self.driver, 10)
+            wait.until(EC.url_contains('/order/'))
+            
+            mensagem_sucesso_element = wait.until(
+                EC.visibility_of_element_located((By.CSS_SELECTOR, 'ul.messages li.success'))
+            )
+            self.assertIn('realizado com sucesso', mensagem_sucesso_element.text.lower())
+        
+        except TimeoutException:
+            form_errors = self.driver.find_elements(By.CSS_SELECTOR, '.errorlist')
+            error_text = "\n".join([err.text for err in form_errors])
+            self.fail(f"O pedido não foi finalizado com sucesso (LOJA ABERTA).\n"
+                      f"URL atual: {self.driver.current_url}\n"
+                      f"Erros encontrados no formulário:\n{error_text}\n")
