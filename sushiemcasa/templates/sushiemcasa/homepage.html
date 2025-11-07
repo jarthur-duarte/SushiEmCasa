@@ -34,6 +34,14 @@
     </header>
 
     <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <section class="secao-promocoes">
         <section class="secao-promocoes">
             <h2>Deals</h2>
             <div class="carrossel-container">

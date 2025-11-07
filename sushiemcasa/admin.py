@@ -1,7 +1,8 @@
 from django.contrib import admin
 # Os modelos são importados corretamente (melhor seria importar do arquivo específico)
 # Vamos assumir que Produto, Order, OrderItem, Categoria estão em sushiemcasa/models/produtos.py
-from .models import Produto, Order, OrderItem, Categoria 
+from .models import Produto, Order, OrderItem, Categoria
+from .models.horariodefuncionamento import HorarioDeFuncionamento
 
 # Assumindo que MensagemFeedback está em sushiemcasa/models/contato.py
 # (Se MensagemFeedback estiver em .models/__init__.py, use 'from .models import MensagemFeedback')
@@ -65,4 +66,8 @@ class MensagemFeedbackAdmin(admin.ModelAdmin):
     # Campos que o administrador não deve poder editar
 
     readonly_fields = ('nome', 'email', 'mensagem', 'data_envio')
-    
+
+@admin.register(HorarioDeFuncionamento)
+class HorarioDeFuncionamentoAdmin(admin.ModelAdmin):
+    list_display = ('get_day_of_week_display', 'is_open', 'open_time', 'close_time')
+    ordering = ('day_of_week',)
