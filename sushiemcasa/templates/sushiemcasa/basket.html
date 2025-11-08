@@ -1,6 +1,6 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
-{% load i18n %} {# Required for number formatting #}
+{% load i18n %} 
 
 {% block title %}Your basket - Sushi em Casa{% endblock %}
 
@@ -62,7 +62,7 @@
                         {% endif %}
                     </td>
                     <td>{{ item.name }}</td>
-                    <td>$ {{ item.price|stringformat:".2f" }}</td> {# <- Revertido para $ #}
+                    <td>$ {{ item.price|stringformat:".2f" }}</td> 
                     <td>
                         <form action="{% url 'sushiemcasa:update_cart' item.product_id %}" method="post" class="form-atualizar-quantidade">
                             {% csrf_token %}
@@ -70,7 +70,7 @@
                             <button type="submit" class="btn-atualizar"><i class="fas fa-sync-alt"></i></button>
                         </form>
                     </td>
-                    <td>R$ {{ item.total|stringformat:".2f" }}</td> {# <- Mantido R$ como no seu original #}
+                    <td>R$ {{ item.total|stringformat:".2f" }}</td> 
                     <td>
                         <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
                             {% csrf_token %}
@@ -83,7 +83,7 @@
         </table>
 
         <div class="resumo-carrinho">
-            <h3>Total: $ {{ cart_total|stringformat:".2f" }}</h3> {# <- Revertido para $ #}
+            <h3>Total: $ {{ cart_total|stringformat:".2f" }}</h3> 
             
             <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalize Order</a>
         </div>

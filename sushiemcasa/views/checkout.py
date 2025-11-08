@@ -1,4 +1,3 @@
-# sushiemcasa/views/checkout.py (ATUALIZADO PARA WHATSAPP)
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -7,7 +6,7 @@ from django.contrib import messages
 from sushiemcasa.forms.pedidos import OrderForm
 from sushiemcasa.models import Order, OrderItem, Produto, HorarioDeFuncionamento
 from decimal import Decimal
-from urllib.parse import quote # 👈 ADICIONADO
+from urllib.parse import quote 
 
 def pagina_checkout(request):
     cart = request.session.get('cart', {})
@@ -16,7 +15,6 @@ def pagina_checkout(request):
 
     product_ids = list(cart.keys())
     if product_ids:
-        # ... (lógica para pegar os 'cart_items' - igual a antes) ...
         products = Produto.objects.filter(id__in=product_ids)
         product_map = {str(product.id): product for product in products}
 
@@ -41,25 +39,21 @@ def pagina_checkout(request):
         messages.error(request, "Seu carrinho está vazio.")
         return redirect('sushiemcasa:basket')
 
-    # --- LÓGICA DE VERIFICAÇÃO DE HORÁRIO (para agendamento) ---
-    # (Removido o 'is_open' que bloqueava o POST)
     
     if request.method == 'POST':
         form = OrderForm(request.POST)
 
-        # (Removemos o bloqueio de POST se a loja estivesse fechada)
 
         if form.is_valid():
             order = form.save(commit=False)
             order.user = request.user 
             order.total_price = cart_total
-            order.save() # <-- Pedido salvo no banco!
+            order.save() 
 
             order_items_to_create = []
-            mensagem_itens_whatsapp = "" # String para a mensagem do WhatsApp
-            
+            mensagem_itens_whatsapp = "" 
+
             for item in cart_items:
-                # Cria os itens para salvar no banco
                 order_items_to_create.append(
                     OrderItem(
                         order=order, 
@@ -69,7 +63,6 @@ def pagina_checkout(request):
                         price=item['price'] 
                     )
                 )
-                # Cria os itens para a mensagem
                 subtotal_item_wa = item['quantity'] * item['price']
                 mensagem_itens_whatsapp += f"- {item['quantity']}x {item['name']} ($ {subtotal_item_wa:.2f})\n"
 
@@ -78,15 +71,10 @@ def pagina_checkout(request):
 
             request.session['cart'] = {}
             request.session.modified = True
-            
-            # -----------------------------------------------------------------
-            # 👇 NOVA LÓGICA DO WHATSAPP ADICIONADA AQUI 👇
-            # -----------------------------------------------------------------
-            
-            # Pega a data/hora agendada que o usuário escolheu
+
             data_hora_agendada = order.delivery_datetime.strftime("%d/%m/%Y às %H:%M")
 
-            numero_whatsapp_restaurante = "5587988240512" # (Pode mudar se precisar)
+            numero_whatsapp_restaurante = "5587988240512" 
     
             mensagem_final = (
                 " *Novo Pedido Agendado - SushiEmCasa* \n\n"
@@ -101,8 +89,6 @@ def pagina_checkout(request):
             mensagem_encodada = quote(mensagem_final)
             url_whatsapp = f"https://wa.me/{numero_whatsapp_restaurante}?text={mensagem_encodada}"
 
-            # Em vez de ir para a página de detalhe,
-            # redireciona para o WhatsApp
             return redirect(url_whatsapp)
         
         else:
@@ -115,13 +101,11 @@ def pagina_checkout(request):
         'form': form,
         'cart_items': cart_items,
         'cart_total': cart_total,
-        # 'is_store_open': is_open (removido para não conflitar com agendamento)
     }
 
     return render(request, 'sushiemcasa/checkout.html', context)
 
 
-# (A view 'order_detail' continua igual)
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     context = {'order': order}
