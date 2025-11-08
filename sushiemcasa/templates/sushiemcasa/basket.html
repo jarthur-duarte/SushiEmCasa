@@ -9,6 +9,27 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    /* Estilos para os botões no resumo do carrinho */
+    .resumo-carrinho .btn-checkout {
+        display: block;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box; /* Garante que padding/border não afetem a largura */
+        margin-bottom: 10px; /* Espaço entre os botões */
+    }
+
+    /* Estilo específico para o botão do WhatsApp */
+    .btn-whatsapp {
+        background-color: #25D366; /* Cor oficial do WhatsApp */
+        color: white;
+    }
+    .btn-whatsapp:hover {
+        background-color: #1DAE56; /* Cor mais escura no hover */
+        color: white;
+    }
+</style>
+
 <main class="container-carrinho">
     <h1>Your basket</h1>
     <hr>
@@ -41,7 +62,7 @@
                         {% endif %}
                     </td>
                     <td>{{ item.name }}</td>
-                    <td>$ {{ item.price|stringformat:".2f" }}</td>
+                    <td>$ {{ item.price|stringformat:".2f" }}</td> {# <- Revertido para $ #}
                     <td>
                         <form action="{% url 'sushiemcasa:update_cart' item.product_id %}" method="post" class="form-atualizar-quantidade">
                             {% csrf_token %}
@@ -49,7 +70,7 @@
                             <button type="submit" class="btn-atualizar"><i class="fas fa-sync-alt"></i></button>
                         </form>
                     </td>
-                    <td>R$ {{ item.total|stringformat:".2f" }}</td>
+                    <td>R$ {{ item.total|stringformat:".2f" }}</td> {# <- Mantido R$ como no seu original #}
                     <td>
                         <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
                             {% csrf_token %}
@@ -62,7 +83,8 @@
         </table>
 
         <div class="resumo-carrinho">
-            <h3>Total: $ {{ cart_total|stringformat:".2f" }}</h3>
+            <h3>Total: $ {{ cart_total|stringformat:".2f" }}</h3> {# <- Revertido para $ #}
+            
             <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalize Order</a>
         </div>
 

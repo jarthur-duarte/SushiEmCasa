@@ -94,7 +94,7 @@
                     </div>
                 {% endif %}
 
-                <button type="submit" class="btn-submit" {% if not is_store_open %}disabled{% endif %} >Confirm order</button>
+                <button type="submit" class="btn-submit" id="confirm-order-btn" disabled>Confirm order</button>
             </form>
         </div>
         {% endif %}
@@ -104,9 +104,8 @@
     <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
         <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
     </a>
-
     <footer class="rodape">
-        <div class="logo">
+    <div class="logo">
             <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa"> 
         </div>
         <div class="links-rodape">
@@ -124,6 +123,41 @@
             <p>+1(239)7719811</p>
         </div>
     </footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+       
+        const dateTimeInput = document.getElementById("id_delivery_datetime");
+        const submitButton = document.getElementById("confirm-order-btn");
+
+        if (!dateTimeInput || !submitButton) {
+            console.error("Não foi possível encontrar o campo de data/hora ou o botão de submit.");
+            return;
+        }
+
+        function validateDateTime() {
+            const selectedValue = dateTimeInput.value;
+
+            if (!selectedValue) {
+                submitButton.disabled = true;
+                return;
+            }
+            const selectedDate = new Date(selectedValue);
+            const now = new Date();
+            const minTime = now.getTime() + (24 * 60 * 60 * 1000);
+            const minDate = new Date(minTime);
+
+            if (selectedDate > minDate) {
+                submitButton.disabled = false; 
+            } else {
+                submitButton.disabled = true;  
+            }
+        }
+
+        dateTimeInput.addEventListener("input", validateDateTime);
+        validateDateTime();
+    });
+</script>
 
 </body>
 </html>
