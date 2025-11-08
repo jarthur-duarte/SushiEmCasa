@@ -86,7 +86,7 @@ def pagina_checkout(request):
             # Pega a data/hora agendada que o usuário escolheu
             data_hora_agendada = order.delivery_datetime.strftime("%d/%m/%Y às %H:%M")
 
-            numero_whatsapp_restaurante = "87988240512" # (Pode mudar se precisar)
+            numero_whatsapp_restaurante = "5587988240512" # (Pode mudar se precisar)
     
             mensagem_final = (
                 " *Novo Pedido Agendado - SushiEmCasa* \n\n"
