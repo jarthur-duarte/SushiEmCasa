@@ -1,3 +1,4 @@
+# sushiemcasa/urls.py (ATUALIZADO)
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
@@ -17,6 +18,9 @@ urlpatterns = [
     path('basket/add/<int:product_id>/', basket.add_to_cart, name='add_to_cart'),
     path('basket/update/<int:product_id>/', basket.update_cart, name='update_cart'),
     path('basket/remove/<int:product_id>/', basket.remove_from_cart, name='remove_from_cart'),
+    
+    # 👇 NOVA URL ADICIONADA
+    path('basket/finalizar-whatsapp/', basket.finalizar_pedido_whatsapp, name='finalizar_whatsapp'),
 
     # Checkout URL
     path('checkout/', checkout.pagina_checkout, name='checkout'),

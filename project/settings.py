@@ -29,17 +29,14 @@ if NOT_PROD:
     # --- CONFIGURAÇÕES DE DESENVOLVIMENTO ---
     print(">>> Ambiente de Desenvolvimento Ativado <<<")
 
-    # A chave secreta pode ficar aqui para facilitar o desenvolvimento local.
-    SECRET_KEY = os.environ.get('SECRET_KEY')
+    # CORREÇÃO: Chave secreta hardcoded, apenas para desenvolvimento.
+    SECRET_KEY = 'django-insecure-QUALQUER-COISA-AQUI-PARA-TESTE-LOCAL'
 
-    # O modo Debug é ativado para mostrar erros detalhados.
-    DEBUG = os.environ.get('DEBUG') == 'True'
+    # CORREÇÃO: Debug é VERDADEIRO em desenvolvimento.
+    DEBUG = True
 
-    if not SECRET_KEY and not DEBUG:
-        raise ImproperlyConfigured("A variável de ambiente SECRET_KEY não foi definida em produção!")
-
-    # Permite acesso de qualquer host localmente.
-    ALLOWED_HOSTS = []
+    # CORREÇÃO: Hosts permitidos para 'localhost'
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
     # Usa o banco de dados SQLite, que é um arquivo simples.
     DATABASES = {
@@ -65,13 +62,19 @@ else:
     # O Debug NUNCA deve ser True em produção.
     DEBUG = os.getenv('DEBUG', '0').lower() in ['true', 't', '1']
 
-    # Você deve configurar os domínios permitidos no seu servidor (ex: "meusite.com www.meusite.com")
+    # Você deve configurar os domínios permitidos no seu servidor
+    # DICA: No Azure, defina a variável 'ALLOWED_HOSTS'
+    # com o valor: "sushiemcasa.azurewebsites.net" (separado por espaço se tiver mais)
     ALLOWED_HOSTS_RAW = os.getenv('ALLOWED_HOSTS')
     if ALLOWED_HOSTS_RAW:
         ALLOWED_HOSTS = ALLOWED_HOSTS_RAW.split(' ')
     else:
+        # Se DEBUG=False, esta lista NUNCA pode estar vazia.
+        # Defina a variável de ambiente no Azure!
         ALLOWED_HOSTS = []
     
+    # DICA: No Azure, defina 'CSRF_TRUSTED_ORIGINS'
+    # com o valor: "https://sushiemcasa.azurewebsites.net"
     CSRF_TRUSTED_ORIGINS_RAW = os.getenv('CSRF_TRUSTED_ORIGINS')
     if CSRF_TRUSTED_ORIGINS_RAW:
         CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS_RAW.split(' ')
@@ -100,23 +103,14 @@ else:
     
     AZURE_CONNECTION_STRING = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
     
-    # O nome da conta de armazenamento que você criou (ex: 'sushiemcasastorage')
     AZURE_ACCOUNT_NAME = 'sushiemcasastorage' 
-    
-    # O nome do contêiner que você criou (ex: 'media')
     AZURE_CONTAINER_NAME = 'media'
 
     if not AZURE_CONNECTION_STRING:
         raise ImproperlyConfigured("A variável AZURE_STORAGE_CONNECTION_STRING não foi definida!")
 
-    # Define o "motor" de armazenamento padrão para o Azure
     DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
-    
-    # Garante que os arquivos não sejam sobrescritos
     AZURE_OVERWRITE_FILES = False
-
-    # Media files (Produção) - Servidos pelo Azure
-    # O MEDIA_ROOT não é necessário, pois os arquivos não ficam no servidor web
     MEDIA_URL = f'https://{AZURE_ACCOUNT_NAME}.blob.core.windows.net/{AZURE_CONTAINER_NAME}/'
     
     # --- FIM DA CONFIGURAÇÃO DO AZURE BLOB STORAGE ---
@@ -188,11 +182,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATICFILES_DIRS = [
+    # CORREÇÃO: Mudei para uma lista vazia para evitar o aviso W004
+    # Se você criar uma pasta 'static' na raiz, pode descomentar a linha abaixo.
     # os.path.join(BASE_DIR, 'static')
 ]
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# As configurações de MEDIA_URL e MEDIA_ROOT foram movidas
-# para dentro dos blocos 'if NOT_PROD:' e 'else:'
