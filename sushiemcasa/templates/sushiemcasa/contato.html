@@ -31,11 +31,16 @@
                 <li><a href="{% url 'sushiemcasa:contato' %}" class="ativo">Contact</a></li>
             </ul>
         </nav>
-        <div class="icone-usuario"> 
-            <a href="#">
-                <i class="fas fa-user-circle"></i>
-            </a>
-        </div>
+        <div class="icone-usuario">
+    {% if user.is_authenticated %}
+        <a href="{% url 'sushiemcasa:logout' %}" title="Logout ({{ user.username }})">
+            <i class="fas fa-user-circle" style="color: #4CAF50;"></i> </a>
+    {% else %}
+        <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
+            <i class="fas fa-user-circle"></i>
+        </a>
+    {% endif %}
+</div>
     </header>
 
     <main class="contact-main-container">

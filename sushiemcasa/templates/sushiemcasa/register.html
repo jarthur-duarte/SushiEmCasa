@@ -1,0 +1,129 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Register - Sushi em Casa{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-field {
+        margin-bottom: 20px;
+    }
+    .form-field label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .form-field input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .errorlist {
+        list-style-type: none;
+        padding: 0;
+        margin: 5px 0 0 0;
+        color: #dc3545; /* Vermelho */
+        font-size: 0.9em;
+        font-weight: bold;
+    }
+    .non-field-errors {
+        color: #dc3545;
+        margin-bottom: 15px;
+    }
+    .form-field input:invalid {
+        border-color: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="container-carrinho" style="max-width: 600px; margin: 40px auto;">
+    <h1>Create an Account</h1>
+    <hr>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'sushiemcasa:register' %}">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="non-field-errors errorlist">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-field">
+            <label for="{{ form.username.id_for_label }}">Username:</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <ul class="errorlist">
+                {% for error in form.username.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% if form.username.help_text %}
+                <small style="color: #666; display: block; margin-top: 5px;">{{ form.username.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.email.id_for_label }}">Email:</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <ul class="errorlist">
+                {% for error in form.email.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% if form.email.help_text %}
+                <small style="color: #666; display: block; margin-top: 5px;">{{ form.email.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.password1.id_for_label }}">Password:</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <ul class="errorlist">
+                {% for error in form.password1.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% if form.password1.help_text %}
+                <small style="color: #666; display: block; margin-top: 5px;">{{ form.password1.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        <div class="form-field">
+            <label for="{{ form.password2.id_for_label }}">Password confirmation:</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <ul class="errorlist">
+                {% for error in form.password2.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% if form.password2.help_text %}
+                <small style="color: #666; display: block; margin-top: 5px;">{{ form.password2.help_text|safe }}</small>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn-checkout">Register</button>
+    </form>
+    
+    <hr style="margin-top: 20px;">
+    <p>Already have an account? <a href="{% url 'sushiemcasa:login' %}">Login here</a>.</p>
+</main>
+{% endblock %}

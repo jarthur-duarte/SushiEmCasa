@@ -2,6 +2,8 @@ from django.views.generic import ListView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from ..models.produtos import Produto 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 
 class StaffRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     def test_func(self):
@@ -26,3 +28,14 @@ class ProdutoUpdateView(StaffRequiredMixin, UpdateView):
     fields = ['nome', 'descricao', 'preco'] 
 
     success_url = reverse_lazy('sushiemcasa:listar_produtos')
+
+
+@login_required(login_url='sushiemcasa:login') 
+def painel_controle(request):
+        if not request.user.is_staff:
+            return redirect('sushiemcasa:cardapio')
+        context = {
+            'username': request.user.username
+    }   
+        return render(request, 'sushiemcasa/painel/dashboard.html', context)
+    

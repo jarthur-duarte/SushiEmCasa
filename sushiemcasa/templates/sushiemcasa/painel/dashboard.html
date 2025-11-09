@@ -1,0 +1,28 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Painel de Controle{% endblock %}
+
+{% block content %}
+<main class="container-carrinho" style="max-width: 800px; margin: 40px auto;">
+    <h1>Painel de Controle</h1>
+    <p>Bem-vindo, <strong>{{ username }}</strong>. O que você gostaria de fazer?</p>
+    <hr>
+
+    <div class="admin-actions" style="display: flex; gap: 20px; flex-wrap: wrap;">
+        
+        <a href="{% url 'sushiemcasa:listar_produtos' %}" class="btn-checkout" style="text-decoration: none;">
+            🍣 Gerenciar Produtos (Preços)
+        </a>
+        
+        <a href="#" class="btn-checkout" style="text-decoration: none;">
+            🗓️ Gerenciar Horários
+        </a>
+        
+        <a href="/admin/" class="btn-checkout" style="text-decoration: none; background-color: #6c757d;">
+            Admin Completo
+        </a>
+
+    </div>
+</main>
+{% endblock %}
