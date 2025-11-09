@@ -1,0 +1,42 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Login - Sushi em Casa{% endblock %}
+
+{% block content %}
+<main class="container-carrinho" style="max-width: 500px; margin: 40px auto;">
+    <h1>Login</h1>
+    <hr>
+    
+    {% if form.errors %}
+        <p style="color: red;">Your username or password was incorrect.</p>
+    {% endif %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" action="{% url 'sushiemcasa:login' %}">
+        {% csrf_token %}
+        
+        <div class="form-field" style="margin-bottom: 15px;">
+            
+            <label for="id_username">Username:</label>
+            <input type="text" name="username" id="id_username" class="form-control" required>
+        </div>
+        
+        <div class="form-field" style="margin-bottom: 15px;">
+            <label for="id_password">Password:</label>
+            <input type="password" name="password" id="id_password" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn-checkout">Login</button>
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+    
+    <hr style="margin-top: 20px;">
+    <p>Don't have an account? <a href="{% url 'sushiemcasa:register' %}">Register here</a>.</p>
+</main>
+{% endblock %}
