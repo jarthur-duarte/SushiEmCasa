@@ -222,7 +222,76 @@ class TestBasketCheckoutFlows(StaticLiveServerTestCase):
         )
         carrinho_vazio_msg = carrinho_vazio_msg_element.text
         self.assertIn('Your basket is empty', carrinho_vazio_msg)
+    def test_finalizar_pedido_redireciona_para_whatsapp(self):
+        
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto1.id]), {'quantity': 1})
+        
+        checkout_url = self.live_server_url + reverse('sushiemcasa:checkout')
+        self.driver.get(checkout_url)
+        wait = WebDriverWait(self.driver, 10)
+        
+        now_aware = timezone.now()
+        valid_datetime_aware = now_aware + timedelta(hours=25)
+        valid_local_datetime = timezone.localtime(valid_datetime_aware)
 
+        delivery_hour = valid_local_datetime.hour
+        
+        if not (10 <= delivery_hour < 20):
+            valid_local_datetime += timedelta(days=1)
+            valid_local_datetime = valid_local_datetime.replace(hour=14, minute=0, second=0, microsecond=0)
+        
+        while valid_local_datetime.weekday() == 6:
+            valid_local_datetime += timedelta(days=1)
+            
+        datetime_string = valid_local_datetime.strftime('%Y-%m-%dT%H:%M')
+        
+        campo_data = wait.until(EC.presence_of_element_located((By.ID, 'id_delivery_datetime')))
+        
+        self.driver.execute_script("arguments[0].value = arguments[1]", campo_data, datetime_string)
+        self.driver.execute_script("arguments[0].dispatchEvent(new Event('input'))", campo_data)
+
+        try:
+            wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.btn-submit')))
+        except TimeoutException:
+            self.fail("O Selenium preencheu a data, mas o JavaScript não habilitou o botão 'Confirmar'.")
+
+        btn_confirmar = self.driver.find_element(By.CSS_SELECTOR, '.btn-submit')
+        btn_confirmar.click()
+
+        wait_externo = WebDriverWait(self.driver, 20) 
+        
+        try:
+            wait_externo.until(EC.url_contains('whatsapp.com'))
+            
+            url_atual = self.driver.current_url
+            
+            self.assertIn('5587988240512', url_atual)
+            self.assertIn('Novo+Pedido+Agendado', url_atual)
+            self.assertIn('Teste+Sushi', url_atual) 
+            self.assertIn('10.00', url_atual) 
+
+        except TimeoutException:
+            error_text = "Nenhuma mensagem de erro de formulário foi encontrada."
+            try:
+                error_elements = self.driver.find_elements(By.CSS_SELECTOR, '.errorlist p')
+                message_elements = self.driver.find_elements(By.CSS_SELECTOR, 'ul.messages li')
+                
+                all_errors = error_elements + message_elements
+                if all_errors:
+                    error_text = "\n".join([e.text for e in all_errors])
+
+            except Exception as e:
+                error_text = f"Erro ao tentar encontrar a mensagem de erro: {e}"
+
+            self.fail(
+                "O Selenium clicou em 'Confirmar', mas não foi redirecionado.\n"
+                f"URL ATUAL: {self.driver.current_url}\n"
+                f"ERRO DE VALIDAÇÃO ENCONTRADO NA PÁGINA: '{error_text}'"
+            )
+            
+        ultimo_pedido = Order.objects.filter(user=self.user).order_by('-id').first()
+        self.assertIsNotNone(ultimo_pedido, "O pedido não foi salvo no banco de dados.")
+        self.assertEqual(ultimo_pedido.total_price, Decimal('10.00'))
 class HorarioFuncionamentoSeleniumTests(StaticLiveServerTestCase):
 
     @classmethod
@@ -575,3 +644,5 @@ class HorarioFuncionamentoSeleniumTests(StaticLiveServerTestCase):
             self.fail(f"O pedido não foi finalizado com sucesso (LOJA ABERTA).\n"
                       f"URL atual: {self.driver.current_url}\n"
                       f"Erros encontrados no formulário:\n{error_text}\n")
+
+
