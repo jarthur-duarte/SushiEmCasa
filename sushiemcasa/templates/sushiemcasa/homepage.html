@@ -1,43 +1,14 @@
+{% extends 'sushiemcasa/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sushi em Casa - Menu</title> 
+
+{% block title %}Sushi em Casa - Menu{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" type="image/jpg" href="{% static 'sushiemcasa/images/LOGO.jpg' %}">
-</head>
-<body>
+{% endblock %}
 
-    <header class="barra-navegacao">
-        <div class="logo">
-            <a href="{% url 'sushiemcasa:cardapio' %}">
-                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
-            </a>
-        </div>
-        <nav>
-            <ul>
-                {# Use url template tag for dynamic URLs #}
-                <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if not categoria_selecionada %}class="ativo"{% endif %}>Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li> {# Changed Basket to Cesta #}
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li> {# Changed Orders to Meus Pedidos #}
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li> {# Changed Contact to Contato #}
-            </ul>
-        </nav>
-        <div class="icone-usuario">
-    {% if user.is_authenticated %}
-        <a href="{% url 'sushiemcasa:logout' %}" title="Logout ({{ user.username }})">
-            <i class="fas fa-user-circle" style="color: #4CAF50;"></i> </a>
-    {% else %}
-        <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
-            <i class="fas fa-user-circle"></i>
-        </a>
-    {% endif %}
-</div>
-    </header>
 
+{% block content %}
     <main>
         {% if messages %}
             <ul class="messages">
@@ -46,7 +17,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        <section class="secao-promocoes">
+        
         <section class="secao-promocoes">
             <h2>Deals</h2>
             <div class="carrossel-container">
@@ -59,7 +30,8 @@
                             </div>
                             <div class="descricao-promocao">
                                 <h3>Hot philladelphia</h3>
-                                    <p>20 pieces of fries with rice, salmon, chives, cream cheese, tare and sesame.</p>                                <div class="precos">
+                                <p>20 pieces of fries with rice, salmon, chives, cream cheese, tare and sesame.</p> 
+                                <div class="precos">
                                     <span class="preco-antigo">$ 23</span>
                                     <span class="preco-novo">$ 20</span>
                                 </div>
@@ -71,7 +43,8 @@
                             </div>
                             <div class="descricao-promocao">
                                 <h3>Salmon Combination</h3>
-                                <p>25 fresh pieces of salmon, including sashimi, California rolls and joys.</p>                                <div class="precos">
+                                <p>25 fresh pieces of salmon, including sashimi, California rolls and joys.</p> 
+                                <div class="precos">
                                     <span class="preco-antigo">$ 28</span>
                                     <span class="preco-novo">$ 24</span>
                                 </div>
@@ -121,7 +94,7 @@
 
                         <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post" class="add-to-cart-form">
                             {% csrf_token %}
-                            <input type="number" name="quantity" value="1" min="1" class="quantity-input"> {# Estilo inline removido #}
+                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
                             <button type="submit" class="add-to-cart-button">Add</button>
                         </form>
                         </div>
@@ -132,33 +105,10 @@
             </div>
         </section>
     </main>
+{% endblock content %}
 
-    <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
-        <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
-    </a>
 
-    <footer class="rodape">
-        <div class="logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
-        </div>
-        <div class="links-rodape">
-            <h4>Tabs</h4>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-            </ul>
-        </div>
-        <div class="contato-rodape">
-            <h4>Contatc</h4>
-            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
-            <p>+1(239)7719811</p>
-        </div>
-    </footer>
-
+{% block extra_js %}
     <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
     <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script> 
-
-</body>
-</html>
+{% endblock %}

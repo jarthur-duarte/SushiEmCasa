@@ -1,51 +1,17 @@
+{% extends 'sushiemcasa/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact - Sushi em Casa</title>
 
-    <link rel="shortcut icon" type="imagem/png" href="{% static 'sushiemcasa/images/LOGO.ico' %}">
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
+{% block title %}Contact - Sushi em Casa{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/contato_style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" type="imagem/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
+{% endblock %}
 
 
-
-</head>
-<body>
-
-    <header class="barra-navegacao">
-        <div class="logo">
-            <a href="{% url 'sushiemcasa:cardapio' %}">
-                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
-            </a>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" >Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}" class="ativo">Contact</a></li>
-            </ul>
-        </nav>
-        <div class="icone-usuario">
-    {% if user.is_authenticated %}
-        <a href="{% url 'sushiemcasa:logout' %}" title="Logout ({{ user.username }})">
-            <i class="fas fa-user-circle" style="color: #4CAF50;"></i> </a>
-    {% else %}
-        <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
-            <i class="fas fa-user-circle"></i>
-        </a>
-    {% endif %}
-</div>
-    </header>
-
+{% block content %}
     <main class="contact-main-container">
         
- {% if messages %}
+    {% if messages %}
     <div style="max-width: 800px; margin: 20px auto; padding: 0 20px; text-align: center;">
         {% for message in messages %}
             <div style="background-color: {% if message.tags == 'success' %}#28a745{% else %}#dc3545{% endif %}; color: white; padding: 15px; border-radius: 5px; font-weight: bold;">
@@ -86,51 +52,29 @@
             </li>
         </ul>
 
-    <div class="feedback-form-section">
-    <h2 class="feedback-msg">Leave Your Feedback:</h2>
+        <div class="feedback-form-section">
+            <h2 class="feedback-msg">Leave Your Feedback:</h2>
 
-   <form method="post" class="feedback-form">
-        {% csrf_token %}
-        
-        <div class="form-field">
-            {{ form.nome.label_tag }}
-            {{ form.nome }}
-        </div>
-        
-        <div class="form-field">
-            {{ form.email.label_tag }}
-            {{ form.email }}
-        </div>
+            <form method="post" class="feedback-form">
+                {% csrf_token %}
+                
+                <div class="form-field">
+                    {{ form.nome.label_tag }}
+                    {{ form.nome }}
+                </div>
+                
+                <div class="form-field">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                </div>
 
-        <div class="form-field">
-            {{ form.mensagem.label_tag }}
-            {{ form.mensagem }}
+                <div class="form-field">
+                    {{ form.mensagem.label_tag }}
+                    {{ form.mensagem }}
+                </div>
+            
+                <button type="submit" class="btn-submit">Send feedback</button>    
+            </form>
         </div>
-    
-    <button type="submit" class="btn-submit">Send feedback</button>    
-</form>
-    </div>
-
     </main>
-    <footer class="rodape">
-        <div class="logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
-        </div>
-        <div class="links-rodape">
-            <h4>Tabs</h4>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" class="ativo">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-            </ul>
-        </div>
-        <div class="contato-rodape">
-            <h4>Contact</h4>
-            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
-            <p>+1(239)7719811</p>
-        </div>
-    </footer>
-
-</body>
-</html>
+{% endblock content %}

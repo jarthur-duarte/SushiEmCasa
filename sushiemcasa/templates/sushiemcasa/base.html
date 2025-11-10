@@ -9,6 +9,61 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="shortcut icon" type="image/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/admin_style.css' %}">
+
+    <style>
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .user-dropdown-toggle {
+            cursor: pointer;
+        }
+        .user-dropdown-menu {
+            display: none; 
+            position: absolute;
+            right: 0;
+            top: 38px; /* <-- Mais próximo do ícone */
+            background-color: white;
+            min-width: 180px; /* <-- Mais estreito */
+            /* Sombra mais suave */
+            box-shadow: 0px 4px 12px 0px rgba(0,0,0,0.15); 
+            border-radius: 6px; /* <-- Menos arredondado */
+            z-index: 100;
+            border: 1px solid #eee;
+            padding-top: 4px;    /* <-- Menos preenchimento */
+            padding-bottom: 4px; /* <-- Menos preenchimento */
+        }
+        .user-dropdown-menu a {
+            color: black;
+            padding: 7px 14px; /* <-- Menos preenchimento */
+            text-decoration: none;
+            display: block;
+            font-size: 0.8rem; /* <-- Fonte menor */
+        }
+        .user-dropdown-menu a:hover {
+            background-color: #f1f1f1;
+        }
+        .user-dropdown-menu.show {
+            display: block; 
+        }
+        .dropdown-header {
+            padding: 7px 14px; /* <-- Menos preenchimento */
+            color: #6c757d;
+            font-size: 0.75rem; /* <-- Fonte menor */
+            border-bottom: 1px solid #f1f1f1;
+            margin-bottom: 4px; /* <-- Espaçamento menor */
+        }
+        .dropdown-logout {
+            color: #dc3545 !important; 
+        }
+        /* Linha divisória mais sutil */
+        .user-dropdown-menu hr {
+            margin: 4px 0;
+            border: 0;
+            border-top: 1px solid #f1f1f1;
+        }
+    </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -32,9 +87,33 @@
         
         <div class="icone-usuario">
             {% if user.is_authenticated %}
-                <a href="{% url 'sushiemcasa:logout' %}" title="Logout ({{ user.username }})">
-                    <i class="fas fa-user-circle" style="color: #4CAF50;"></i> 
-                </a>
+                
+                <div class="user-dropdown">
+                    
+                    <a href="#" class="user-dropdown-toggle" id="user-dropdown-toggle">
+                        <i class="fas fa-user-circle" style="color: #4CAF50;"></i>
+                    </a>
+                    
+                    <div class="user-dropdown-menu" id="user-dropdown-menu">
+                        <div class="dropdown-header">
+                            Logado como:<br>
+                            <strong>{{ user.username }}</strong>
+                        </div>
+                        
+                        <a href="{% url 'sushiemcasa:orders' %}">Meus Pedidos</a>
+                        
+                        {% if user.is_staff %}
+                            <hr>
+                            <a href="{% url 'sushiemcasa:painel_controle' %}">Painel de Controle</a>
+                            <a href="{% url 'sushiemcasa:listar_produtos' %}">Gerenciar Preços</a>
+                            <a href="{% url 'sushiemcasa:gerenciar_horarios' %}">Gerenciar Horários</a>
+                        {% endif %}
+                        
+                        <hr>
+                        <a href="{% url 'sushiemcasa:logout' %}" class="dropdown-logout">Sair</a>
+                    </div>
+                </div>
+                
             {% else %}
                 <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
                     <i class="fas fa-user-circle"></i>
@@ -42,6 +121,7 @@
             {% endif %}
         </div>
     </header>
+
     <main class="container">
         {% block content %}
         {% endblock %}
@@ -72,6 +152,28 @@
     </footer>
 
     {% block extra_js %}{% endblock %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('user-dropdown-toggle');
+            const dropdownMenu = document.getElementById('user-dropdown-menu');
+
+            if (toggleButton) {
+                toggleButton.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    dropdownMenu.classList.toggle('show');
+                });
+            }
+
+            window.onclick = function(event) {
+                if (toggleButton && !toggleButton.contains(event.target)) {
+                    if (dropdownMenu.classList.contains('show')) {
+                        dropdownMenu.classList.remove('show');
+                    }
+                }
+            }
+        });
+    </script>
 
 </body>
 </html>

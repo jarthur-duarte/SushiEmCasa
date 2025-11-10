@@ -3,9 +3,7 @@ from sushiemcasa.models import Produto, Categoria, HorarioDeFuncionamento
 from django.contrib import messages 
 from django.utils import timezone  
 
-# =========================================================================
-# FUNÇÃO 1: CARDÁPIO (Homepage e Filtro)
-# =========================================================================
+
 def exibir_cardapio(request, categoria_slug=None): 
    
     categorias = Categoria.objects.all()
@@ -22,16 +20,14 @@ def exibir_cardapio(request, categoria_slug=None):
         categoria_selecionada = categoria.nome 
     
     now = timezone.localtime(timezone.now())
-    current_day_int = now.weekday() # Segunda=0, Domingo=6
+    current_day_int = now.weekday() 
     current_time = now.time()
     
-    is_open = False # Começa como fechado por padrão
+    is_open = False 
     
     try:
-        # Pega a configuração de horário para o dia de HOJE
         today_schedule = HorarioDeFuncionamento.objects.get(day_of_week=current_day_int)
         
-        # Verifica se estamos dentro da janela de funcionamento
         if (today_schedule.is_open and 
             today_schedule.open_time and 
             today_schedule.close_time and
@@ -40,10 +36,9 @@ def exibir_cardapio(request, categoria_slug=None):
             is_open = True
             
     except HorarioDeFuncionamento.DoesNotExist:
-        is_open = False # Se não houver configuração para hoje, consideramos fechado
+        is_open = False 
 
     if not is_open:
-        # ESTA É A MENSAGEM QUE O SEU TESTE ESTÁ PROCURANDO!
         messages.warning(request, "Loja fechada. Não estamos aceitando pedidos no momento.")
         
     context = {

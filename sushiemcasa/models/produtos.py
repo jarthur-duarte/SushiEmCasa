@@ -18,8 +18,7 @@ class Categoria(models.Model):
 # MODELO EXISTENTE: Produto
 class Produto(models.Model):
     """ Define a estrutura de um produto de sushi no cardápio. """
-    
-    # CHAVE ESTRANGEIRA ADICIONADA: Linka o produto a uma categoria
+    disponivel = models.BooleanField(default=True)
     categoria = models.ForeignKey(
         Categoria, 
         on_delete=models.CASCADE, 
