@@ -85,22 +85,7 @@ https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/
 
 
 
-### ✅ Quadro da sprint
-<details>
 
-  ### Backlog
-
-  ![backlog](https://github.com/user-attachments/assets/1436020e-0ea8-4a6b-9b40-537f327c8c4e) 
-
-
-  ### Sprint final
-
-  ![Lista](https://github.com/user-attachments/assets/7342a618-e651-464e-87c9-dad09ad43daf)
-
-  ![quadro_sprint4](https://github.com/user-attachments/assets/622faaea-87cc-457d-b4b6-f89b47c25739)
-  
-
-</details>
 
 ---
 
@@ -262,16 +247,25 @@ https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/
 
   ### 📊 Quadro da Sprint
 
+  ![Lista](https://github.com/user-attachments/assets/7342a618-e651-464e-87c9-dad09ad43daf)
+
+  ![quadro_sprint4](https://github.com/user-attachments/assets/622faaea-87cc-457d-b4b6-f89b47c25739)
+
   ### 🧩 Backlog das Histórias  
   ![backlog](https://github.com/user-attachments/assets/fd6a1ed4-0d8c-44d2-acbd-6b22a634f8bd)
 
   ### 🔗 Documentação técnica
 
-  https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/edit?usp=sharing
+  ### Acesse aqui: https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/edit?usp=sharing
 
   ### 🪲 Issue Tracker 
 
+  ![Issues](https://github.com/user-attachments/assets/93f0e3c6-6adb-47ca-bbd9-9da6b1893067)
+
   ### ▶️ Screencasts
+
+- ### Deploy & Build [Deploy e Build](https://www.youtube.com/watch?v=Wg4OpnnYn_g)
+- ### Testes [Testes](linkaqui)
 
 </details>
 
