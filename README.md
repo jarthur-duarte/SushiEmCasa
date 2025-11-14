@@ -1,10 +1,4 @@
-<!-- Cabeçalho com título e badges -->
-<h1 align="center">🍣 SushiEmCasa</h1>
-
-<p align="center">
-  Plataforma digital para gestão de pedidos e cardápio do SushiEmCasa — desenvolvida com <b>Python</b>, <b>Django</b> e <b>PostgreSQL</b>.
-</p>
-
+# Projeto SushiEmCasa - Delivery de Sushi Web Application
 <p align="center">
   <!-- Badges de tecnologias -->
   <img src="https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white" alt="Python Badge"/>
@@ -15,14 +9,86 @@
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License Badge"/>
 </p>
 
+Este é um projeto desenvolvido para atender às necessidades de um cliente real, com o objetivo principal de otimizar o processo de recebimento de pedidos e melhorar a experiência do cliente no gerenciamento de suas solicitações.
+
+<details>
+  <summary><strong>📋 Funcionalidades Principais</strong></summary>
+
+
+  <h3>👤 Para o Usuário (Cliente)</h3>
+
+- Cardápio: Visualização do menu completo.
+
+- Agenda: Consulta à agenda e disponibilidade da administradora/restaurante.
+
+- Pedidos: Acompanhamento do status dos pedidos realizados.
+
+- Contatos: Acesso rápido às informações de contato do restaurante.
+
+  <h3>👩‍💼 Para a administradora</h3>
+
+- Cardápio: Visualização do menu completo.
+
+- Agenda: Consulta à agenda e disponibilidade da administradora/restaurante.
+
+- Pedidos: Acompanhamento do status dos pedidos realizados.
+
+- Contatos: Acesso rápido às informações de contato do restaurante.
+
+
+  </details>
+
+
+## 🧩 Estrutura do Projeto
+<details>
+
+```
+SushiEmCasa
+.
+├── .github/
+│   └── workflows/
+│       └── main_sushiemcasa.yml
+│
+├── .vscode/
+│   └── settings.json
+│
+├── project/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── sushi_em_casa/ # app 1
+│
+├── usuario/ # app 2
+│
+├── .gitignore
+├── apoio.txt
+├── CONTRIBUTING.md
+├── LICENSE
+├── manage.py
+├── README.md
+└── requirements.txt
+
+
+```
+</details>
+
+
+## 📚 Documentação
+
+Toda a documentação técnica do projeto — incluindo arquitetura, decisões técnicas, endpoints e padrões adotados — está disponível no Google Docs:
+
+🔗 **Documentação Técnica:**  
+https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/edit?usp=sharing
+
 ---
 
 ## 📦 Entregas do Projeto
 
----
-
 <details>
-  <summary><h2>🚀 Entrega 1</h2></summary>
+  <summary><strong>Entrega 01</strong></summary>
 
 ### 📋 Backlog das Histórias
 ![backlog1](https://github.com/user-attachments/assets/7be62ea5-96e6-48cd-a199-e6bd32f49c05)
@@ -59,10 +125,9 @@
 
 </details>
 
----
 
 <details>
-  <summary><h2>⚙️ Entrega 2</h2></summary>
+  <summary><strong>Entrega 02</strong></summary>
 
 ### 👩‍💻 Relatório de Pair Programming
 
@@ -115,12 +180,12 @@
 
 </details>
 
----
+</details>
 
 <details>
-  <summary><h2>💻 Entrega 3</h2></summary>
+  <summary><strong>Entrega 03</strong></summary>
 
-### 👩‍💻 Relatório de Pair Programming
+  ### 👩‍💻 Relatório de Pair Programming
 
 <details>
 <summary>🛒 Carrinho de Compras (História 1)</summary>
@@ -169,7 +234,11 @@
 
 </details>
 
----
+
+<details>
+  <summary><strong>Entrega 04</strong></summary>
+</details>
+
 
 ## 👥 Equipe – Grupo 02 (FDS - 2025.2)
 
