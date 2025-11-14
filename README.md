@@ -83,7 +83,21 @@ Toda a documentação técnica do projeto — incluindo arquitetura, decisões t
 🔗 **Documentação Técnica:**  
 https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/edit?usp=sharing
 
+
+
+### ✅ Quadro da sprint
+<details>
+
+  ![sprint1](https://github.com/user-attachments/assets/1436020e-0ea8-4a6b-9b40-537f327c8c4e) 
+  ![quadro_sprint1](https://github.com/user-attachments/assets/b8c205c4-55c5-4d3c-91c2-3b1896264c9d)
+  ![quadro_sprint2](https://github.com/user-attachments/assets/4073efb8-2f2b-4b92-9a62-8bf8865c3174)
+  ![quadro_sprint3](https://github.com/user-attachments/assets/bdf90868-af78-4437-93ee-5e83365a4f7f) 
+
+</details>
+
 ---
+
+
 
 ## 📦 Entregas do Projeto
 
