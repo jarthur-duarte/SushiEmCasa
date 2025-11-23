@@ -4,9 +4,9 @@ from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
 from sushiemcasa.forms.pedidos import OrderForm
-from sushiemcasa.models import Order, OrderItem, Produto, HorarioDeFuncionamento
+from sushiemcasa.models import Order, OrderItem, Produto
 from decimal import Decimal
-from urllib.parse import quote 
+from urllib.parse import quote
 
 def pagina_checkout(request):
     cart = request.session.get('cart', {})
@@ -39,20 +39,23 @@ def pagina_checkout(request):
         messages.error(request, "Seu carrinho está vazio.")
         return redirect('sushiemcasa:basket')
 
-    
     if request.method == 'POST':
         form = OrderForm(request.POST)
 
-
         if form.is_valid():
             order = form.save(commit=False)
-            order.user = request.user 
+            
+            if request.user.is_authenticated:
+                order.user = request.user
+            else:
+                order.user = None 
+            
             order.total_price = cart_total
             order.save() 
 
             order_items_to_create = []
             mensagem_itens_whatsapp = "" 
-
+            
             for item in cart_items:
                 order_items_to_create.append(
                     OrderItem(
@@ -66,20 +69,24 @@ def pagina_checkout(request):
                 subtotal_item_wa = item['quantity'] * item['price']
                 mensagem_itens_whatsapp += f"- {item['quantity']}x {item['name']} ($ {subtotal_item_wa:.2f})\n"
 
-
             OrderItem.objects.bulk_create(order_items_to_create)
 
             request.session['cart'] = {}
             request.session.modified = True
-
+            
             data_hora_agendada = order.delivery_datetime.strftime("%d/%m/%Y às %H:%M")
+            
+            if order.user:
+                nome_cliente = order.user.username
+            else:
+                nome_cliente = "Cliente Visitante (Não Logado)"
 
-            numero_whatsapp_restaurante = "5587988240512" 
+            numero_whatsapp_restaurante = "5587988240512"
     
             mensagem_final = (
-                " *Novo Pedido Agendado - SushiEmCasa* \n\n"
+                "🍣 *Novo Pedido - SushiEmCasa* 🍣\n\n"
                 f"*Pedido ID:* #{order.id}\n"
-                f"*Cliente:* {order.user.username}\n"
+                f"*Cliente:* {nome_cliente}\n"
                 f"*Agendado para:* {data_hora_agendada}\n\n"
                 "---- Itens ----\n"
                 f"{mensagem_itens_whatsapp}\n"
@@ -93,7 +100,6 @@ def pagina_checkout(request):
         
         else:
             messages.error(request, "Por favor, corrija os erros abaixo.")
-            print(form.errors)
     else:
         form = OrderForm()
 
@@ -104,7 +110,6 @@ def pagina_checkout(request):
     }
 
     return render(request, 'sushiemcasa/checkout.html', context)
-
 
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id)
