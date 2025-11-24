@@ -266,7 +266,8 @@ https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/
 
   ### Deploy [Deployment](https://www.youtube.com/watch?v=Wg4OpnnYn_g)
 - ### CI/CD [Deploy e Build](https://www.youtube.com/watch?v=Wg4OpnnYn_g)
-- ### Testes [Testes](linkaqui)
+- ### Testes [Testes automatizados](https://youtu.be/FJOwukHw6Ug)
+- ### Workflows/Actions [Workflows/Actions](https://www.youtube.com/watch?v=fdReA9gsHiE)
 
 </details>
 
