@@ -264,7 +264,7 @@ https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/
 
   ### ▶️ Screencasts
 
-- ### Deploy & Build [Deploy e Build](https://www.youtube.com/watch?v=Wg4OpnnYn_g)
+- ### Deploy & Build (CI/CD) [Deploy e Build](https://www.youtube.com/watch?v=Wg4OpnnYn_g)
 - ### Testes [Testes](linkaqui)
 
 </details>
