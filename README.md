@@ -245,6 +245,42 @@ https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/
 <details>
   <summary><strong>Entrega 04</strong></summary>
 
+  ### 👩‍💻 Relatório de Pair Programming
+
+<details>
+<summary>✏️ Alteração de preços</summary>
+
+**Objetivo:** Implementa uma seção de gerenciamento de preços no painel administrativo.  
+**Dupla:** Arthur Reis Gomes De Mello Queiroz e Bernardo Guimarães Nunes Palhares  
+**Ferramentas:** HTML, CSS, JS, Python, Django e Discord.
+**Aprendizados:** Integração eficiente entre frontend e backend, gerenciando o banco de dados em paralelo.
+</details>
+
+---
+
+<details>
+<summary>⏱️ Alteração dos horários de funcionamento</summary>
+
+**Objetivo:** Local onde a administradora poderá configurar o status de operação da loja para cada dia da semana.  
+**Dupla:** Cauã parente e João Arthur Gomes Duarte  
+**Ferramentas:** Django, HTML, CSS, JS, Discord, Jira  
+**Aprendizados:** Desenvolvimento e integração eficiente entre backend e frontend.
+</details>
+
+---
+
+<details>
+<summary>💬 Recebimento do pedido via Whatsapp</summary>
+
+**Objetivo:** Recebimento do pedido e seus detalhes via Whatsapp, para a administradora avaliar sua viabilidade.  
+**Dupla:** Luiza Barbosa Almeida da Silva e Maria Eduarda Souza
+**Ferramentas:** Django, Jira, Discord e API do Whatsapp.  
+**Aprendizados:** Dominamos o redirecionamento para o Whatsapp em mensagem devidamente organizada e formatada.
+</details>
+
+---
+
+
   ### 📊 Quadro da Sprint
 
   ![Lista](https://github.com/user-attachments/assets/7342a618-e651-464e-87c9-dad09ad43daf)
@@ -264,8 +300,9 @@ https://docs.google.com/document/d/1KC3Db0AT6AEDgvPb-e6kgqTNkPvWHFwfWEnhjRgizXg/
 
   ### ▶️ Screencasts
 
-- ### Deploy & Build [Deploy e Build](https://www.youtube.com/watch?v=Wg4OpnnYn_g)
-- ### Testes [Testes](linkaqui)
+  ### Deploy [Deployment](https://www.youtube.com/watch?v=Wg4OpnnYn_g)
+- ### Testes [Testes automatizados](https://youtu.be/FJOwukHw6Ug)
+- ### Workflows/Actions (CI/CD) [Deploy e Build](https://www.youtube.com/watch?v=fdReA9gsHiE)
 
 </details>
 
