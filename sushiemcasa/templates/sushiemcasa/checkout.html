@@ -5,7 +5,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sushi em Casa - Finalize Order</title>
+    {% if not user.is_authenticated %}
+    <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ffeeba;">
+        <strong>⚠️ Atenção:</strong> Você não está logado.
+        <br>
+        <small>Without login, you cannot see your order status on site. 
+        plese, track your order seeding the receipt on 
+        <a href="https://wa.me/12397719811" target="_blank" style="text-decoration: underline; color: #856404;"><strong>WhatsApp</strong></a>.</small>
+    </div>
+{% endif %}
+    <title>Sushi em Casa - Finish Order</title>
     
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
