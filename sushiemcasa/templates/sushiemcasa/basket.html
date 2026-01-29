@@ -70,7 +70,7 @@
                             <button type="submit" class="btn-atualizar"><i class="fas fa-sync-alt"></i></button>
                         </form>
                     </td>
-                    <td>R$ {{ item.total|stringformat:".2f" }}</td> 
+                    <td>$ {{ item.total|stringformat:".2f" }}</td> 
                     <td>
                         <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
                             {% csrf_token %}
