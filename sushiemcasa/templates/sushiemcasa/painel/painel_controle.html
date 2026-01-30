@@ -1,0 +1,82 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Admin Panel - Sushi em Casa{% endblock %}
+
+{% block content %}
+<style>
+    .admin-container { padding: 2rem 5%; background-color: #f4f6f9; min-height: 80vh; }
+    .admin-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .admin-table th, .admin-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+    .admin-table th { background-color: #333; color: white; }
+    .status-select { padding: 5px; border-radius: 4px; border: 1px solid #ccc; }
+    .btn-save { background-color: #28a745; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+    .btn-save:hover { background-color: #218838; }
+    
+    /* Cores das Badges na Tabela */
+    .badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 0.8rem; font-weight: bold; }
+    .bg-pending { background-color: #ffc107; color: #333; }
+    .bg-in-preparation { background-color: #17a2b8; }
+    .bg-out-for-delivery { background-color: #007bff; }
+    .bg-delivered { background-color: #28a745; }
+    .bg-cancelled { background-color: #dc3545; }
+</style>
+
+<main class="admin-container">
+    <h1 style="margin-bottom: 20px;">🛡️ Manager Dashboard</h1>
+
+    <div style="overflow-x: auto;">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Current Status</th>
+                    <th>Change Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td>#{{ pedido.id }}</td>
+                    <td>{{ pedido.created_at|date:"d/m H:i" }}</td>
+                    <td>{{ pedido.user.username|default:"Guest" }}</td>
+                    <td>
+                        <ul style="margin:0; padding-left:15px; font-size:0.9rem;">
+                            {% for item in pedido.items.all %}
+                                <li>{{ item.quantity }}x {{ item.item_name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>$ {{ pedido.total_price|floatformat:2 }}</td>
+                    <td>
+                        <span class="badge bg-{{ pedido.status|slugify }}">
+                            {{ pedido.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <form method="POST" style="display: flex; gap: 5px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ pedido.id }}">
+                            <select name="new_status" class="status-select">
+                                {% for codigo, nome in status_choices %}
+                                    <option value="{{ codigo }}" {% if pedido.status == codigo %}selected{% endif %}>
+                                        {{ nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn-save" title="Save Status">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock %}
