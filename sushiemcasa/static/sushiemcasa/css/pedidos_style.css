@@ -1,3 +1,4 @@
+
 .container-pedidos {
     padding: 2rem 5%;
     background-color: #f9f9f9;
@@ -37,10 +38,13 @@
     color: #fff;
     text-transform: uppercase;
     font-size: 0.8rem;
+    text-align: center;
 }
 
 .status-pending { background-color: #f0ad4e; } 
+.status-accepted { background-color: #28a745; } 
 .status-in-preparation { background-color: #337ab7; }
+.status-ready-to-pickup { background-color: #17a2b8; } 
 .status-out-for-delivery { background-color: #5bc0de; } 
 .status-delivered { background-color: #5cb85c; } 
 .status-cancelled { background-color: #d9534f; } 
@@ -54,6 +58,28 @@
 
 .item-pedido:last-child {
     border-bottom: none;
+}
+
+.alert-custom {
+    text-align: center; 
+    margin-top: 20px; 
+    font-weight: bold; 
+    padding: 15px; 
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.alert-red {
+    background-color: #f8d7da; 
+    color: #721c24; 
+    border: 1px solid #f5c6cb;
+}
+.alert-yellow {
+    background-color: #fff3cd; 
+    color: #856404; 
+    border: 1px solid #ffeeba;
 }
 
 .stepper-wrapper {
@@ -80,7 +106,7 @@
     width: 100%;
     top: 20px;
     left: -50%;
-    z-index: -1;
+    z-index: 2; 
 }
 
 .stepper-item::after {
@@ -90,23 +116,24 @@
     width: 100%;
     top: 20px;
     left: 50%;
-    z-index: -1;
+    z-index: 2; 
 }
 
 .stepper-item .step-counter {
     position: relative;
-    z-index: 5;
+    z-index: 10; 
     display: flex;
     justify-content: center;
     align-items: center;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: #e0e0e0;
+    background: #e0e0e0; 
     margin-bottom: 8px;
     color: #fff;
     font-size: 1.1rem;
     transition: all 0.3s ease;
+    border: 2px solid #fff;
 }
 
 .stepper-item .step-name {
@@ -119,8 +146,8 @@
 .stepper-item.completed .step-counter {
     background-color: #4bb543; 
     color: #fff;
-    z-index: 5;
     box-shadow: 0 0 10px rgba(75, 181, 67, 0.4); 
+    z-index: 10; 
 }
 
 .stepper-item.completed .step-name {
@@ -131,18 +158,42 @@
 
 .stepper-item.completed::before {
     border-bottom: 2px solid #4bb543; 
-    z-index: 3;
+    z-index: 3; 
 }
 
 .stepper-item.completed::after {
-    border-bottom: 2px solid #e0e0e0 !important; 
-    z-index: -1;
+    border-bottom: 2px solid #e0e0e0; 
+    z-index: 2;
 }
 
 .stepper-item:first-child::before { content: none; }
 .stepper-item:last-child::after { content: none; }
 
+
 @media (max-width: 768px) {
+    
+    .container-pedidos {
+        padding: 15px !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .pedido {
+        padding: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .pedido-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .pedido-status {
+        width: 100%;
+        display: block;
+    }
+
     
     .items-list {
         padding: 0;
@@ -151,12 +202,8 @@
     }
     
     .item-pedido {
-        display: flex;
-        justify-content: space-between; 
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #f0f0f0;
-        font-size: 0.95rem;
+        flex-wrap: wrap; 
+        font-size: 0.9rem;
     }
     
     .item-pedido span:first-child {
@@ -164,6 +211,7 @@
         color: #333;
     }
 
+   
     .form-field {
         margin-bottom: 20px;
     }
@@ -173,7 +221,7 @@
         width: 100%;
         padding: 12px;
         box-sizing: border-box; 
-        font-size: 16px;
+        font-size: 16px; 
         border: 1px solid #ccc;
         border-radius: 8px;
         margin-top: 8px;
@@ -202,5 +250,28 @@
         font-size: 0.9rem;
         text-align: left;
         line-height: 1.5;
+    }
+
+    .stepper-wrapper {
+        margin-top: 30px;
+        padding: 0;
+    }
+
+    .stepper-item .step-counter {
+        width: 30px; 
+        height: 30px;
+        font-size: 0.9rem;
+    }
+
+    .stepper-item .step-name {
+        font-size: 0.7rem; 
+        line-height: 1.2;
+        margin-top: 5px;
+        word-wrap: break-word; 
+    }
+    
+    .stepper-item::before, 
+    .stepper-item::after {
+        top: 15px; 
     }
 }

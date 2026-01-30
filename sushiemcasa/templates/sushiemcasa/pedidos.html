@@ -7,47 +7,27 @@
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
     
     <style>
-        /* CSS DA BARRA VERDE (Só aparece quando aceito) */
+        /* Bolinha VERDE */
         .stepper-item.completed .step-counter {
             background-color: #4bb543 !important;
             color: #fff;
             box-shadow: 0 0 10px rgba(75, 181, 67, 0.4);
-            z-index: 5;
+            z-index: 10 !important; /* Sempre acima da linha */
         }
+        /* Texto Escuro */
         .stepper-item.completed .step-name {
             color: #333;
             font-weight: bold;
         }
+        /* Linha de TRÁS fica Verde (caminho percorrido) */
         .stepper-item.completed::before {
             border-bottom: 2px solid #4bb543 !important;
-            z-index: 3;
+            z-index: 3 !important;
         }
+        /* Linha da FRENTE fica CINZA (caminho futuro) */
         .stepper-item.completed::after {
             border-bottom: 2px solid #e0e0e0 !important;
-            z-index: 2;
-        }
-
-        /* CSS DOS AVISOS (Cancelado e Pendente) */
-        .alert-custom {
-            text-align: center; 
-            margin-top: 20px; 
-            font-weight: bold; 
-            padding: 15px; 
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        .alert-red {
-            background-color: #f8d7da; 
-            color: #721c24; 
-            border: 1px solid #f5c6cb;
-        }
-        .alert-yellow {
-            background-color: #fff3cd; 
-            color: #856404; 
-            border: 1px solid #ffeeba;
+            z-index: 2 !important;
         }
     </style>
 {% endblock %}
@@ -102,12 +82,12 @@
                                 <div class="step-name">Order Accepted</div>
                             </div>
 
-                            <div class="stepper-item {% if pedido.status == 'In Preparation' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
+                            <div class="stepper-item {% if pedido.status == 'In Preparation' or pedido.status == 'Ready to Pickup' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
                                 <div class="step-counter"><i class="fas fa-utensils"></i></div>
                                 <div class="step-name">In preparation</div>
                             </div>
 
-                            <div class="stepper-item {% if pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
+                            <div class="stepper-item {% if pedido.status == 'Ready to Pickup' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
                                 <div class="step-counter"><i class="fas fa-truck"></i></div>
                                 <div class="step-name">Ready to pickup</div>
                             </div>
