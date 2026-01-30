@@ -99,19 +99,18 @@
         @media (max-width: 992px) { .produtos-grid { grid-template-columns: repeat(3, 1fr); } }
 
         @media (max-width: 768px) {
-            .produtos-grid {
-                grid-template-columns: 1fr 1fr; /* 2 colunas no celular */
-                gap: 12px;
-            }
+    /* ... outros códigos mobile ... */
 
-            .cartao-promocao { flex-direction: column; text-align: center; }
-            .imagem-promocao img { width: 100%; height: 140px; background: #f9f9f9; }
-            .produto-card img { height: 140px; }
-            .produto-descricao { display: none; }
-            .seta { width: 32px; height: 32px; }
-            .seta-esquerda { left: 5px; }
-            .seta-direita { right: 5px; }
-        }
+    /* ESCONDE AS SETAS NO CELULAR */
+    .seta {
+        display: none !important;
+    }
+    
+    /* Garante que o usuário saiba que dá para arrastar (opcional) */
+    .carrossel-track {
+        cursor: grab;
+    }
+}
     </style>
 {% endblock %}
 
