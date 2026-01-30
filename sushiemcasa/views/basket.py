@@ -5,6 +5,8 @@ from sushiemcasa.models import Produto
 from decimal import Decimal
 from urllib.parse import quote
 from django.utils import timezone  
+import json
+from django.http import JsonResponse
 
 def pagina_basket(request):
     cart = request.session.get('cart', {})
@@ -28,7 +30,7 @@ def pagina_basket(request):
                         'price': product.preco,
                         'quantity': quantity,
                         'total': total_item_price,
-                        'image_url': product.imagem.url if product.imagem else None # Add image URL
+                        'image_url': product.imagem.url if product.imagem else None 
                     })
                     cart_total += total_item_price
 
@@ -41,15 +43,12 @@ def pagina_basket(request):
 @require_POST
 def add_to_cart(request, product_id):
     cart = request.session.get('cart', {})
-    product_id_str = str(product_id) # Ensure product_id is a string key
+    product_id_str = str(product_id)
     quantity = int(request.POST.get('quantity', 1))
 
-    # Optional: Check if product exists before adding
     try:
         product = Produto.objects.get(id=product_id)
     except Produto.DoesNotExist:
-        # Handle the case where the product doesn't exist (e.g., show an error)
-        # For simplicity, we'll just ignore it here, but you might want better handling
         return redirect('sushiemcasa:cardapio') 
 
     if product_id_str in cart:
@@ -66,7 +65,12 @@ def add_to_cart(request, product_id):
 def update_cart(request, product_id):
     cart = request.session.get('cart', {})
     product_id_str = str(product_id)
-    new_quantity = int(request.POST.get('quantity', 0))
+    
+    try:
+        data = json.loads(request.body)
+        new_quantity = int(data.get('quantity', 0))
+    except (json.JSONDecodeError, ValueError):
+        new_quantity = int(request.POST.get('quantity', 0))
 
     if product_id_str in cart:
         if new_quantity > 0:
@@ -76,7 +80,31 @@ def update_cart(request, product_id):
 
     request.session['cart'] = cart
     request.session.modified = True
-    return redirect('sushiemcasa:basket')
+
+    
+    cart_total = Decimal('0.00')
+    item_total = Decimal('0.00')
+    
+    product_ids = list(cart.keys())
+    if product_ids:
+        products = Produto.objects.filter(id__in=product_ids)
+        
+        for product in products:
+            pid = str(product.id)
+            if pid in cart:
+                qty = cart[pid]['quantity']
+                total_line = product.preco * qty
+                cart_total += total_line
+                
+                if pid == product_id_str:
+                    item_total = total_line
+
+
+    return JsonResponse({
+        'success': True,
+        'item_total': float(item_total),
+        'cart_total': float(cart_total)
+    })
 
 @require_POST
 def remove_from_cart(request, product_id):
