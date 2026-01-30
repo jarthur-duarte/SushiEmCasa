@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 class Order(models.Model):
     STATUS_CHOICES = (
         ('Pending', 'Pendente'),
+        ('Accepted','Aceito'),
         ('In Preparation', 'Em preparo'),
         ('Out for Delivery', 'Pronto para retirada'),
         ('Delivered', 'Entregue'),
