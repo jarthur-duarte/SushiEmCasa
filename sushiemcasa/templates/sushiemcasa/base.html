@@ -5,121 +5,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Sushi em Casa{% endblock %}</title>
+    
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" type="image/jpg" href="{%static 'sushiemcasa/images/LOGO.jpg' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/admin_style.css' %}">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'sushiemcasa/images/LOGO.jpg' %}">
 
     <style>
-        .user-dropdown {
-            position: relative;
-            display: inline-block;
+        /* --- RESET BÁSICO --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding-top: 70px; }
+
+        /* --- HEADER PRINCIPAL --- */
+        .main-header {
+            background-color: #222;
+            color: #fff;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        .user-dropdown-toggle {
-            cursor: pointer;
+
+        /* LOGO */
+        .brand-logo {
+            display: flex; align-items: center; text-decoration: none;
+            color: white; font-weight: bold; font-size: 1.1rem; gap: 10px;
         }
-        .user-dropdown-menu {
-            display: none; 
-            position: absolute;
-            right: 0;
-            top: 38px;
-            background-color: white;
-            min-width: 180px;
-            /* Sombra mais suave */
-            box-shadow: 0px 4px 12px 0px rgba(0,0,0,0.15); 
-            border-radius: 6px;
-            z-index: 100;
-            border: 1px solid #eee;
-            padding-top: 4px; 
-            padding-bottom: 4px; 
+        .brand-logo img { height: 40px; width: auto; border-radius: 5px; }
+
+        /* --- NAVEGAÇÃO DESKTOP --- */
+        .nav-links { display: flex; align-items: center; }
+        .nav-links ul { display: flex; list-style: none; gap: 20px; margin: 0; padding: 0; align-items: center; }
+        .nav-links a { color: #ccc; text-decoration: none; font-size: 0.95rem; transition: 0.3s; padding: 5px 10px; border-radius: 4px; }
+        .nav-links a:hover, .nav-links a.active { color: #fff; background-color: rgba(255,255,255,0.1); }
+
+        /* User Dropdown Desktop */
+        .user-menu-desktop { position: relative; margin-left: 20px; }
+        .user-btn { background: none; border: none; color: #4CAF50; font-size: 1.5rem; cursor: pointer; }
+        .dropdown-content { display: none; position: absolute; right: 0; top: 40px; background-color: #fff; min-width: 180px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); z-index: 1001; border-radius: 5px; overflow: hidden; border: 1px solid #ddd; }
+        .dropdown-content a { color: #333; padding: 12px 16px; text-decoration: none; display: block; font-size: 0.9rem; }
+        .dropdown-content a:hover { background-color: #f1f1f1; }
+        .user-menu-desktop:hover .dropdown-content { display: block; } 
+
+        /* Controles Mobile */
+        .mobile-controls { display: none; }
+        .hamburger-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; margin-left: 15px;}
+        .cart-mobile { color: white; font-size: 1.2rem; text-decoration: none; position: relative;}
+
+        /* =========================================
+           VISÃO DE CELULAR (FORÇADA)
+           ========================================= */
+        @media (max-width: 768px) {
+            
+            /* 1. MENU */
+            .mobile-controls { display: flex; align-items: center; }
+            .nav-links { position: absolute; top: 60px; left: 0; width: 100%; background-color: #1a1a1a; flex-direction: column; display: none; border-top: 1px solid #333; padding-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+            .nav-links.active { display: flex; animation: slideDown 0.3s ease; }
+            .nav-links ul { flex-direction: column; width: 100%; gap: 0; }
+            .nav-links li { width: 100%; border-bottom: 1px solid #333; }
+            .nav-links a { display: block; padding: 15px 20px; width: 100%; font-size: 1.1rem; }
+            .user-menu-desktop { display: none; } 
+            .mobile-user-links { display: block !important; }
+
+            /* 2. PRODUTOS (COM !IMPORTANT PARA FORÇAR) */
+            
+            /* Usamos o ID #menu-principal para ganhar prioridade sobre o CSS antigo */
+            #menu-principal .produtos-grid, .produtos-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important; /* 2 Colunas */
+                gap: 10px !important;
+                padding: 5px !important;
+                width: 100% !important;
+            }
+
+            .produto-card {
+                width: 100% !important;
+                margin: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                height: auto !important;
+                min-height: 200px; /* Garante tamanho mínimo */
+            }
+
+            .produto-card img {
+                width: 100% !important;
+                height: 100px !important; /* Imagem pequena */
+                object-fit: cover !important;
+            }
+
+            .produto-info { padding: 5px !important; }
+
+            .produto-info h3 {
+                font-size: 0.8rem !important;
+                margin: 5px 0 !important;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+
+            /* Esconde descrição */
+            .produto-descricao { display: none !important; }
+
+            .produto-preco {
+                font-size: 0.9rem !important;
+                margin: 5px 0 !important;
+            }
+            
+            /* Ajuste do botão */
+            .add-to-cart-form { display: flex; flex-direction: column; gap: 5px; }
+            .add-to-cart-button { padding: 5px; font-size: 0.8rem; }
         }
-        .user-dropdown-menu a {
-            color: #333 !important;
-            padding: 7px 14px;
-            text-decoration: none;
-            display: block;
-            font-size: 0.8rem;
+
+        .mobile-user-links { display: none; background-color: #111; }
+        .mobile-user-links li { border-bottom: 1px solid #222 !important; }
+        .text-danger { color: #dc3545 !important; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .user-dropdown-menu a:hover {
-            background-color: #f1f1f1;
-        }
-        .user-dropdown-menu.show {
-            display: block; 
-        }
-        .dropdown-header {
-            padding: 7px 14px;
-            color: #6c757d;
-            font-size: 0.75rem;
-            border-bottom: 1px solid #f1f1f1;
-            margin-bottom: 4px;
-        }
-        .dropdown-logout {
-            color: #dc3545 !important; 
-        }
-        /* Linha divisória mais sutil */
-        .user-dropdown-menu hr {
-            margin: 4px 0;
-            border: 0;
-            border-top: 1px solid #f1f1f1;
-        }
+
+        /* Extras */
+        .whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px; background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center; font-size: 30px; box-shadow: 2px 2px 3px #999; z-index: 100; display: flex; align-items: center; justify-content: center; }
+        .whatsapp-float img { width: 35px; }
+        .rodape { background: #222; color: #fff; padding: 20px; text-align: center; margin-top: 40px; }
+        .links-rodape ul { list-style: none; padding: 0; }
+        .links-rodape a { color: #aaa; text-decoration: none; }
     </style>
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
-    <header class="barra-navegacao">
+    <header class="main-header">
         
-        <div class="logo">
-            <a href="{% url 'sushiemcasa:cardapio' %}">
-                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+        <a href="{% url 'sushiemcasa:cardapio' %}" class="brand-logo">
+            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo">
+            <span>SushiEmCasa</span>
+        </a>
+
+        <div class="mobile-controls">
+            <a href="{% url 'sushiemcasa:basket' %}" class="cart-mobile">
+                <i class="fas fa-shopping-cart"></i>
             </a>
+            <button class="hamburger-btn" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-        
-        <nav>
+
+        <nav class="nav-links" id="navLinks">
             <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if request.resolver_match.url_name == 'cardapio' %}class="ativo"{% endif %}>Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" {% if request.resolver_match.url_name == 'basket' %}class="ativo"{% endif %}>Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}" {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %}class="ativo"{% endif %}>Orders</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}" {% if request.resolver_match.url_name == 'contato' %}class="ativo"{% endif %}>Contact</a></li>
-            </ul>
-        </nav>
-        
-        <div class="icone-usuario">
-            {% if user.is_authenticated %}
-                
-                <div class="user-dropdown">
-                    
-                    <a href="#" class="user-dropdown-toggle" id="user-dropdown-toggle">
-                        <i class="fas fa-user-circle" style="color: #4CAF50;"></i>
-                    </a>
-                    
-                    <div class="user-dropdown-menu" id="user-dropdown-menu">
-                        <div class="dropdown-header">
-                            Logado como:<br>
-                            <strong>{{ user.username }}</strong>
-                        </div>
-                        
-                        <a href="{% url 'sushiemcasa:orders' %}">Meus Pedidos</a>
-                        
+                <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if request.resolver_match.url_name == 'cardapio' %}class="active"{% endif %}>Home</a></li>
+                <li><a href="{% url 'sushiemcasa:basket' %}" {% if request.resolver_match.url_name == 'basket' %}class="active"{% endif %}>Basket</a></li>
+                <li><a href="{% url 'sushiemcasa:orders' %}" {% if request.resolver_match.url_name == 'orders' %}class="active"{% endif %}>Orders</a></li>
+                <li><a href="{% url 'sushiemcasa:contato' %}" {% if request.resolver_match.url_name == 'contato' %}class="active"{% endif %}>Contact</a></li>
+
+                {% if user.is_authenticated %}
+                    <div class="mobile-user-links">
+                        <li><a href="#" style="color: #4CAF50; font-weight: bold;">Olá, {{ user.username }}</a></li>
+                        <li><a href="{% url 'sushiemcasa:orders' %}">Meus Pedidos</a></li>
                         {% if user.is_staff %}
-                            <hr>
-                            <a href="{% url 'sushiemcasa:painel_controle' %}">Painel de Controle</a>
+                            <li><a href="{% url 'sushiemcasa:painel_controle' %}">Painel de Controle</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'sushiemcasa:logout' %}" class="text-danger">Sair</a></li>
+                    </div>
+                {% else %}
+                    <div class="mobile-user-links">
+                        <li><a href="{% url 'sushiemcasa:login' %}">Fazer Login</a></li>
+                    </div>
+                {% endif %}
+            </ul>
+
+            <div class="user-menu-desktop">
+                {% if user.is_authenticated %}
+                    <button class="user-btn"><i class="fas fa-user-circle"></i></button>
+                    <div class="dropdown-content">
+                        <div style="padding: 10px; font-weight: bold; border-bottom: 1px solid #eee; text-align: center; background-color: #f9f9f9;">
+                            {{ user.username }}
+                        </div>
+                        <a href="{% url 'sushiemcasa:orders' %}">Meus Pedidos</a>
+                        {% if user.is_staff %}
+                            <a href="{% url 'sushiemcasa:painel_controle' %}">Painel Admin</a>
                             <a href="{% url 'sushiemcasa:listar_produtos' %}">Gerenciar Preços</a>
                             <a href="{% url 'sushiemcasa:gerenciar_horarios' %}">Gerenciar Horários</a>
                         {% endif %}
-                        
-                        <hr>
-                        <a href="{% url 'sushiemcasa:logout' %}" class="dropdown-logout">Sair</a>
+                        <a href="{% url 'sushiemcasa:logout' %}" style="color: red;">Sair</a>
                     </div>
-                </div>
-                
-            {% else %}
-                <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
-                    <i class="fas fa-user-circle"></i>
-                </a>
-            {% endif %}
-        </div>
+                {% else %}
+                    <a href="{% url 'sushiemcasa:login' %}" style="color: white;">
+                        <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </nav>
     </header>
 
     <main class="container">
@@ -133,46 +215,19 @@
 
     <footer class="rodape">
         <div class="logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
+            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo" style="width: 80px; border-radius: 5px;">
         </div>
-        <div class="links-rodape">
-            <h4>Tabs</h4>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-            </ul>
-        </div>
-        <div class="contato-rodape">
-            <h4>Contact</h4>
-            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
-            <p>+1(239)7719811</p>
-        </div>
+        <br>
+        <p>&copy; 2026 SushiEmCasa. Todos os direitos reservados.</p>
     </footer>
 
     {% block extra_js %}{% endblock %}
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleButton = document.getElementById('user-dropdown-toggle');
-            const dropdownMenu = document.getElementById('user-dropdown-menu');
-
-            if (toggleButton) {
-                toggleButton.addEventListener('click', function(event) {
-                    event.preventDefault(); 
-                    dropdownMenu.classList.toggle('show');
-                });
-            }
-
-            window.onclick = function(event) {
-                if (toggleButton && !toggleButton.contains(event.target)) {
-                    if (dropdownMenu.classList.contains('show')) {
-                        dropdownMenu.classList.remove('show');
-                    }
-                }
-            }
-        });
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            nav.classList.toggle('active');
+        }
     </script>
 
 </body>

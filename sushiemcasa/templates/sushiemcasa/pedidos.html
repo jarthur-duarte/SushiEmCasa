@@ -4,30 +4,149 @@
 {% block title %}Sushi em Casa - My Orders{% endblock %}
 
 {% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
     
     <style>
-        /* Bolinha VERDE */
+        /* --- ESTILOS GERAIS --- */
+        .container-pedidos { max-width: 800px; margin: 30px auto; padding: 0 15px; }
+        h1 { text-align: center; margin-bottom: 30px; color: #333; }
+
+        /* --- CARD DO PEDIDO --- */
+        .pedido-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #f0f0f0;
+            overflow: hidden;
+        }
+        
+        .pedido-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #f5f5f5; padding-bottom: 15px; margin-bottom: 15px;
+        }
+        .pedido-header h2 { font-size: 1.1rem; margin: 0; color: #222; }
+
+        .pedido-status {
+            padding: 6px 12px; border-radius: 20px; font-size: 0.8rem;
+            font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        /* Cores dos Status */
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-accepted { background: #d1ecf1; color: #0c5460; }
+        .status-in-preparation { background: #cce5ff; color: #004085; }
+        .status-ready-to-pickup { background: #e2e3e5; color: #383d41; }
+        .status-out-for-delivery { background: #d4edda; color: #155724; }
+        .status-delivered { background: #28a745; color: white; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+
+        /* Infos e Lista */
+        .pedido-info p { margin: 6px 0; color: #555; font-size: 0.9rem; }
+        .lista-itens { background: #fafafa; border-radius: 8px; padding: 15px; margin: 15px 0; border: 1px dashed #eee; }
+        .item-linha { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; color: #444; }
+        .total-price { text-align: right; font-size: 1.1rem; color: #28a745; font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+
+        /* --- BARRA DE PROGRESSO (STEPPER LIMPO) --- */
+        
+        .stepper-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .stepper-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            z-index: 1;
+        }
+
+        /* 1. RESET: APAGA QUALQUER LINHA ANTIGA */
+        .stepper-item::before {
+            content: none !important;
+            display: none !important;
+            border: none !important;
+        }
+
+        /* 2. LINHA CONECTORA (Sai do meio deste item e vai até o próximo) */
+        .stepper-item::after {
+            content: '';
+            position: absolute;
+            top: 15px; /* Metade da altura da bolinha */
+            left: 50%; 
+            width: 100%; 
+            height: 3px; 
+            background-color: #e9ecef; 
+            z-index: -1;
+        }
+
+        /* O último item não precisa desenhar linha */
+        .stepper-item:last-child::after {
+            display: none !important;
+        }
+
+        /* BOLINHA */
+        .step-counter {
+            width: 30px; height: 30px;
+            background-color: #fff;
+            border: 3px solid #e9ecef;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+            z-index: 2;
+            color: #ccc; /* Cor padrão do ícone */
+        }
+        
+        /* Garante que o ícone herde a cor */
+        .step-counter i { color: inherit; } 
+
+        /* TEXTO */
+        .step-name {
+            font-size: 0.75rem; color: #999; font-weight: 600; text-align: center;
+        }
+
+        /* --- ESTADO COMPLETADO --- */
+        
+        /* Pinta a bolinha de verde */
         .stepper-item.completed .step-counter {
-            background-color: #4bb543 !important;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(75, 181, 67, 0.4);
-            z-index: 10 !important; /* Sempre acima da linha */
+            background-color: #28a745; 
+            border-color: #28a745;
+            color: white; /* Ícone fica branco */
         }
-        /* Texto Escuro */
-        .stepper-item.completed .step-name {
-            color: #333;
-            font-weight: bold;
-        }
-        /* Linha de TRÁS fica Verde (caminho percorrido) */
-        .stepper-item.completed::before {
-            border-bottom: 2px solid #4bb543 !important;
-            z-index: 3 !important;
-        }
-        /* Linha da FRENTE fica CINZA (caminho futuro) */
+        .stepper-item.completed .step-name { color: #28a745; font-weight: bold; }
+        
+        /* Pinta a linha que sai deste item de verde */
         .stepper-item.completed::after {
-            border-bottom: 2px solid #e0e0e0 !important;
-            z-index: 2 !important;
+             background-color: #28a745;
+        }
+
+        /* Alertas */
+        .alert-custom {
+            padding: 15px; border-radius: 6px; text-align: center; 
+            font-weight: bold; margin-top: 15px;
+        }
+        .alert-red { background-color: #f8d7da; color: #721c24; }
+        .alert-yellow { background-color: #fff3cd; color: #856404; }
+
+
+        /* RESPONSIVIDADE MOBILE */
+        @media (max-width: 768px) {
+            /* Ajuste fino da linha para bolinha menor (26px / 2 = 13px) */
+            .stepper-item::after { top: 13px !important; height: 3px; }
+            
+            .step-counter { width: 26px; height: 26px; font-size: 0.7rem; border-width: 2px; }
+            .step-name { font-size: 0.65rem; }
+            
+            .pedido-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .pedido-status { align-self: flex-start; }
         }
     </style>
 {% endblock %}
@@ -38,40 +157,46 @@
 
         {% if pedidos %}
             {% for pedido in pedidos %}
-                <div class="pedido">
+                <div class="pedido-card">
                     
                     <div class="pedido-header">
                         <h2>Order #{{ pedido.id }}</h2>
-                        <span class="pedido-status status-{{ pedido.status|slugify }}">{{ pedido.get_status_display }}</span>
+                        <span class="pedido-status status-{{ pedido.status|slugify }}">
+                            {{ pedido.get_status_display }}
+                        </span>
                     </div>
                     
-                    <p><strong>Customer:</strong> {{ pedido.user.username|default:"Guest (Visitante)" }}</p>
-                    <p><strong>Order date:</strong> {{ pedido.created_at|date:"d/m/Y H:i" }}</p>
+                    <div class="pedido-info">
+                        <p><i class="fas fa-user"></i> <strong>Customer:</strong> {{ pedido.user.username|default:"Guest" }}</p>
+                        <p><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> {{ pedido.created_at|date:"d/m/Y H:i" }}</p>
+                        
+                        {% if pedido.delivery_datetime %}
+                            <p><i class="fas fa-clock"></i> <strong>Scheduled:</strong> {{ pedido.delivery_datetime|date:"d/m/Y H:i" }}</p>
+                        {% else %}
+                            <p><i class="fas fa-shipping-fast"></i> <strong>Delivery:</strong> ASAP</p>
+                        {% endif %}
+                    </div>
                     
-                    {% if pedido.delivery_datetime %}
-                        <p><strong>Scheduled delivery for:</strong> {{ pedido.delivery_datetime|date:"d/m/Y H:i" }}</p>
-                    {% else %}
-                        <p><strong>Delivery:</strong> ASAP</p>
-                    {% endif %}
-                    
-                    <h4>Items:</h4>
-                    {% for item in pedido.items.all %}
-                        <div class="item-pedido">
-                            <span>{{ item.quantity }}x {{ item.item_name }}</span>
-                            <span>$ {{ item.price|floatformat:2 }}</span>
+                    <div class="lista-itens">
+                        {% for item in pedido.items.all %}
+                            <div class="item-linha">
+                                <span>{{ item.quantity }}x {{ item.item_name }}</span>
+                                <span>$ {{ item.price|floatformat:2 }}</span>
+                            </div>
+                        {% endfor %}
+                        <div class="total-price">
+                            Total: $ {{ pedido.total_price|floatformat:2 }}
                         </div>
-                    {% endfor %}
-                    <hr>
-                    <p><strong>Total: $ {{ pedido.total_price|floatformat:2 }}</strong></p>
+                    </div>
 
                     {% if pedido.status == 'Cancelled' %}
                         <div class="alert-custom alert-red">
-                            <i class="fas fa-times-circle"></i> Order Cancelled
+                            <i class="fas fa-times-circle"></i> This order was cancelled.
                         </div>
 
                     {% elif pedido.status == 'Pending' %}
                         <div class="alert-custom alert-yellow">
-                            <i class="fas fa-clock"></i> Order Under Review (Waiting for Restaurant)
+                            <i class="fas fa-hourglass-half"></i> Waiting for confirmation...
                         </div>
 
                     {% else %}
@@ -79,32 +204,34 @@
                             
                             <div class="stepper-item completed">
                                 <div class="step-counter"><i class="fas fa-check"></i></div>
-                                <div class="step-name">Order Accepted</div>
+                                <div class="step-name">Accepted</div>
                             </div>
 
                             <div class="stepper-item {% if pedido.status == 'In Preparation' or pedido.status == 'Ready to Pickup' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
-                                <div class="step-counter"><i class="fas fa-utensils"></i></div>
-                                <div class="step-name">In preparation</div>
+                                <div class="step-counter"><i class="fas fa-fire"></i></div>
+                                <div class="step-name">Prep</div>
                             </div>
 
                             <div class="stepper-item {% if pedido.status == 'Ready to Pickup' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
-                                <div class="step-counter"><i class="fas fa-truck"></i></div>
-                                <div class="step-name">Ready to pickup</div>
+                                <div class="step-counter"><i class="fas fa-box"></i></div>
+                                <div class="step-name">Ready</div>
                             </div>
 
                             <div class="stepper-item {% if pedido.status == 'Delivered' %}completed{% endif %}">
-                                <div class="step-counter"><i class="fas fa-box-open"></i></div>
-                                <div class="step-name">Delivered</div>
+                                <div class="step-counter"><i class="fas fa-home"></i></div>
+                                <div class="step-name">Done</div>
                             </div>
                         
                         </div>
                     {% endif %}
                     
                 </div>
-                <br>
             {% endfor %}
         {% else %}
-            <p style="text-align: center; margin-top: 20px;">No orders registered yet.</p>
+            <div style="text-align: center; padding: 50px 20px; color: #888;">
+                <p>No orders yet.</p>
+                <a href="{% url 'sushiemcasa:cardapio' %}" style="color: #007bff; text-decoration: underline;">Go to Menu</a>
+            </div>
         {% endif %}
     </main>
 {% endblock content %}
