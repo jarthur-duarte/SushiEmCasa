@@ -5,20 +5,19 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-    <style>
-        /* --- AJUSTES GERAIS --- */
+   <style>
+        /* --- CONFIGURAÇÃO PADRÃO (PC/DESKTOP) --- */
         .secao-promocoes, .secao-menu {
             max-width: 1200px;
             margin: 20px auto;
             padding: 0 15px;
         }
 
-        /* --- CARROSSEL --- */
         .carrossel-container {
             width: 100%;
             overflow: hidden;
             position: relative;
-            padding: 0 45px;
+            padding: 0 45px; /* No PC mantemos espaço para as setas */
         }
 
         .carrossel-track {
@@ -33,13 +32,12 @@
             align-items: center;
             background: #fff;
             border-radius: 12px;
-            overflow: hidden;
             border: 1px solid #eee;
         }
 
         .imagem-promocao img {
             max-height: 250px;
-            width: auto;
+            width: 350px;
             object-fit: contain;
         }
 
@@ -61,10 +59,10 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* --- GRID DE PRODUTOS (FIX PARA PC) --- */
+        /* --- GRID DE PRODUTOS (PC) --- */
         .produtos-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 colunas no desktop */
+            grid-template-columns: repeat(4, 1fr);
             gap: 25px;
             padding: 20px 0;
         }
@@ -72,45 +70,64 @@
         .produto-card {
             background: white;
             border-radius: 16px;
-            overflow: hidden;
             border: 1px solid #f0f0f0;
             display: flex;
             flex-direction: column;
             height: 100%;
-            transition: transform 0.3s;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         .produto-card:hover { transform: translateY(-5px); }
+        .produto-card img { width: 100%; height: 200px; object-fit: cover; }
+        .produto-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
 
-        .produto-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
+        /* --- RESPONSIVIDADE (MOBILE) --- */
+        @media (max-width: 1024px) {
+            .produtos-grid { grid-template-columns: repeat(3, 1fr); }
         }
-
-        .produto-info {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        /* --- RESPONSIVIDADE MOBILE --- */
-        @media (max-width: 992px) { .produtos-grid { grid-template-columns: repeat(3, 1fr); } }
 
         @media (max-width: 768px) {
-    /* ... outros códigos mobile ... */
+            /* 1. Removemos o padding lateral para o banner esticar */
+            .carrossel-container {
+                padding: 0 !important; 
+            }
 
-    /* ESCONDE AS SETAS NO CELULAR */
-    .seta {
-        display: none !important;
-    }
-    
-    /* Garante que o usuário saiba que dá para arrastar (opcional) */
-    .carrossel-track {
-        cursor: grab;
-    }
-}
+            .secao-promocoes {
+                padding: 0 10px; /* Pequena margem apenas para não colar na borda da tela */
+            }
+
+            /* 2. Banner mais horizontal */
+            .cartao-promocao {
+                flex-direction: column;
+                text-align: center;
+                border-radius: 16px; /* Bordas mais arredondadas */
+            }
+
+            .imagem-promocao img {
+                width: 100%;
+                height: 120px; /* Reduzimos a altura (era 140px) para parecer mais horizontal */
+                object-fit: contain;
+                padding: 5px; /* Menos padding interno */
+            }
+
+            /* 3. Setas grandes e transparentes sobre a imagem */
+            .seta { 
+                width: 45px !important; 
+                height: 45px !important; 
+                background-color: rgba(0,0,0,0.4) !important; /* Mais transparente */
+            }
+            .seta-esquerda { left: 0px !important; border-radius: 0 10px 10px 0 !important; }
+            .seta-direita { right: 0px !important; border-radius: 10px 0 0 10px !important; }
+
+            /* Grid e Produtos Mobile */
+            .produtos-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            .produto-card img { height: 130px; }
+            .produto-descricao { display: none; }
+        }
     </style>
 {% endblock %}
 
