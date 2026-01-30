@@ -3,93 +3,132 @@
 
 {% block title %}Painel de Controle{% endblock %}
 
-{% block content %}
-<main class="container-carrinho" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+{% block extra_css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <h1>Painel de Controle</h1>
-    <p>Bem-vindo, <strong>{{ username }}</strong>.</p>
-    <hr>
-
-    <div class="admin-actions">
-        
-        <a href="{% url 'sushiemcasa:listar_produtos' %}" class="btn-checkout">
-            🍣 Gerenciar Produtos (Preços)
-        </a>
-        
-        <a href="/painel/horarios/" class="btn-checkout">
-            🗓️ Gerenciar Horários
-        </a>
-        
-        <a href="/admin/" class="btn-checkout btn-admin-full">
-            Admin Completo
-        </a>
-
-    </div>
-
-    {% if messages %}
-        {% for message in messages %}
-            <div style="padding: 10px; margin-bottom: 20px; border-radius: 5px; 
-                        {% if message.tags == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% endif %}
-                        {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-
-    <h2 style="margin-bottom: 20px; color: #333; border-left: 5px solid #28a745; padding-left: 10px;">
-        📦 Gerenciar Pedidos em Tempo Real
-    </h2>
-
     <style>
-        /* --- ESTILO PADRÃO (DESKTOP) --- */
+        /* --- ESTILOS GERAIS --- */
+        .container-admin {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            padding-bottom: 80px;
+        }
+
+        h1 { color: #333; margin-bottom: 10px; }
+        
+        /* --- BOTÕES DE TOPO (LINKS RÁPIDOS) --- */
         .admin-actions {
             display: flex; 
-            gap: 20px; 
+            gap: 15px; 
             flex-wrap: wrap; 
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            margin-top: 20px;
         }
-        .btn-checkout {
-            text-decoration: none; 
-            text-align: center;
-            flex: 1; /* Botões tentam ocupar espaço igual */
+        
+        .btn-action {
+            flex: 1;
             min-width: 200px;
-        }
-        .btn-admin-full {
-            background-color: #6c757d;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        /* Tabela */
+        .btn-produtos { background-color: #17a2b8; } /* Azul Petróleo */
+        .btn-horarios { background-color: #ffc107; color: #333; } /* Amarelo */
+        .btn-django { background-color: #343a40; } /* Cinza Escuro */
+
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); filter: brightness(1.1); }
+
+        /* --- TABELA DE PEDIDOS --- */
+        .titulo-secao {
+            margin-bottom: 20px; 
+            color: #333; 
+            border-left: 5px solid #28a745; 
+            padding-left: 15px;
+            font-size: 1.5rem;
+        }
+
+        .tabela-container {
+            overflow-x: auto; /* Rolagem lateral se necessário no desktop */
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
         .tabela-admin {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
-            overflow: hidden;
-            font-size: 0.9rem;
-        }
-        .tabela-admin th { background-color: #343a40; color: white; padding: 12px; text-align: left; }
-        .tabela-admin td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
-        .tabela-admin tr:hover { background-color: #f8f9fa; }
-        .status-select { padding: 6px; border-radius: 4px; border: 1px solid #ccc; max-width: 140px;} 
-        .btn-save-status {
-            background-color: #28a745; color: white; border: none;
-            padding: 7px 12px; border-radius: 4px; cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-save-status:hover { background-color: #218838; transform: scale(1.05); }
-        .btn-delete-order {
-            background-color: #dc3545; color: white; border: none;
-            padding: 7px 12px; border-radius: 4px; cursor: pointer;
-            transition: 0.2s;
-            margin-left: 5px;
-        }
-        .btn-delete-order:hover { 
-            background-color: #c82333; 
-            transform: scale(1.05); 
+            font-size: 0.95rem;
         }
 
-        .badge { padding: 5px 10px; border-radius: 15px; color: white; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; display: inline-block;min-width: 80px; text-align: center; }
+        .tabela-admin th {
+            background-color: #f8f9fa;
+            color: #555;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tabela-admin td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+            color: #444;
+        }
+
+        /* Select de Status */
+        .status-select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Botões da Tabela (Salvar/Excluir) */
+        .btn-icon {
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        .btn-save { background-color: #28a745; }
+        .btn-save:hover { background-color: #218838; }
+        
+        .btn-delete { background-color: #dc3545; margin-left: 5px; }
+        .btn-delete:hover { background-color: #c82333; }
+
+        /* Badges de Status (Visualização) */
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            display: inline-block;
+            white-space: nowrap;
+        }
         .bg-pending { background-color: #ffc107; color: #333; }
         .bg-accepted { background-color: #69069e; }
         .bg-in-preparation { background-color: #17a2b8; }
@@ -97,61 +136,118 @@
         .bg-out-for-delivery { background-color: #007bff; }
         .bg-delivered { background-color: #28a745; }
         .bg-cancelled { background-color: #dc3545; }
-        @media (max-width: 768px) {
-            /* 1. Botões ficam um embaixo do outro */
-            .admin-actions { flex-direction: column; gap: 10px; }
-            .btn-checkout { width: 100%; margin: 0; }
 
-            /* 2. Esconde o cabeçalho da tabela */
+
+        /* =========================================
+           VISÃO MOBILE (TABELA VIRA CARDS)
+           ========================================= */
+        @media (max-width: 768px) {
+            
+            /* Ajuste dos botões de topo */
+            .admin-actions { flex-direction: column; gap: 10px; }
+            .btn-action { width: 100%; margin: 0; }
+
+            /* Esconde cabeçalho da tabela */
             .tabela-admin thead { display: none; }
             
-            /* 3. Transforma a tabela em BLOCOS (Cards) */
+            /* Container vira transparente */
+            .tabela-container { background: transparent; box-shadow: none; }
+
+            /* Transforma linhas em blocos (Cards) */
             .tabela-admin, .tabela-admin tbody, .tabela-admin tr, .tabela-admin td {
                 display: block;
                 width: 100%;
                 box-sizing: border-box;
             }
 
-            /* 4. Estilo de cada "Cartão" (Linha) */
             .tabela-admin tr {
-                margin-bottom: 15px;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.05);
                 background: #fff;
+                margin-bottom: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+                border: 1px solid #f0f0f0;
+                overflow: hidden;
             }
 
-            /* 5. Estilo de cada célula dentro do cartão */
+            /* Células viram linhas flexíveis */
             .tabela-admin td {
-                text-align: right; /* Conteúdo alinhado à direita */
-                padding-left: 50%; /* Espaço para o rótulo */
-                position: relative;
-                border-bottom: 1px solid #eee;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                text-align: right;
+                padding: 12px 15px;
+                border-bottom: 1px solid #f5f5f5;
             }
             
-            /* 6. Usa o atributo 'data-label' para criar o título à esquerda */
+            .tabela-admin td:last-child { 
+                border-bottom: none; 
+                background-color: #fcfcfc; /* Destaque para a área de ação */
+                padding: 15px;
+                justify-content: flex-end; /* Alinha botões à direita */
+            }
+
+            /* Rótulo (Label) à esquerda */
             .tabela-admin td::before {
                 content: attr(data-label);
                 font-weight: bold;
                 text-transform: uppercase;
                 font-size: 0.8rem;
-                color: #555;
-                text-align: left;
+                color: #888;
+                margin-right: 10px;
             }
 
-            .tabela-admin td:last-child { border-bottom: none; }        
-            .status-select { max-width: none; width: 60%; }
+            /* Ajustes específicos de inputs no mobile */
+            .status-select { 
+                width: 100%; 
+                max-width: 150px; 
+                padding: 10px;
+            }
+            
+            .btn-icon {
+                width: 45px; height: 45px; /* Botões maiores para o dedo */
+                font-size: 1.2rem;
+            }
         }
     </style>
+{% endblock %}
 
-    <div style="width: 100%;"> <table class="tabela-admin">
+{% block content %}
+<main class="container-admin">
+    
+    <h1>Painel de Controle</h1>
+    <p style="color: #666;">Bem-vindo, <strong>{{ user.username }}</strong>.</p>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <div class="admin-actions">
+        <a href="{% url 'sushiemcasa:listar_produtos' %}" class="btn-action btn-produtos">
+            <i class="fas fa-sitemap"></i> Gerenciar Produtos
+        </a>
+        <a href="{% url 'sushiemcasa:gerenciar_horarios' %}" class="btn-action btn-horarios">
+            <i class="fas fa-calendar-alt"></i> Gerenciar Horários
+        </a>
+        <a href="/admin/" class="btn-action btn-django">
+            <i class="fas fa-cogs"></i> Admin Completo
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; font-weight: bold;
+                        {% if message.tags == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% endif %}
+                        {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h2 class="titulo-secao">📦 Pedidos em Tempo Real</h2>
+
+    <div class="tabela-container">
+        <table class="tabela-admin">
             <thead>
                 <tr>
                     <th>#ID</th>
-                    <th>Horário</th>
+                    <th>Data/Hora</th>
                     <th>Cliente</th>
                     <th>Itens</th>
                     <th>Total</th>
@@ -162,7 +258,9 @@
             <tbody>
                 {% for pedido in pedidos %}
                 <tr>
-                    <td data-label="ID Pedido"><strong>#{{ pedido.id }}</strong></td>
+                    <td data-label="ID Pedido">
+                        <strong>#{{ pedido.id }}</strong>
+                    </td>
                     
                     <td data-label="Data/Hora">
                         {{ pedido.created_at|date:"d/m" }} - {{ pedido.created_at|date:"H:i" }}
@@ -177,14 +275,14 @@
                     </td>
                     
                     <td data-label="Itens">
-                        <ul style="padding-left: 0; margin: 0; color: #555; list-style: none; text-align: right;">
+                        <div style="text-align: right; width: 100%;">
                             {% for item in pedido.items.all %}
-                                <li>{{ item.quantity }}x {{ item.item_name }}</li>
+                                <div style="font-size: 0.9rem;">{{ item.quantity }}x {{ item.item_name }}</div>
                             {% endfor %}
-                        </ul>
+                        </div>
                     </td>
                     
-                    <td data-label="Total" style="font-weight: bold; color: #333;">
+                    <td data-label="Total" style="font-weight: bold; color: #28a745;">
                         $ {{ pedido.total_price|floatformat:2 }}
                     </td>
                     
@@ -194,10 +292,10 @@
                         </span>
                     </td>
 
-                    <td data-label="Ação">
-                        <div style="display: flex; gap: 5px; align-items: center; justify-content: flex-end; width: 100%;">
+                    <td data-label="Gerenciar">
+                        <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end; width: 100%;">
                             
-                            <form method="POST" style="display: flex; gap: 5px; align-items: center;">
+                            <form method="POST" style="display: flex; gap: 5px; align-items: center; flex-grow: 1; justify-content: flex-end;">
                                 {% csrf_token %}
                                 <input type="hidden" name="order_id" value="{{ pedido.id }}">
                                 
@@ -209,26 +307,25 @@
                                     {% endfor %}
                                 </select>
                                 
-                                <button type="submit" class="btn-save-status" title="Salvar alteração">
+                                <button type="submit" class="btn-icon btn-save" title="Salvar">
                                     <i class="fas fa-save"></i>
                                 </button>
                             </form>
 
-                            {% if pedido.status == 'Delivered' or pedido.status == 'Cancelled' %}
-                                <form action="{% url 'sushiemcasa:deletar_pedido' pedido.id %}" method="POST" onsubmit="return confirm('Tem certeza que deseja apagar o pedido #{{ pedido.id }} permanentemente?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-delete-order" title="Excluir Pedido">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </form>
-                            {% endif %}
+                            <form action="{% url 'sushiemcasa:deletar_pedido' pedido.id %}" method="POST" onsubmit="return confirm('Tem certeza que deseja apagar o pedido #{{ pedido.id }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-icon btn-delete" title="Excluir">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                             
                         </div>
                     </td>
-                    </tr>
+                </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" style="text-align: center; padding: 30px; color: #777;">
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #777;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; display: block; margin-bottom: 10px; color: #ddd;"></i>
                         Nenhum pedido realizado ainda.
                     </td>
                 </tr>
