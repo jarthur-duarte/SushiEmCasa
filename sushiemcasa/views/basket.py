@@ -151,7 +151,7 @@ def finalizar_pedido_whatsapp(request):
 
     
     
-    numero_whatsapp_restaurante = "55878240512" 
+    numero_whatsapp_restaurante = "12397719811" 
     
     mensagem_final = (
         "🍣 *New Order - SushiEmCasa* 🍣\n\n"

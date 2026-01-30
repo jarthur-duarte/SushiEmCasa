@@ -86,7 +86,7 @@ def pagina_checkout(request):
                 f"{itens_whatsapp}\n"
                 f"💰 TOTAL DO PEDIDO: R$ {order.total_price:.2f}*"
             )
-            numero_whatsapp = "87988240512"
+            numero_whatsapp = "12397719811"
 
             mensagem_codificada = quote_plus(
                 mensagem,

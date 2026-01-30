@@ -3,6 +3,7 @@ from .models.produtos import Produto, Categoria
 from .models.pedidos import Order, OrderItem
 from .models.horariodefuncionamento import HorarioDeFuncionamento
 from .models.contato import MensagemFeedback
+from sushiemcasa.models.itens_promo import BannerPromocional
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
@@ -57,3 +58,10 @@ class HorarioDeFuncionamentoAdmin(admin.ModelAdmin):
     list_display = ('get_day_of_week_display', 'is_open', 'open_time', 'close_time')
     ordering = ('day_of_week',)
     list_editable = ('is_open', 'open_time', 'close_time')
+
+@admin.register(BannerPromocional)
+class BannerPromocionalAdmin(admin.ModelAdmin):
+    list_display = ('titulo', 'ordem', 'ativo', 'preco_promocional')
+    list_display_links = ('titulo',) 
+    list_editable = ('ordem', 'ativo') 
+    list_filter = ('ativo',)
