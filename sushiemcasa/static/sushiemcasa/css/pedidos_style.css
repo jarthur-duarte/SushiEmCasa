@@ -1,6 +1,7 @@
 .container-pedidos {
     padding: 2rem 5%;
     background-color: #f9f9f9;
+    min-height: 80vh;
 }
 
 .pedido {
@@ -19,6 +20,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap; 
+    gap: 10px;
 }
 
 .pedido-header h2 {
@@ -28,105 +31,113 @@
 }
 
 .pedido-status {
-font-weight: bold;
-padding: 0.5rem 1rem;
-border-radius: 20px;
-color: #fff;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 0.8rem;
 }
 
-.status-pendente { background-color: #f0ad4e; }
-.status-em-preparo { background-color: #337ab7; }
-.status-a-caminho { background-color: #5bc0de; }
-.status-entregue { background-color: #5cb85c; }
-.status-cancelado { background-color: #d9534f; }
+.status-pending { background-color: #f0ad4e; } 
+.status-in-preparation { background-color: #337ab7; }
+.status-out-for-delivery { background-color: #5bc0de; } 
+.status-delivered { background-color: #5cb85c; } 
+.status-cancelled { background-color: #d9534f; } 
 
 .item-pedido {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.item-pedido:last-child {
+    border-bottom: none;
 }
 
 .stepper-wrapper {
-  margin-top: auto;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    position: relative;
 }
+
 .stepper-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    z-index: 1;
 }
 
 .stepper-item::before {
-  position: absolute;
-  content: "";
-  border-bottom: 2px solid #ccc;
-  width: 100%;
-  top: 20px;
-  left: -50%;
-  z-index: 2;
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #e0e0e0;
+    width: 100%;
+    top: 20px;
+    left: -50%;
+    z-index: -1;
 }
 
 .stepper-item::after {
-  position: absolute;
-  content: "";
-  border-bottom: 2px solid #ccc;
-  width: 100%;
-  top: 20px;
-  left: 50%;
-  z-index: 2;
+    position: absolute;
+    content: "";
+    border-bottom: 2px solid #e0e0e0;
+    width: 100%;
+    top: 20px;
+    left: 50%;
+    z-index: -1;
 }
 
 .stepper-item .step-counter {
-  position: relative;
-  z-index: 5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #ccc;
-  margin-bottom: 6px;
-  color: #fff;
+    position: relative;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    margin-bottom: 8px;
+    color: #fff;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
 }
 
-.stepper-item.active {
-  font-weight: bold;
+.stepper-item .step-name {
+    font-size: 0.85rem;
+    color: #999;
+    font-weight: 500;
+    text-align: center;
 }
 
 .stepper-item.completed .step-counter {
-  background-color: #007bff;
+    background-color: #4bb543; 
+    color: #fff;
+    z-index: 5;
+    box-shadow: 0 0 10px rgba(75, 181, 67, 0.4); 
 }
 
-.stepper-item.completed::after {
-  position: absolute;
-  content: "";
-  border-bottom: 2px solid #007bff;
-  width: 100%;
-  top: 20px;
-  left: 50%;
-  z-index: 3;
-}
-
-.stepper-item.active {
+.stepper-item.completed .step-name {
+    color: #333;
     font-weight: bold;
 }
 
-.stepper-item.completed.entregue .step-counter {
-    background-color: #007bff;
+
+.stepper-item.completed::before {
+    border-bottom: 2px solid #4bb543; 
+    z-index: 3;
 }
 
-.stepper-item.completed.entregue::after {
-    border-bottom-color: #007bff;
+.stepper-item.completed::after {
+    border-bottom: 2px solid #e0e0e0 !important; 
+    z-index: -1;
 }
 
-.stepper-item:first-child::before {
-  content: none;
-}
-.stepper-item:last-child::after {
-  content: none;
-}
+.stepper-item:first-child::before { content: none; }
+.stepper-item:last-child::after { content: none; }

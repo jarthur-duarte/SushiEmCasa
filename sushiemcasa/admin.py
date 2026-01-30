@@ -9,7 +9,6 @@ class CategoriaAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('nome',)}
     list_display = ('nome', 'slug')
 
-
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
     list_display = ('nome', 'preco', 'categoria', 'disponivel')
@@ -27,16 +26,24 @@ class OrderItemInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'status', 'delivery_datetime', 'created_at', 'total_price')
+    list_display = ('id', 'cliente_info', 'status', 'total_price', 'delivery_datetime', 'created_at')
+    
     list_filter = ('status', 'delivery_datetime', 'created_at')
     inlines = [OrderItemInline]
     ordering = ('-created_at',) 
     
     search_fields = ('id', 'user__username', 'user__email')
     
+    list_editable = ['status']
+    
     readonly_fields = ('user', 'total_price', 'created_at', 'delivery_datetime')
 
-
+    def cliente_info(self, obj):
+        if obj.user:
+            return f"{obj.user.username}"
+        return "👤 Visitante (Sem Login)"
+    
+    cliente_info.short_description = "Cliente" 
 
 @admin.register(MensagemFeedback)
 class MensagemFeedbackAdmin(admin.ModelAdmin):

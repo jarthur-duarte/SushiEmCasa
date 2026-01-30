@@ -8,7 +8,7 @@ class Order(models.Model):
     STATUS_CHOICES = (
         ('Pending', 'Pendente'),
         ('In Preparation', 'Em preparo'),
-        ('Out for Delivery', 'A caminho'),
+        ('Out for Delivery', 'Pronto para retirada'),
         ('Delivered', 'Entregue'),
         ('Cancelled', 'Cancelado'),
     )
@@ -34,7 +34,7 @@ class Order(models.Model):
         return f"Order #{self.id} - {nome_cliente}"
     
     def clean(self):
-        if self.delivery_datetime:
+        if not self.id and self.delivery_datetime:
             now_plus_24h = timezone.now() + datetime.timedelta(hours=24)
             if timezone.is_naive(self.delivery_datetime):  
                 delivery_dt_aware = timezone.make_aware(self.delivery_datetime, timezone.get_current_timezone())

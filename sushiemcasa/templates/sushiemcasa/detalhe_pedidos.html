@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders detail #{{ order.id }} - Sushi em Casa</title>
+    <title>Order Detail #{{ order.id }} - Sushi em Casa</title>
     
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'sushiemcasa/images/LOGO.ico' %}">
+
 </head>
 <body>
 
@@ -52,50 +53,69 @@
                 <h2>Order #{{ order.id }}</h2>
                 <span class="pedido-status status-{{ order.status|slugify }}">{{ order.get_status_display }}</span>
             </div>
-            <p><strong>Costumer:</strong> {{ order.user.username }}</p>
+            
+            <p><strong>Customer:</strong> 
+                {% if order.user %}
+                    {{ order.user.username }}
+                {% else %}
+                    Guest (Visitante)
+                {% endif %}
+            </p>
+
             <p><strong>Order date:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+            
             {% if order.delivery_datetime %}
                 <p><strong>Scheduled delivery for:</strong> {{ order.delivery_datetime|date:"d/m/Y H:i" }}</p>
             {% else %}
                 <p><strong>Delivery:</strong> ASAP</p>
             {% endif %}
-            <h4>Itens:</h4>
+
+            <h4>Items:</h4>
             <ul class="items-list">
                 {% for item in order.items.all %}
                     <li class="item-pedido">
-                        {{ item.quantity }}x {{ item.item_name }} - R$ {{ item.price|floatformat:2 }}
+                        {{ item.quantity }}x {{ item.item_name }} - $ {{ item.price|floatformat:2 }}
                     </li>
                 {% empty %}
-                    <li>None itens found in this order.</li>
+                    <li>No items found in this order.</li>
                 {% endfor %}
             </ul>
             <hr>
             <p><strong>Total: $ {{ order.total_price|floatformat:2 }}</strong></p>
         </div>
 
-        {% if order.status != 'Cancelado' %}
+        {% if order.status != 'Cancelled' %}
             <div class="stepper-wrapper">
-                <div class="stepper-item {% if order.status == 'Pendente' or order.status == 'Em preparo' or order.status == 'A caminho' or order.status == 'Entregue' %}completed{% endif %}">
+                
+                <div class="stepper-item {% if order.status == 'Pending' or order.status == 'In Preparation' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
                     <div class="step-counter"><i class="fas fa-check"></i></div>
                     <div class="step-name">Order Accepted</div>
                 </div>
-                <div class="stepper-item {% if order.status == 'Em preparo' or order.status == 'A caminho' or order.status == 'Entregue' %}completed{% endif %}">
+
+                <div class="stepper-item {% if order.status == 'In Preparation' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
                     <div class="step-counter"><i class="fas fa-utensils"></i></div>
                     <div class="step-name">In preparation</div>
                 </div>
-                <div class="stepper-item {% if order.status == 'A caminho' or order.status == 'Entregue' %}completed{% endif %}">
+
+                <div class="stepper-item {% if order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
                     <div class="step-counter"><i class="fas fa-truck"></i></div>
                     <div class="step-name">On the way</div>
                 </div>
-                <div class="stepper-item {% if order.status == 'Entregue' %}completed entregue{% endif %}">
+
+                <div class="stepper-item {% if order.status == 'Delivered' %}completed entregue{% endif %}">
                     <div class="step-counter"><i class="fas fa-box-open"></i></div>
                     <div class="step-name">Delivered</div>
                 </div>
+
+            </div>
+        {% else %}
+             <div class="alert alert-danger" style="text-align: center; margin-top: 20px; color: red;">
+                <strong>Order Cancelled.</strong> Please contact us.
             </div>
         {% endif %}
 
         <p style="text-align: center; margin-top: 20px;">
-            <a href="{% url 'sushiemcasa:orders' %}" class="btn btn-secondary">Voltar para Meus Pedidos</a>
+            <a href="{% url 'sushiemcasa:orders' %}" class="btn btn-secondary">Back to My Orders</a>
         </p>
     </main>
 
