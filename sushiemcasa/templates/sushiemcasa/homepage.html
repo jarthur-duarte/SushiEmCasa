@@ -5,191 +5,243 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
+    <style>
+    /* --- AJUSTE DO CARROSSEL (PARA NÃO COBRIR A TELA) --- */
+    .secao-promocoes {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+    }
+
+    .carrossel-container {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        padding: 0 40px; /* Espaço para as setas não ficarem em cima do card */
+    }
+
+    .carrossel-viewport {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    /* REMOVE OS PONTINHOS PRETOS DA LATERAL */
+    .carrossel-track {
+        display: flex;
+        list-style: none !important; /* Remove bullets */
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .cartao-promocao {
+        min-width: 100%;
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #eee;
+    }
+
+    /* --- AJUSTE DAS SETAS (MAIS VISÍVEIS) --- */
+    .seta {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: #222; /* Fundo escuro para destacar */
+        color: #fff; /* Ícone branco */
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        transition: 0.3s;
+    }
+
+    .seta:hover {
+        background-color: #4CAF50; /* Fica verde ao passar o mouse */
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .seta-esquerda { left: 0; }
+    .seta-direita { right: 0; }
+
+    .imagem-promocao img {
+        max-height: 300px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    /* --- ESTILOS DO CATÁLOGO CLEAN (MANTIDOS) --- */
+    .secao-menu {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .produtos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+        padding: 20px 0;
+    }
+
+    .produto-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-img-container {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .card-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .produto-info {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .card-footer-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #f5f5f5;
+        padding-top: 15px;
+    }
+
+    .add-to-cart-button {
+        background-color: #222;
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    /* AJUSTE MOBILE */
+    @media (max-width: 768px) {
+        .carrossel-container { padding: 0 30px; }
+        .seta { width: 30px; height: 30px; font-size: 0.8rem; }
+        .imagem-promocao img { max-height: 200px; }
+        .produtos-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 10px;
+        }
+        .card-img-container { height: 130px; }
+        .produto-descricao { display: none; }
+    }
+</style>
 {% endblock %}
 
-
 {% block content %}
-    <main>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="message {{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        
-        <section class="secao-promocoes">
-            <h2>Deals</h2>
-            <div class="carrossel-container">
-                <button class="seta seta-esquerda"><i class="fas fa-chevron-left"></i></button>
-                <div class="carrossel-viewport">
-                    <div class="carrossel-track">
-                        <div class="cartao-promocao">
-                            <div class="imagem-promocao">
-                                <img src="{% static 'sushiemcasa/images/hot.png' %}" alt="hot filadélfia">
-                            </div>
-                            <div class="descricao-promocao">
-                                <h3>Hot philladelphia</h3>
-                                <p>20 pieces of fries with rice, salmon, chives, cream cheese, tare and sesame.</p> 
-                                <div class="precos">
-                                    <span class="preco-antigo">$ 23</span>
-                                    <span class="preco-novo">$ 20</span>
-                                </div>
-                            </div>
+<main>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="message {{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <section class="secao-promocoes">
+        <h2>Deals</h2>
+        <div class="carrossel-container">
+            <button class="seta seta-esquerda"><i class="fas fa-chevron-left"></i></button>
+            <div class="carrossel-viewport">
+                <div class="carrossel-track">
+                    <div class="cartao-promocao">
+                        <div class="imagem-promocao">
+                            <img src="{% static 'sushiemcasa/images/hot.png' %}" alt="hot filadélfia">
                         </div>
-                        <div class="cartao-promocao">
-                            <div class="imagem-promocao">
-                                <img src="{% static 'sushiemcasa/images/salmao.png' %}" alt="Promoção Combinado Salmão">
-                            </div>
-                            <div class="descricao-promocao">
-                                <h3>Salmon Combination</h3>
-                                <p>25 fresh pieces of salmon, including sashimi, California rolls and joys.</p> 
-                                <div class="precos">
-                                    <span class="preco-antigo">$ 28</span>
-                                    <span class="preco-novo">$ 24</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cartao-promocao">
-                            <div class="imagem-promocao">
-                                <img src="{% static 'sushiemcasa/images/temaki.png' %}" alt="Promoção Temaki Hot">
-                            </div>
-                            <div class="descricao-promocao">
-                                <h3>Temaki Hot</h3>
-                                <p>Fried salmon temaki, cream cheese, rice and seaweed.</p>
-                                <div class="precos">
-                                    <span class="preco-antigo">$ 22</span>
-                                    <span class="preco-novo">$ 20</span>
-                                </div>
+                        <div class="descricao-promocao" style="padding: 20px;">
+                            <h3>Hot philladelphia</h3>
+                            <p>20 pieces of fries with salmon and cream cheese.</p> 
+                            <div class="precos">
+                                <span class="preco-antigo" style="text-decoration: line-through; color: #999;">$ 23</span>
+                                <span class="preco-novo" style="font-weight: bold; color: #e74c3c; font-size: 1.2rem;">$ 20</span>
                             </div>
                         </div>
                     </div>
-                </div>
-                <button class="seta seta-direita"><i class="fas fa-chevron-right"></i></button>
+                    </div>
             </div>
-        </section>
+            <button class="seta seta-direita"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
 
-        <hr class="separador">
+    <hr class="separador">
 
-        <section id="menu-principal" class="secao-menu">
-            <div class="cabecalho-menu">
-                <h2>Menu</h2>
-                {% if categoria_selecionada %}
-                    <a href="{% url 'sushiemcasa:cardapio' %}#menu-principal">All Sushis</a>
-                {% endif %}
-            </div>
-            <div class="filtros-menu">
-                {% for categoria in categorias %}
-                    <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}#menu-principal" class="botao-filtro {% if categoria.nome == categoria_selecionada %}ativo{% endif %}">{{ categoria.nome }}</a>
-                {% endfor %}
-            </div>
+    <section id="menu-principal" class="secao-menu">
+        <div class="cabecalho-menu">
+            <h2>Menu</h2>
+        </div>
 
-            <div class="produtos-grid">
-                {% for produto in produtos %}
-                <div class="produto-card">
+        <div class="filtros-menu">
+            {% for categoria in categorias %}
+                <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}#menu-principal" 
+                   class="botao-filtro {% if categoria.nome == categoria_selecionada %}ativo{% endif %}">
+                   {{ categoria.nome }}
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="produtos-grid">
+            {% for produto in produtos %}
+            <div class="produto-card">
+                <div class="card-img-container">
                     {% if produto.imagem %}
-                    <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
                     {% endif %}
-                    <div class="produto-info">
-                        <h3>{{ produto.nome|upper }}</h3>
-                        <p class="produto-descricao">{{ produto.descricao }}</p>
-                        <p class="produto-preco">$ {{ produto.preco|floatformat:2 }}</p>
-
-                        <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post" class="add-to-cart-form">
-                            {% csrf_token %}
-                            <input type="number" name="quantity" value="1" min="1" class="quantity-input">
-                            <button type="submit" class="add-to-cart-button">Add</button>
-                        </form>
-                        </div>
                 </div>
-                {% empty %}
-                <p>Nenhum produto encontrado nesta categoria.</p>
-                {% endfor %}
+                
+                <div class="produto-info">
+                    <h3 style="font-size: 1rem; font-weight: 800;">{{ produto.nome }}</h3>
+                    <p class="produto-descricao">{{ produto.descricao }}</p>
+                    
+                    <div class="card-footer-flex">
+                        <span class="produto-preco" style="font-weight: bold; color: #2ecc71;">$ {{ produto.preco|floatformat:2 }}</span>
+                        
+                        <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="add-to-cart-button">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-        </section>
-    </main>
+            {% endfor %}
+        </div>
+    </section>
+</main>
 {% endblock content %}
-
 
 {% block extra_js %}
     <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
     <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script> 
 {% endblock %}
-@media (max-width: 768px) {
-            
-            /* 1. Grade de Produtos */
-            .produtos-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
-                gap: 12px; /* Espaço entre eles */
-                padding: 10px;
-            }
-
-            /* 2. Cartão do Produto */
-            .produto-card {
-                width: 100%;
-                margin: 0;
-                display: flex;
-                flex-direction: column;
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            }
-
-            /* 3. Imagem do Produto */
-            .produto-card img {
-                width: 100%;
-                height: 120px; /* Altura fixa menor */
-                object-fit: cover;
-            }
-
-            /* 4. Texto e Informações */
-            .produto-info {
-                padding: 8px;
-            }
-
-            .produto-info h3 {
-                font-size: 0.9rem; /* Título menor */
-                margin-bottom: 5px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .produto-descricao {
-                display: none; /* Esconde a descrição longa no celular para limpar */
-            }
-
-            .produto-preco {
-                font-size: 1rem;
-                font-weight: bold;
-                color: #d32f2f;
-                margin: 5px 0;
-            }
-
-            /* 5. Botão de Adicionar */
-            .add-to-cart-form {
-                display: flex;
-                flex-direction: column; /* Input em cima, botão embaixo */
-                gap: 5px;
-            }
-
-            .quantity-input {
-                width: 100%;
-                padding: 5px;
-                text-align: center;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-
-            .add-to-cart-button {
-                width: 100%;
-                padding: 8px 0;
-                font-size: 0.8rem;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                font-weight: bold;
-            }
-        }
