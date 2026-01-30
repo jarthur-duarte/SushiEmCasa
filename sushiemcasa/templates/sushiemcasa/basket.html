@@ -29,7 +29,7 @@
         color: white;
     }
     
-    /* Remove as setinhas do input number para ficar mais limpo (opcional) */
+    /* Remove as setinhas do input number para ficar mais limpo */
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { 
         -webkit-appearance: none; 
@@ -63,16 +63,19 @@
             <tbody>
                 {% for item in cart_items %}
                 <tr class="item-carrinho">
-                    <td class="imagem-item">
+                    <td class="imagem-item" data-label="Image">
                         {% if item.image_url %}
                             <img src="{{ item.image_url }}" alt="{{ item.name }}" width="60">
                         {% else %}
                             <img src="{% static 'sushiemcasa/images/placeholder.png' %}" alt="Sem imagem" width="60">
                         {% endif %}
                     </td>
-                    <td>{{ item.name }}</td>
-                    <td>$ {{ item.price|stringformat:".2f" }}</td> 
-                    <td>
+                    
+                    <td data-label="Product"><strong>{{ item.name }}</strong></td>
+                    
+                    <td data-label="Unit Price">$ {{ item.price|stringformat:".2f" }}</td> 
+                    
+                    <td data-label="Amount">
                         <div class="form-atualizar-quantidade">
                             <input type="number" 
                                    value="{{ item.quantity }}" 
@@ -83,8 +86,12 @@
                                    style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
                         </div>
                     </td>
-                    <td id="subtotal-{{ item.product_id }}">$ {{ item.total|stringformat:".2f" }}</td> 
-                    <td>
+                    
+                    <td id="subtotal-{{ item.product_id }}" data-label="Subtotal" style="font-weight: bold; color: #333;">
+                        $ {{ item.total|stringformat:".2f" }}
+                    </td> 
+                    
+                    <td data-label="Action">
                         <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
                             {% csrf_token %}
                             <button type="submit" class="btn-remover"><i class="fas fa-trash-alt"></i> Remover</button>
@@ -108,9 +115,25 @@
 </main>
 
 <script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const inputs = document.querySelectorAll('.quantidade-automatico');
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        const csrfToken = getCookie('csrftoken');
 
         inputs.forEach(input => {
             input.addEventListener('change', function() {
@@ -124,13 +147,18 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken
+                        'X-CSRFToken': csrfToken 
                     },
                     body: JSON.stringify({
                         'quantity': newQuantity
                     })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na rede ou token inválido');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         const subtotalEl = document.getElementById(`subtotal-${productId}`);
