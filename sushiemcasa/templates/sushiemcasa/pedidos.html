@@ -5,8 +5,27 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
+    <style>
+        .stepper-item.completed .step-counter {
+            background-color: #4bb543 !important;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(75, 181, 67, 0.4);
+            z-index: 5;
+        }
+        .stepper-item.completed .step-name {
+            color: #333;
+            font-weight: bold;
+        }
+        .stepper-item.completed::before {
+            border-bottom: 2px solid #4bb543 !important;
+            z-index: 3;
+        }
+        .stepper-item.completed::after {
+            border-bottom: 2px solid #e0e0e0 !important;
+            z-index: 2;
+        }
+    </style>
 {% endblock %}
-
 
 {% block content %}
     <main class="container-pedidos">
@@ -14,52 +33,74 @@
 
         {% if pedidos %}
             {% for pedido in pedidos %}
-                 <div class="pedido">
+                <div class="pedido">
+                    
                     <div class="pedido-header">
                         <h2>Order #{{ pedido.id }}</h2>
                         <span class="pedido-status status-{{ pedido.status|slugify }}">{{ pedido.get_status_display }}</span>
                     </div>
-                    <p><strong>Costumer:</strong> {{ pedido.user.username }}</p>
+                    
+                    <p><strong>Customer:</strong> 
+                        {% if pedido.user %}
+                            {{ pedido.user.username }}
+                        {% else %}
+                            Guest (Visitante)
+                        {% endif %}
+                    </p>
+
                     <p><strong>Order date:</strong> {{ pedido.created_at|date:"d/m/Y H:i" }}</p>
+                    
                     {% if pedido.delivery_datetime %}
                         <p><strong>Scheduled delivery for:</strong> {{ pedido.delivery_datetime|date:"d/m/Y H:i" }}</p>
                     {% else %}
                         <p><strong>Delivery:</strong> ASAP</p>
                     {% endif %}
-                    <h4>Itens:</h4>
+                    
+                    <h4>Items:</h4>
                     {% for item in pedido.items.all %}
                         <div class="item-pedido">
                             <span>{{ item.quantity }}x {{ item.item_name }}</span>
-                            <span>$ {{ item.price }}</span>
+                            <span>$ {{ item.price|floatformat:2 }}</span>
                         </div>
                     {% endfor %}
                     <hr>
-                    <p><strong>Total: $ {{ pedido.total_price }}</strong></p>
-                    </div>
-                    {% if pedido.status != 'Cancelado' %}
+                    <p><strong>Total: $ {{ pedido.total_price|floatformat:2 }}</strong></p>
+
+                    {% if pedido.status != 'Cancelled' %}
                         <div class="stepper-wrapper">
-                            <div class="stepper-item {% if pedido.status == 'Pendente' or pedido.status == 'Em preparo' or pedido.status == 'A caminho' or pedido.status == 'Entregue' %}completed{% endif %}">
+                            
+                            <div class="stepper-item {% if pedido.status == 'Pending' or pedido.status == 'In Preparation' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
                                 <div class="step-counter"><i class="fas fa-check"></i></div>
                                 <div class="step-name">Order Accepted</div>
                             </div>
-                            <div class="stepper-item {% if pedido.status == 'Em preparo' or pedido.status == 'A caminho' or pedido.status == 'Entregue' %}completed{% endif %}">
+
+                            <div class="stepper-item {% if pedido.status == 'In Preparation' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
                                 <div class="step-counter"><i class="fas fa-utensils"></i></div>
                                 <div class="step-name">In preparation</div>
                             </div>
-                            <div class="stepper-item {% if pedido.status == 'A caminho' or pedido.status == 'Entregue' %}completed{% endif %}">
+
+                            <div class="stepper-item {% if pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
                                 <div class="step-counter"><i class="fas fa-truck"></i></div>
-                                <div class="step-name">Redy to pickup</div>
+                                <div class="step-name">Ready to pickup</div>
                             </div>
-                            <div class="stepper-item {% if pedido.status == 'Entregue' %}completed entregue{% endif %}">
+
+                            <div class="stepper-item {% if pedido.status == 'Delivered' %}completed{% endif %}">
                                 <div class="step-counter"><i class="fas fa-box-open"></i></div>
                                 <div class="step-name">Delivered</div>
                             </div>
+                        
+                        </div>
+                    {% else %}
+                        <div class="alert alert-danger" style="text-align: center; margin-top: 20px;">
+                            Order Cancelled
                         </div>
                     {% endif %}
+                    
                 </div>
+                <br>
             {% endfor %}
         {% else %}
-            <p>No orders registered yet.</p>
+            <p style="text-align: center;">No orders registered yet.</p>
         {% endif %}
     </main>
 {% endblock content %}

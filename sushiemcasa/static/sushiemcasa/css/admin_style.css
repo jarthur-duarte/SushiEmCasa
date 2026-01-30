@@ -1,10 +1,9 @@
-/* --- Reset Básico e Fontes --- */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background-color: #f4f7f6;
     color: #333;
     line-height: 1.6;
-    margin: 20px; /* Adiciona uma margem se não estiver usando um container */
+    margin: 20px; 
 }
 
 h2 {
@@ -13,15 +12,14 @@ h2 {
     padding-bottom: 10px;
 }
 
-/* --- Estilos da Tabela (Página de Lista) --- */
 table {
     width: 100%;
-    border-collapse: collapse; /* Tira espaço entre bordas */
+    border-collapse: collapse; 
     margin-top: 20px;
     background-color: #ffffff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     border-radius: 8px;
-    overflow: hidden; /* Garante que o radius funcione nas bordas */
+    overflow: hidden;
 }
 
 table th, table td {
@@ -35,12 +33,10 @@ table th {
     font-weight: 600;
 }
 
-/* Efeito ao passar o mouse */
 table tr:hover {
     background-color: #fdfdfd;
 }
 
-/* --- Estilos de Formulário (Página de Edição) --- */
 form {
     background-color: #ffffff;
     padding: 25px;
@@ -49,7 +45,6 @@ form {
     margin-top: 20px;
 }
 
-/* O '{{ form.as_p }}' cria tags <p> */
 form p {
     margin-bottom: 15px;
 }
@@ -70,11 +65,9 @@ form select {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    /* Faz o padding não aumentar a largura total */
     box-sizing: border-box; 
 }
 
-/* --- Botões e Links --- */
 .btn,
 button[type="submit"] {
     display: inline-block;
@@ -95,7 +88,6 @@ button[type="submit"]:hover {
     background-color: #2980b9;
 }
 
-/* Link 'Cancelar' */
 a[href="{% url 'listar_produtos' %}"] {
     display: inline-block;
     margin-top: 15px;
