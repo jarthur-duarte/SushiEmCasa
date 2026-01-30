@@ -10,30 +10,117 @@
 
 {% block content %}
 <style>
-    /* Estilos para os botões no resumo do carrinho */
-    .resumo-carrinho .btn-checkout {
-        display: block;
-        width: 100%;
-        text-align: center;
-        box-sizing: border-box;
-        margin-bottom: 10px;
+    /* --- ESTILOS GERAIS --- */
+    .container-carrinho {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 0 15px;
     }
 
-    /* Estilo específico para o botão do WhatsApp */
-    .btn-whatsapp {
-        background-color: #25D366;
-        color: white;
+    /* Estilos para os botões no resumo do carrinho */
+    .resumo-carrinho {
+        margin-top: 30px;
+        text-align: right;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
     }
-    .btn-whatsapp:hover {
-        background-color: #1DAE56;
+
+    .resumo-carrinho .btn-checkout {
+        display: inline-block;
+        background-color: #28a745;
         color: white;
+        padding: 10px 30px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: 0.2s;
+        margin-top: 10px;
     }
     
-    /* Remove as setinhas do input number para ficar mais limpo */
+    .resumo-carrinho .btn-checkout:hover { background-color: #218838; }
+
+    /* Remove as setinhas do input number */
     input[type=number]::-webkit-inner-spin-button, 
     input[type=number]::-webkit-outer-spin-button { 
-        -webkit-appearance: none; 
-        margin: 0; 
+        -webkit-appearance: none; margin: 0; 
+    }
+
+    /* Tabela Desktop Padrão */
+    .tabela-carrinho {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .tabela-carrinho th { background-color: #eee; padding: 10px; text-align: left; }
+    .tabela-carrinho td { padding: 10px; border-bottom: 1px solid #ddd; vertical-align: middle; }
+
+    .btn-remover {
+        background-color: #dc3545; color: white; border: none;
+        padding: 5px 10px; border-radius: 4px; cursor: pointer;
+    }
+
+    /* =========================================
+       VISÃO MOBILE (TRANSFORMA TABELA EM CARDS)
+       ========================================= */
+    @media (max-width: 768px) {
+        
+        /* 1. Esconde o cabeçalho da tabela */
+        .tabela-carrinho thead { display: none; }
+        
+        /* 2. Transforma a tabela em blocos */
+        .tabela-carrinho, .tabela-carrinho tbody, .tabela-carrinho tr, .tabela-carrinho td {
+            display: block;
+            width: 100%;
+        }
+
+        /* 3. Estilo do "Cartão" (Linha da tabela) */
+        .tabela-carrinho tr {
+            margin-bottom: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 15px;
+            position: relative; /* Para posicionar elementos se precisar */
+        }
+
+        /* 4. Estilo das células */
+        .tabela-carrinho td {
+            text-align: right; /* Conteúdo alinhado à direita */
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tabela-carrinho td:last-child { border-bottom: none; }
+
+        /* 5. Labels (Títulos) à esquerda */
+        .tabela-carrinho td::before {
+            content: attr(data-label); /* Pega o nome do atributo data-label */
+            font-weight: bold;
+            color: #555;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        /* Ajuste especial para a Imagem */
+        .tabela-carrinho td.imagem-item {
+            justify-content: center; /* Centraliza a imagem */
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .tabela-carrinho td.imagem-item::before { display: none; } /* Sem texto "Image" */
+
+        /* Botão Finalizar ocupa largura total no mobile */
+        .resumo-carrinho .btn-checkout {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 
@@ -43,7 +130,7 @@
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" style="padding: 10px; background: #e9ecef; margin-bottom: 10px; border-radius: 4px;">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
@@ -65,9 +152,9 @@
                 <tr class="item-carrinho">
                     <td class="imagem-item" data-label="Image">
                         {% if item.image_url %}
-                            <img src="{{ item.image_url }}" alt="{{ item.name }}" width="60">
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" width="80" style="border-radius: 5px;">
                         {% else %}
-                            <img src="{% static 'sushiemcasa/images/placeholder.png' %}" alt="Sem imagem" width="60">
+                            <img src="{% static 'sushiemcasa/images/placeholder.png' %}" alt="Sem imagem" width="80">
                         {% endif %}
                     </td>
                     
@@ -83,18 +170,18 @@
                                    class="quantidade-automatico"
                                    data-product-id="{{ item.product_id }}"
                                    data-url="{% url 'sushiemcasa:update_cart' item.product_id %}"
-                                   style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                                   style="width: 60px; text-align: center; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;">
                         </div>
                     </td>
                     
-                    <td id="subtotal-{{ item.product_id }}" data-label="Subtotal" style="font-weight: bold; color: #333;">
+                    <td id="subtotal-{{ item.product_id }}" data-label="Subtotal" style="font-weight: bold; color: #28a745; font-size: 1.1rem;">
                         $ {{ item.total|stringformat:".2f" }}
                     </td> 
                     
                     <td data-label="Action">
                         <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
                             {% csrf_token %}
-                            <button type="submit" class="btn-remover"><i class="fas fa-trash-alt"></i> Remover</button>
+                            <button type="submit" class="btn-remover"><i class="fas fa-trash-alt"></i> Remove</button>
                         </form>
                     </td>
                 </tr>
@@ -103,14 +190,17 @@
         </table>
 
         <div class="resumo-carrinho">
-            <h3>Total: <span id="total-geral">$ {{ cart_total|stringformat:".2f" }}</span></h3> 
+            <h3 style="margin-bottom: 10px;">Total: <span id="total-geral" style="color: #28a745;">$ {{ cart_total|stringformat:".2f" }}</span></h3> 
             
-            <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalize Order</a>
+            <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalize Order <i class="fas fa-arrow-right"></i></a>
         </div>
 
     {% else %}
-        <p>Your basket is empty.</p>
-        <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn-primary">Back to Menu</a></p>
+        <div style="text-align: center; padding: 40px; color: #777;">
+            <i class="fas fa-shopping-basket" style="font-size: 3rem; margin-bottom: 20px; color: #ddd;"></i>
+            <p style="font-size: 1.2rem;">Your basket is empty.</p>
+            <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn-checkout" style="background-color: #007bff;">Back to Menu</a></p>
+        </div>
     {% endif %}
 </main>
 
@@ -132,7 +222,6 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const inputs = document.querySelectorAll('.quantidade-automatico');
-        
         const csrfToken = getCookie('csrftoken');
 
         inputs.forEach(input => {
@@ -149,35 +238,24 @@
                         'Content-Type': 'application/json',
                         'X-CSRFToken': csrfToken 
                     },
-                    body: JSON.stringify({
-                        'quantity': newQuantity
-                    })
+                    body: JSON.stringify({ 'quantity': newQuantity })
                 })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro na rede ou token inválido');
-                    }
+                    if (!response.ok) throw new Error('Erro na rede');
                     return response.json();
                 })
                 .then(data => {
                     if (data.success) {
                         const subtotalEl = document.getElementById(`subtotal-${productId}`);
-                        if (subtotalEl) {
-                            subtotalEl.innerText = '$ ' + parseFloat(data.item_total).toFixed(2);
-                        }
+                        if (subtotalEl) subtotalEl.innerText = '$ ' + parseFloat(data.item_total).toFixed(2);
 
                         const totalGeralEl = document.getElementById('total-geral');
-                        if (totalGeralEl) {
-                            totalGeralEl.innerText = '$ ' + parseFloat(data.cart_total).toFixed(2);
-                        }
-                    } else {
-                        console.error('Erro ao atualizar carrinho');
+                        if (totalGeralEl) totalGeralEl.innerText = '$ ' + parseFloat(data.cart_total).toFixed(2);
                     }
                 })
-                .catch(error => console.error('Erro na requisição:', error));
+                .catch(error => console.error('Erro:', error));
             });
         });
     });
 </script>
-
 {% endblock %}

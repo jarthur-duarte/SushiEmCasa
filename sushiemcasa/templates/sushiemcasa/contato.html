@@ -5,76 +5,262 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/contato_style.css' %}">
+    
+    <style>
+        /* --- CONTAINER GERAL --- */
+        .contact-main-container {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 0 15px;
+            padding-bottom: 80px; /* Espaço para não cobrir o rodapé/whatsapp */
+        }
+
+        /* --- LISTA DE CONTATOS (CARDS) --- */
+        .contact-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .contact-list li {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            border: 1px solid #f0f0f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden; /* Para o link não sair da borda */
+        }
+
+        .contact-list li:active {
+            transform: scale(0.98); /* Efeito de clique no celular */
+        }
+
+        /* O link ou div de dentro do card */
+        .contact-link {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            text-decoration: none;
+            color: #333;
+            width: 100%;
+        }
+
+        /* ÍCONES */
+        .icon-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        /* Cores Específicas dos Ícones */
+        .bg-phone { background-color: #007bff; }
+        .bg-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .bg-email { background-color: #ea4335; }
+        .bg-whats { background-color: #25d366; }
+
+        /* Textos */
+        .text-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Evita quebra de layout se texto for longo */
+        }
+
+        .label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #222;
+            margin-bottom: 2px;
+        }
+
+        .info {
+            font-size: 0.95rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- FORMULÁRIO DE FEEDBACK --- */
+        .feedback-form-section {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-top: 40px;
+            border: 1px solid #f0f0f0;
+        }
+
+        .feedback-msg {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .form-field {
+            margin-bottom: 15px;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        /* Estilizando os inputs do Django */
+        .form-field input, 
+        .form-field textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fcfcfc;
+            transition: border-color 0.3s;
+            box-sizing: border-box; /* Garante que padding não estoure a largura */
+        }
+
+        .form-field input:focus, 
+        .form-field textarea:focus {
+            border-color: #28a745;
+            outline: none;
+            background-color: #fff;
+        }
+
+        .form-field textarea {
+            resize: vertical; /* Permite esticar apenas para baixo */
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #000;
+        }
+
+        /* Alertas de Sucesso/Erro */
+        .alert-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    </style>
 {% endblock %}
 
 
 {% block content %}
     <main class="contact-main-container">
         
-    {% if messages %}
-    <div style="max-width: 800px; margin: 20px auto; padding: 0 20px; text-align: center;">
-        {% for message in messages %}
-            <div style="background-color: {% if message.tags == 'success' %}#28a745{% else %}#dc3545{% endif %}; color: white; padding: 15px; border-radius: 5px; font-weight: bold;">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-box {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
         
         <ul class="contact-list">
+            
             <li>
-                <div style="display: flex; align-items: center; width: 100%; padding: 20px 10px;">
-                    <i class="fas fa-phone icon"></i>
-                    <span class="label">Phone</span>
-                    <span class="info">+1 (239) 771-9811</span>
+                <div class="contact-link">
+                    <div class="icon-box bg-phone">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="text-content">
+                        <span class="label">Phone</span>
+                        <span class="info">+1 (239) 771-9811</span>
+                    </div>
                 </div>
             </li>
+
             <li>
-                <a href="https://www.instagram.com/Sushiemcasausa" target="_blank">
-                    <i class="fab fa-instagram icon"></i>
-                    <span class="label">Instagram</span>
-                    <span class="info">@Sushiemcasausa</span>
+                <a href="https://www.instagram.com/Sushiemcasausa" target="_blank" class="contact-link">
+                    <div class="icon-box bg-insta">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <div class="text-content">
+                        <span class="label">Instagram</span>
+                        <span class="info">@Sushiemcasausa</span>
+                    </div>
                 </a>
             </li>
+
             <li>
-                <div style="display: flex; align-items: center; width: 100%; padding: 20px 10px;">
-                    <i class="fas fa-envelope icon"></i>
-                    <span class="label">Email</span>
-                    <span class="info">sushiemcasausa@gmail.com</span>
+                <div class="contact-link">
+                    <div class="icon-box bg-email">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="text-content">
+                        <span class="label">Email</span>
+                        <span class="info">sushiemcasausa@gmail.com</span>
+                    </div>
                 </div>
             </li>
+
             <li>
-                <a href="https://wa.me/12397719811?text=Ola%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20o%20meu%20pedido." target="_blank">
-                    <i class="fab fa-whatsapp icon"></i>
-                    <span class="label">WhatsApp</span>
-                    <span class="info">+1 (239) 771-9811</span>
+                <a href="https://wa.me/12397719811?text=Ola%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20o%20meu%20pedido." target="_blank" class="contact-link">
+                    <div class="icon-box bg-whats">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="text-content">
+                        <span class="label">WhatsApp</span>
+                        <span class="info">Chat with us</span>
+                    </div>
                 </a>
             </li>
         </ul>
 
         <div class="feedback-form-section">
-            <h2 class="feedback-msg">Leave Your Feedback:</h2>
+            <h2 class="feedback-msg">Leave Your Feedback</h2>
 
             <form method="post" class="feedback-form">
                 {% csrf_token %}
                 
                 <div class="form-field">
-                    {{ form.nome.label_tag }}
+                    <label for="{{ form.nome.id_for_label }}">Name:</label>
                     {{ form.nome }}
                 </div>
                 
                 <div class="form-field">
-                    {{ form.email.label_tag }}
+                    <label for="{{ form.email.id_for_label }}">Email (optional):</label>
                     {{ form.email }}
                 </div>
 
                 <div class="form-field">
-                    {{ form.mensagem.label_tag }}
+                    <label for="{{ form.mensagem.id_for_label }}">Message:</label>
                     {{ form.mensagem }}
                 </div>
             
-                <button type="submit" class="btn-submit">Send feedback</button>    
+                <button type="submit" class="btn-submit">Send Feedback <i class="fas fa-paper-plane"></i></button>    
             </form>
         </div>
+
     </main>
-{% endblock content %}
+{% endblock %}
