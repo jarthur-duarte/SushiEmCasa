@@ -15,18 +15,25 @@
         display: block;
         width: 100%;
         text-align: center;
-        box-sizing: border-box; /* Garante que padding/border não afetem a largura */
-        margin-bottom: 10px; /* Espaço entre os botões */
+        box-sizing: border-box;
+        margin-bottom: 10px;
     }
 
     /* Estilo específico para o botão do WhatsApp */
     .btn-whatsapp {
-        background-color: #25D366; /* Cor oficial do WhatsApp */
+        background-color: #25D366;
         color: white;
     }
     .btn-whatsapp:hover {
-        background-color: #1DAE56; /* Cor mais escura no hover */
+        background-color: #1DAE56;
         color: white;
+    }
+    
+    /* Remove as setinhas do input number para ficar mais limpo (opcional) */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
     }
 </style>
 
@@ -41,6 +48,8 @@
     {% endif %}
 
     {% if cart_items %}
+        {% csrf_token %}
+        
         <table class="tabela-carrinho">
             <thead>
                 <tr>
@@ -58,19 +67,23 @@
                         {% if item.image_url %}
                             <img src="{{ item.image_url }}" alt="{{ item.name }}" width="60">
                         {% else %}
-                            <img src="{% static 'sushiemcasa/images/placeholder.png' %}" alt="Sem imagem" width="60"> {# Add a placeholder image if needed #}
+                            <img src="{% static 'sushiemcasa/images/placeholder.png' %}" alt="Sem imagem" width="60">
                         {% endif %}
                     </td>
                     <td>{{ item.name }}</td>
                     <td>$ {{ item.price|stringformat:".2f" }}</td> 
                     <td>
-                        <form action="{% url 'sushiemcasa:update_cart' item.product_id %}" method="post" class="form-atualizar-quantidade">
-                            {% csrf_token %}
-                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantidade-input-carrinho">
-                            <button type="submit" class="btn-atualizar"><i class="fas fa-sync-alt"></i></button>
-                        </form>
+                        <div class="form-atualizar-quantidade">
+                            <input type="number" 
+                                   value="{{ item.quantity }}" 
+                                   min="1" 
+                                   class="quantidade-automatico"
+                                   data-product-id="{{ item.product_id }}"
+                                   data-url="{% url 'sushiemcasa:update_cart' item.product_id %}"
+                                   style="width: 60px; text-align: center; padding: 5px; border: 1px solid #ccc; border-radius: 4px;">
+                        </div>
                     </td>
-                    <td>$ {{ item.total|stringformat:".2f" }}</td> 
+                    <td id="subtotal-{{ item.product_id }}">$ {{ item.total|stringformat:".2f" }}</td> 
                     <td>
                         <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
                             {% csrf_token %}
@@ -83,7 +96,7 @@
         </table>
 
         <div class="resumo-carrinho">
-            <h3>Total: $ {{ cart_total|stringformat:".2f" }}</h3> 
+            <h3>Total: <span id="total-geral">$ {{ cart_total|stringformat:".2f" }}</span></h3> 
             
             <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalize Order</a>
         </div>
@@ -93,4 +106,50 @@
         <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn-primary">Back to Menu</a></p>
     {% endif %}
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.quantidade-automatico');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        inputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const url = this.dataset.url;
+                const productId = this.dataset.productId;
+                const newQuantity = this.value;
+
+                if (newQuantity < 1) return;
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        'quantity': newQuantity
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const subtotalEl = document.getElementById(`subtotal-${productId}`);
+                        if (subtotalEl) {
+                            subtotalEl.innerText = '$ ' + parseFloat(data.item_total).toFixed(2);
+                        }
+
+                        const totalGeralEl = document.getElementById('total-geral');
+                        if (totalGeralEl) {
+                            totalGeralEl.innerText = '$ ' + parseFloat(data.cart_total).toFixed(2);
+                        }
+                    } else {
+                        console.error('Erro ao atualizar carrinho');
+                    }
+                })
+                .catch(error => console.error('Erro na requisição:', error));
+            });
+        });
+    });
+</script>
+
 {% endblock %}

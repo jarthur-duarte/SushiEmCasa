@@ -4,25 +4,147 @@
 {% block title %}Painel de Controle{% endblock %}
 
 {% block content %}
-<main class="container-carrinho" style="max-width: 800px; margin: 40px auto;">
+<main class="container-carrinho" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    
     <h1>Painel de Controle</h1>
     <p>Bem-vindo, <strong>{{ username }}</strong>. O que você gostaria de fazer?</p>
     <hr>
 
-    <div class="admin-actions" style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div class="admin-actions" style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 40px;">
         
-        <a href="{% url 'sushiemcasa:listar_produtos' %}" class="btn-checkout" style="text-decoration: none;">
+        <a href="{% url 'sushiemcasa:listar_produtos' %}" class="btn-checkout" style="text-decoration: none; text-align: center;">
             🍣 Gerenciar Produtos (Preços)
         </a>
         
-        <a href="/painel/horarios/" class="btn-checkout" style="text-decoration: none;">
+        <a href="/painel/horarios/" class="btn-checkout" style="text-decoration: none; text-align: center;">
             🗓️ Gerenciar Horários
         </a>
         
-        <a href="/admin/" class="btn-checkout" style="text-decoration: none; background-color: #6c757d;">
+        <a href="/admin/" class="btn-checkout" style="text-decoration: none; background-color: #6c757d; text-align: center;">
             Admin Completo
         </a>
 
     </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 10px; margin-bottom: 20px; border-radius: 5px; 
+                        {% if message.tags == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% endif %}
+                        {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h2 style="margin-bottom: 20px; color: #333; border-left: 5px solid #28a745; padding-left: 10px;">
+        📦 Gerenciar Pedidos em Tempo Real
+    </h2>
+
+    <style>
+        /* CSS DA TABELA */
+        .tabela-admin {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+        .tabela-admin th { background-color: #343a40; color: white; padding: 12px; text-align: left; }
+        .tabela-admin td { padding: 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+        .tabela-admin tr:hover { background-color: #f8f9fa; }
+        
+        /* Select e Botão */
+        .status-select { padding: 6px; border-radius: 4px; border: 1px solid #ccc; max-width: 140px;}
+        .btn-save-status {
+            background-color: #28a745; color: white; border: none;
+            padding: 7px 12px; border-radius: 4px; cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-save-status:hover { background-color: #218838; transform: scale(1.05); }
+
+        /* Cores dos Status (Badges) */
+        .badge { padding: 5px 10px; border-radius: 15px; color: white; font-weight: bold; font-size: 0.75rem; text-transform: uppercase; display: inline-block; }
+        .bg-pending { background-color: #ffc107; color: #333; }
+        .bg-in-preparation { background-color: #17a2b8; }
+        .bg-out-for-delivery { background-color: #007bff; }
+        .bg-delivered { background-color: #28a745; }
+        .bg-cancelled { background-color: #dc3545; }
+    </style>
+
+    <div style="overflow-x: auto;">
+        <table class="tabela-admin">
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Horário</th>
+                    <th>Cliente</th>
+                    <th>Itens do Pedido</th>
+                    <th>Total</th>
+                    <th>Status Atual</th>
+                    <th>Mudar Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pedido in pedidos %}
+                <tr>
+                    <td><strong>#{{ pedido.id }}</strong></td>
+                    <td>
+                        {{ pedido.created_at|date:"d/m" }}<br>
+                        <small style="color: #666;">{{ pedido.created_at|date:"H:i" }}</small>
+                    </td>
+                    <td>
+                        {% if pedido.user %}
+                            {{ pedido.user.username }}
+                        {% else %}
+                            <span style="color: #999; font-style: italic;">Visitante</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <ul style="padding-left: 15px; margin: 0; color: #555;">
+                            {% for item in pedido.items.all %}
+                                <li>{{ item.quantity }}x {{ item.item_name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="font-weight: bold; color: #333;">$ {{ pedido.total_price|floatformat:2 }}</td>
+                    
+                    <td>
+                        <span class="badge bg-{{ pedido.status|slugify }}">
+                            {{ pedido.get_status_display }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <form method="POST" style="display: flex; gap: 5px; align-items: center;">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ pedido.id }}">
+                            
+                            <select name="new_status" class="status-select">
+                                {% for codigo, nome in status_choices %}
+                                    <option value="{{ codigo }}" {% if pedido.status == codigo %}selected{% endif %}>
+                                        {{ nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            
+                            <button type="submit" class="btn-save-status" title="Salvar alteração">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 30px; color: #777;">
+                        Nenhum pedido realizado ainda.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 </main>
 {% endblock %}
