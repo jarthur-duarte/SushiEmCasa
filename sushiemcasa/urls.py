@@ -20,26 +20,17 @@ urlpatterns = [
      path('basket/finalizar-whatsapp/', basket.finalizar_pedido_whatsapp, name='finalizar_whatsapp'),
      path('checkout/', checkout.pagina_checkout, name='checkout'),
      path('order/<int:order_id>/', checkout.order_detail, name='order_detail'),
-     path('gerenciar/produtos/', admin_views.GerenciarProdutosListView.as_view(), name='listar_produtos'),
-     path('gerenciar/produto/<int:pk>/editar/',admin_views.ProdutoUpdateView.as_view(), name='editar_produto'),
-     path('register/', 
-         userv.register, 
-         name='register'),
-     path('login/', 
-         auth_views.LoginView.as_view(
-             template_name='sushiemcasa/login.html',
-             redirect_authenticated_user=True 
-         ), 
-         name='login'),
-     path('logout/', 
-         userv.logout_view, 
-         name='logout'),
-
+     path('register/', userv.register, name='register'),
+     path('login/', auth_views.LoginView.as_view(
+          template_name='sushiemcasa/login.html',
+          redirect_authenticated_user=True 
+      ), name='login'),
+     path('logout/', userv.logout_view, name='logout'),
      path('painel/', admin_views.painel_controle, name='painel_controle'),
-
-     path('gerenciar/produtos/', admin_views.GerenciarProdutosListView.as_view(), name='listar_produtos'),
-     path('gerenciar/produto/<int:pk>/editar/',admin_views.ProdutoUpdateView.as_view(), name='editar_produto'),
+     path('painel/deletar/<int:pk>/', admin_views.deletar_pedido, name='deletar_pedido'),
      path('painel/horarios/', admin_views.gerenciar_horarios, name='gerenciar_horarios'),
+     path('gerenciar/produtos/', admin_views.GerenciarProdutosListView.as_view(), name='listar_produtos'),
+     path('gerenciar/produto/<int:pk>/editar/', admin_views.ProdutoUpdateView.as_view(), name='editar_produto'),
 ]
     
 if settings.DEBUG:

@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.forms import modelformset_factory
 from sushiemcasa.models.produtos import Produto
 from sushiemcasa.models import HorarioDeFuncionamento
-from sushiemcasa.models.pedidos import Order  
+from sushiemcasa.models.pedidos import Order   
 from sushiemcasa.forms.horarios import HorarioForm
 
 
@@ -48,7 +48,6 @@ def painel_controle(request):
             pedido.save()
             messages.success(request, f"Status do pedido #{order_id} atualizado!")
             return redirect('sushiemcasa:painel_controle')
-
     todos_pedidos = Order.objects.all().order_by('-created_at')
     status_choices = Order.STATUS_CHOICES
 
@@ -59,6 +58,25 @@ def painel_controle(request):
     }   
     
     return render(request, 'sushiemcasa/painel/dashboard.html', context)
+
+
+@login_required(login_url='sushiemcasa:login')
+def deletar_pedido(request, pk):
+    if not request.user.is_staff:
+        messages.error(request, "Acesso negado.")
+        return redirect('sushiemcasa:cardapio')
+    
+    pedido = get_object_or_404(Order, pk=pk)
+    
+    if request.method == 'POST':
+        if pedido.status in ['Cancelled', 'Delivered']:
+            pedido_id = pedido.id
+            pedido.delete()
+            messages.success(request, f"Pedido #{pedido_id} foi excluído permanentemente.")
+        else:
+            messages.error(request, "Erro: Você só pode excluir pedidos que já foram Entregues ou Cancelados.")
+        
+    return redirect('sushiemcasa:painel_controle')
 
 
 @login_required(login_url='sushiemcasa:login')
