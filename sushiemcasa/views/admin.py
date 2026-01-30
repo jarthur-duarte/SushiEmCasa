@@ -1,5 +1,4 @@
-
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, UpdateView
@@ -8,6 +7,7 @@ from django.contrib import messages
 from django.forms import modelformset_factory
 from sushiemcasa.models.produtos import Produto
 from sushiemcasa.models import HorarioDeFuncionamento
+from sushiemcasa.models.pedidos import Order  
 from sushiemcasa.forms.horarios import HorarioForm
 
 
@@ -37,9 +37,27 @@ class ProdutoUpdateView(StaffRequiredMixin, UpdateView):
 def painel_controle(request):
     if not request.user.is_staff:
         return redirect('sushiemcasa:cardapio')
+
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        new_status = request.POST.get('new_status')
+        
+        if order_id and new_status:
+            pedido = get_object_or_404(Order, id=order_id)
+            pedido.status = new_status
+            pedido.save()
+            messages.success(request, f"Status do pedido #{order_id} atualizado!")
+            return redirect('sushiemcasa:painel_controle')
+
+    todos_pedidos = Order.objects.all().order_by('-created_at')
+    status_choices = Order.STATUS_CHOICES
+
     context = {
-        'username': request.user.username
+        'username': request.user.username,
+        'pedidos': todos_pedidos,        
+        'status_choices': status_choices, 
     }   
+    
     return render(request, 'sushiemcasa/painel/dashboard.html', context)
 
 

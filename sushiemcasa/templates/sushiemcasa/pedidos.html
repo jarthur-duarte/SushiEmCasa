@@ -5,7 +5,9 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
+    
     <style>
+        /* CSS DA BARRA VERDE (Só aparece quando aceito) */
         .stepper-item.completed .step-counter {
             background-color: #4bb543 !important;
             color: #fff;
@@ -24,6 +26,29 @@
             border-bottom: 2px solid #e0e0e0 !important;
             z-index: 2;
         }
+
+        /* CSS DOS AVISOS (Cancelado e Pendente) */
+        .alert-custom {
+            text-align: center; 
+            margin-top: 20px; 
+            font-weight: bold; 
+            padding: 15px; 
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .alert-red {
+            background-color: #f8d7da; 
+            color: #721c24; 
+            border: 1px solid #f5c6cb;
+        }
+        .alert-yellow {
+            background-color: #fff3cd; 
+            color: #856404; 
+            border: 1px solid #ffeeba;
+        }
     </style>
 {% endblock %}
 
@@ -40,14 +65,7 @@
                         <span class="pedido-status status-{{ pedido.status|slugify }}">{{ pedido.get_status_display }}</span>
                     </div>
                     
-                    <p><strong>Customer:</strong> 
-                        {% if pedido.user %}
-                            {{ pedido.user.username }}
-                        {% else %}
-                            Guest (Visitante)
-                        {% endif %}
-                    </p>
-
+                    <p><strong>Customer:</strong> {{ pedido.user.username|default:"Guest (Visitante)" }}</p>
                     <p><strong>Order date:</strong> {{ pedido.created_at|date:"d/m/Y H:i" }}</p>
                     
                     {% if pedido.delivery_datetime %}
@@ -66,10 +84,20 @@
                     <hr>
                     <p><strong>Total: $ {{ pedido.total_price|floatformat:2 }}</strong></p>
 
-                    {% if pedido.status != 'Cancelled' %}
+                    {% if pedido.status == 'Cancelled' %}
+                        <div class="alert-custom alert-red">
+                            <i class="fas fa-times-circle"></i> Order Cancelled
+                        </div>
+
+                    {% elif pedido.status == 'Pending' %}
+                        <div class="alert-custom alert-yellow">
+                            <i class="fas fa-clock"></i> Order Under Review (Waiting for Restaurant)
+                        </div>
+
+                    {% else %}
                         <div class="stepper-wrapper">
                             
-                            <div class="stepper-item {% if pedido.status == 'Pending' or pedido.status == 'In Preparation' or pedido.status == 'Out for Delivery' or pedido.status == 'Delivered' %}completed{% endif %}">
+                            <div class="stepper-item completed">
                                 <div class="step-counter"><i class="fas fa-check"></i></div>
                                 <div class="step-name">Order Accepted</div>
                             </div>
@@ -90,17 +118,13 @@
                             </div>
                         
                         </div>
-                    {% else %}
-                        <div class="alert alert-danger" style="text-align: center; margin-top: 20px;">
-                            Order Cancelled
-                        </div>
                     {% endif %}
                     
                 </div>
                 <br>
             {% endfor %}
         {% else %}
-            <p style="text-align: center;">No orders registered yet.</p>
+            <p style="text-align: center; margin-top: 20px;">No orders registered yet.</p>
         {% endif %}
     </main>
 {% endblock content %}

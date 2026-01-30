@@ -38,8 +38,6 @@ def exibir_cardapio(request, categoria_slug=None):
     except HorarioDeFuncionamento.DoesNotExist:
         is_open = False 
 
-    if not is_open:
-        messages.warning(request, "Loja fechada. Não estamos aceitando pedidos no momento.")
         
     context = {
         'produtos': produtos,
