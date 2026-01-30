@@ -1,5 +1,4 @@
-
-   body, html {
+body, html {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -13,6 +12,7 @@ main {
     max-width: 1200px;
     margin: 0 auto;
 }
+
 .barra-navegacao {
     display: flex;
     justify-content: space-between;
@@ -290,7 +290,6 @@ main {
     margin: 0;
 }
 
-
 .add-to-cart-form {
     display: flex; 
     align-items: center;
@@ -300,7 +299,6 @@ main {
     border-top: 1px solid #f1f2f6; 
     padding-top: 15px;
 }
-
 
 .quantity-input {
     width: 40px;
@@ -412,32 +410,100 @@ main {
     height: 32px;
 }
 
+
 @media (max-width: 768px) {
+    
+    body {
+        overflow-x: hidden;
+    }
+
+    main, .container, .container-carrinho, .container-pedidos {
+        width: 100% !important;
+        padding: 15px !important;
+        margin: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+
     .barra-navegacao {
         flex-direction: column;
-        gap: 10px;
+        padding: 15px;
+        gap: 15px;
+        height: auto;
     }
+
+    .barra-navegacao .logo img {
+        max-width: 140px; 
+    }
+
     .barra-navegacao nav {
-        width: 100%;
-        overflow-x: auto;
+        width: 100%; 
     }
+
     .barra-navegacao nav ul {
+        flex-direction: column; 
         gap: 10px;
-        padding-bottom: 5px;
+        padding: 0;
+        text-align: center;
+        width: 100%;
     }
-    
+
+    .barra-navegacao nav a {
+        display: block; 
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     .cartao-promocao {
         flex-direction: column;
         text-align: center;
+        padding: 1.5rem;
     }
-    
+
     .imagem-promocao img {
         width: 100%;
         height: auto;
+        max-height: 250px;
+    }
+
+    .seta {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    .seta-esquerda { left: 5px; }
+    .seta-direita { right: 5px; }
+
+    
+    .produtos-grid {
+        grid-template-columns: 1fr; 
+        gap: 20px;
     }
     
-    .seta {
-        width: 35px;
-        height: 35px;
+    .produto-card {
+        margin-bottom: 10px;
+    }
+
+    .tabela-carrinho, .admin-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    input, select, textarea, button, .btn-checkout {
+        width: 100% !important;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+
+    footer, .rodape {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+        padding: 3rem 1.5rem;
+    }
+    
+    .links-rodape, .contato-rodape {
+        width: 100%;
     }
 }

@@ -5,21 +5,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if not user.is_authenticated %}
-    <div style="background-color: #fff3cd; color: #856404; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #ffeeba;">
-        <strong>⚠️ Warwing:</strong> you are not logged in.
-        <br>
-        <small>Without login, you cannot see your order status on site. 
-        plese, track your order seeding the receipt on 
-        <a href="https://wa.me/12397719811" target="_blank" style="text-decoration: underline; color: #856404;"><strong>WhatsApp</strong></a>.</small>
-    </div>
-{% endif %}
+    
     <title>Sushi em Casa - Finish Order</title>
     
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'sushiemcasa/images/LOGO.ico' %}">
+
+    <style>
+        /* Estilo local para o aviso de login (Desktop e Mobile) */
+        .alert-login-warning {
+            background-color: #fff3cd; 
+            color: #856404; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            border: 1px solid #ffeeba;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
 </head>
 <body>
 
@@ -38,63 +43,84 @@
             </ul>
         </nav>
         <div class="icone-usuario">
-    {% if user.is_authenticated %}
-        <a href="{% url 'sushiemcasa:logout' %}" title="Logout ({{ user.username }})">
-            <i class="fas fa-user-circle" style="color: #4CAF50;"></i> </a>
-    {% else %}
-        <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
-            <i class="fas fa-user-circle"></i>
-        </a>
-    {% endif %}
-</div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'sushiemcasa:logout' %}" title="Logout ({{ user.username }})">
+                    <i class="fas fa-user-circle" style="color: #4CAF50;"></i> 
+                </a>
+            {% else %}
+                <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            {% endif %}
+        </div>
     </header>
 
     <main class="container-pedidos">
+        
+        {% if not user.is_authenticated %}
+            <div class="alert-login-warning">
+                <strong><i class="fas fa-exclamation-triangle"></i> Warning:</strong> You are not logged in.
+                <br>
+                <small>Without login, you cannot see your order status on the site. 
+                Please, track your order sending the receipt on 
+                <a href="https://wa.me/12397719811" target="_blank" style="text-decoration: underline; color: #856404;"><strong>WhatsApp</strong></a>.</small>
+            </div>
+        {% endif %}
+
         <h1>Finalize Order</h1>
 
         {% if messages %}
-            <ul class="messages">
+            <ul class="messages" style="list-style: none; padding: 0;">
                 {% for message in messages %}
-                    <li class="message {{ message.tags }}">{{ message }}</li>
+                    <li class="message {{ message.tags }}" 
+                        style="padding: 10px; margin-bottom: 10px; border-radius: 5px; 
+                               {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24;{% endif %}">
+                        {{ message }}
+                    </li>
                 {% endfor %}
             </ul>
         {% endif %}
 
         <div class="pedido">
-            <h2>Order resume</h2>
+            <h2>Order Resume</h2>
             {% if cart_items %}
                 <ul class="items-list">
                     {% for item in cart_items %}
                         <li class="item-pedido">
                             <span>{{ item.quantity }}x {{ item.product.nome }}</span>
-                            <span>R$ {{ item.total|floatformat:2 }}</span>
+                            <span>$ {{ item.total|floatformat:2 }}</span>
                         </li>
                     {% endfor %}
                 </ul>
                 <hr>
-                <p><strong>Total: $ {{ cart_total|floatformat:2 }}</strong></p>
+                <p style="font-size: 1.2rem; margin-top: 10px;"><strong>Total: $ {{ cart_total|floatformat:2 }}</strong></p>
             {% else %}
-                <p>Your basket is empty .</p>
-                <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn-submit">Voltar ao Cardápio</a></p>
+                <p>Your basket is empty.</p>
+                <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn-submit">Back to Menu</a></p>
             {% endif %}
         </div>
 
         {% if cart_items %}
         <div class="pedido">
-            <h2>Orders details</h2>
+            <h2>Order Details</h2>
             <form method="post" action="{% url 'sushiemcasa:checkout' %}">
                 {% csrf_token %}
 
                 <div class="form-field">
-                    {{ form.delivery_datetime.label_tag }}
+                    <label for="{{ form.delivery_datetime.id_for_label }}" style="font-weight: bold; display: block; margin-bottom: 5px;">
+                        Delivery Date & Time:
+                    </label>
+                    
                     {{ form.delivery_datetime }}
+                    
                     {% if form.delivery_datetime.help_text %}
                         <small style="color: #666; display: block; margin-top: 5px;">{{ form.delivery_datetime.help_text }}</small>
                     {% endif %}
+                    
                     {% if form.delivery_datetime.errors %}
                         <div class="errorlist">
                             {% for error in form.delivery_datetime.errors %}
-                                <p style="color: red;">{{ error }}</p>
+                                <p style="color: red; margin-top: 5px;"><i class="fas fa-exclamation-circle"></i> {{ error }}</p>
                             {% endfor %}
                         </div>
                     {% endif %}
@@ -108,7 +134,7 @@
                     </div>
                 {% endif %}
 
-                <button type="submit" class="btn-submit" id="confirm-order-btn" disabled>Confirm order</button>
+                <button type="submit" class="btn-submit" id="confirm-order-btn" disabled>Confirm Order</button>
             </form>
         </div>
         {% endif %}
@@ -118,8 +144,9 @@
     <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
         <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
     </a>
+
     <footer class="rodape">
-    <div class="logo">
+        <div class="logo">
             <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa"> 
         </div>
         <div class="links-rodape">
@@ -141,35 +168,41 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
        
-        const dateTimeInput = document.getElementById("id_delivery_datetime");
-        const submitButton = document.getElementById("confirm-order-btn");
+       const dateTimeInput = document.getElementById("id_delivery_datetime");
+       const submitButton = document.getElementById("confirm-order-btn");
 
-        if (!dateTimeInput || !submitButton) {
-            console.error("Não foi possível encontrar o campo de data/hora ou o botão de submit.");
-            return;
-        }
+       if (!dateTimeInput || !submitButton) {
+           console.error("Input de data ou botão não encontrados.");
+           return;
+       }
 
-        function validateDateTime() {
-            const selectedValue = dateTimeInput.value;
+       function validateDateTime() {
+           const selectedValue = dateTimeInput.value;
 
-            if (!selectedValue) {
-                submitButton.disabled = true;
-                return;
-            }
-            const selectedDate = new Date(selectedValue);
-            const now = new Date();
-            const minTime = now.getTime() + (24 * 60 * 60 * 1000);
-            const minDate = new Date(minTime);
+           if (!selectedValue) {
+               submitButton.disabled = true;
+               submitButton.style.opacity = "0.6"; 
+               return;
+           }
+           
+           const selectedDate = new Date(selectedValue);
+           const now = new Date();
+           const minTime = now.getTime() + (24 * 60 * 60 * 1000);
+           const minDate = new Date(minTime);
 
-            if (selectedDate > minDate) {
-                submitButton.disabled = false; 
-            } else {
-                submitButton.disabled = true;  
-            }
-        }
+           if (selectedDate > minDate) {
+               submitButton.disabled = false;
+               submitButton.style.opacity = "1";
+               submitButton.style.cursor = "pointer";
+           } else {
+               submitButton.disabled = true;
+               submitButton.style.opacity = "0.6";
+               submitButton.style.cursor = "not-allowed";
+           }
+       }
 
-        dateTimeInput.addEventListener("input", validateDateTime);
-        validateDateTime();
+       dateTimeInput.addEventListener("input", validateDateTime);
+       validateDateTime();
     });
 </script>
 
