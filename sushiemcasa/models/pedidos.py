@@ -6,12 +6,11 @@ from django.core.exceptions import ValidationError
 
 class Order(models.Model):
     STATUS_CHOICES = (
-        ('Pending', 'Pendente'),
-        ('Accepted','Aceito'),
-        ('In Preparation', 'Em preparo'),
-        ('Out for Delivery', 'Pronto para retirada'),
-        ('Delivered', 'Entregue'),
-        ('Cancelled', 'Cancelado'),
+        ('pendente', 'Pending'),      
+        ('preparando', 'Preparing'),  
+        ('saiu_entrega', 'Out for Delivery'), 
+        ('entregue', 'Delivered'),    
+        ('cancelado', 'Canceled'),    
     )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

@@ -6,156 +6,113 @@
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
     <style>
-    /* --- AJUSTE DO CARROSSEL (PARA NÃO COBRIR A TELA) --- */
-    .secao-promocoes {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 0 20px;
-    }
-
-    .carrossel-container {
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-        padding: 0 40px; /* Espaço para as setas não ficarem em cima do card */
-    }
-
-    .carrossel-viewport {
-        width: 100%;
-        overflow: hidden;
-    }
-
-    /* REMOVE OS PONTINHOS PRETOS DA LATERAL */
-    .carrossel-track {
-        display: flex;
-        list-style: none !important; /* Remove bullets */
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    .cartao-promocao {
-        min-width: 100%;
-        display: flex;
-        align-items: center;
-        background: #fff;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid #eee;
-    }
-
-    /* --- AJUSTE DAS SETAS (MAIS VISÍVEIS) --- */
-    .seta {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: #222; /* Fundo escuro para destacar */
-        color: #fff; /* Ícone branco */
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        cursor: pointer;
-        z-index: 10;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        transition: 0.3s;
-    }
-
-    .seta:hover {
-        background-color: #4CAF50; /* Fica verde ao passar o mouse */
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    .seta-esquerda { left: 0; }
-    .seta-direita { right: 0; }
-
-    .imagem-promocao img {
-        max-height: 300px;
-        width: auto;
-        object-fit: contain;
-    }
-
-    /* --- ESTILOS DO CATÁLOGO CLEAN (MANTIDOS) --- */
-    .secao-menu {
-        max-width: 1200px;
-        margin: 40px auto;
-        padding: 0 20px;
-    }
-
-    .produtos-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 30px;
-        padding: 20px 0;
-    }
-
-    .produto-card {
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        border: 1px solid #f0f0f0;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .card-img-container {
-        width: 100%;
-        height: 200px;
-        overflow: hidden;
-    }
-
-    .card-img-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .produto-info {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-    }
-
-    .card-footer-flex {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px solid #f5f5f5;
-        padding-top: 15px;
-    }
-
-    .add-to-cart-button {
-        background-color: #222;
-        color: white;
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-    }
-
-    /* AJUSTE MOBILE */
-    @media (max-width: 768px) {
-        .carrossel-container { padding: 0 30px; }
-        .seta { width: 30px; height: 30px; font-size: 0.8rem; }
-        .imagem-promocao img { max-height: 200px; }
-        .produtos-grid {
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding: 10px;
+        /* --- AJUSTES GERAIS --- */
+        .secao-promocoes, .secao-menu {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
         }
-        .card-img-container { height: 130px; }
-        .produto-descricao { display: none; }
-    }
-</style>
+
+        /* --- CARROSSEL --- */
+        .carrossel-container {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            padding: 0 45px;
+        }
+
+        .carrossel-track {
+            display: flex;
+            list-style: none !important;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .cartao-promocao {
+            min-width: 100%;
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .imagem-promocao img {
+            max-height: 250px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .seta {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #222;
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* --- GRID DE PRODUTOS (FIX PARA PC) --- */
+        .produtos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 colunas no desktop */
+            gap: 25px;
+            padding: 20px 0;
+        }
+
+        .produto-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: transform 0.3s;
+        }
+
+        .produto-card:hover { transform: translateY(-5px); }
+
+        .produto-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .produto-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        /* --- RESPONSIVIDADE MOBILE --- */
+        @media (max-width: 992px) { .produtos-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        @media (max-width: 768px) {
+            .produtos-grid {
+                grid-template-columns: 1fr 1fr; /* 2 colunas no celular */
+                gap: 12px;
+            }
+
+            .cartao-promocao { flex-direction: column; text-align: center; }
+            .imagem-promocao img { width: 100%; height: 140px; background: #f9f9f9; }
+            .produto-card img { height: 140px; }
+            .produto-descricao { display: none; }
+            .seta { width: 32px; height: 32px; }
+            .seta-esquerda { left: 5px; }
+            .seta-direita { right: 5px; }
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -171,25 +128,42 @@
     <section class="secao-promocoes">
         <h2>Deals</h2>
         <div class="carrossel-container">
-            <button class="seta seta-esquerda"><i class="fas fa-chevron-left"></i></button>
+            <button class="seta seta-esquerda" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
             <div class="carrossel-viewport">
-                <div class="carrossel-track">
+                <div class="carrossel-track" id="track">
+                    {% for banner in banners %}
                     <div class="cartao-promocao">
                         <div class="imagem-promocao">
-                            <img src="{% static 'sushiemcasa/images/hot.png' %}" alt="hot filadélfia">
+                            <img src="{{ banner.imagem.url }}" alt="{{ banner.titulo }}">
                         </div>
-                        <div class="descricao-promocao" style="padding: 20px;">
-                            <h3>Hot philladelphia</h3>
-                            <p>20 pieces of fries with salmon and cream cheese.</p> 
-                            <div class="precos">
-                                <span class="preco-antigo" style="text-decoration: line-through; color: #999;">$ 23</span>
-                                <span class="preco-novo" style="font-weight: bold; color: #e74c3c; font-size: 1.2rem;">$ 20</span>
+                        <div class="descricao-promocao">
+                            <h3 style="padding: 10px 20px 0 20px;">{{ banner.titulo }}</h3>
+                            <p style="padding: 0 20px;">{{ banner.descricao }}</p> 
+                            <div class="precos" style="padding: 0 20px 15px 20px;">
+                                {% if banner.preco_antigo %}
+                                    <span class="preco-antigo" style="text-decoration: line-through; color: #999; margin-right: 10px;">$ {{ banner.preco_antigo }}</span>
+                                {% endif %}
+                                <span class="preco-novo" style="font-weight: bold; color: #d32f2f; font-size: 1.2rem;">$ {{ banner.preco_promocional }}</span>
                             </div>
+                            {% if banner.produto_vinculado %}
+                            <form action="{% url 'sushiemcasa:add_to_cart' product_id=banner.produto_vinculado.id %}" method="post" style="padding: 0 20px 20px 20px;">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn-add-promocao" style="background: #28a745; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%;">
+                                    Add Deal <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </form>
+                            {% endif %}
                         </div>
                     </div>
+                    {% empty %}
+                    <div class="cartao-promocao" style="padding: 40px; justify-content: center; width: 100%;">
+                        <p>None Promos today.</p>
                     </div>
+                    {% endfor %}
+                </div>
             </div>
-            <button class="seta seta-direita"><i class="fas fa-chevron-right"></i></button>
+            <button class="seta seta-direita" onclick="moveSlide(1)"><i class="fas fa-chevron-right"></i></button>
         </div>
     </section>
 
@@ -198,6 +172,9 @@
     <section id="menu-principal" class="secao-menu">
         <div class="cabecalho-menu">
             <h2>Menu</h2>
+            {% if categoria_selecionada %}
+                <a href="{% url 'sushiemcasa:cardapio' %}#menu-principal">All Sushis</a>
+            {% endif %}
         </div>
 
         <div class="filtros-menu">
@@ -212,29 +189,28 @@
         <div class="produtos-grid">
             {% for produto in produtos %}
             <div class="produto-card">
-                <div class="card-img-container">
-                    {% if produto.imagem %}
-                        <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
-                    {% endif %}
-                </div>
-                
+                {% if produto.imagem %}
+                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
+                {% endif %}
                 <div class="produto-info">
-                    <h3 style="font-size: 1rem; font-weight: 800;">{{ produto.nome }}</h3>
-                    <p class="produto-descricao">{{ produto.descricao }}</p>
+                    <h3 style="font-size: 1rem; margin-bottom: 8px;">{{ produto.nome|upper }}</h3>
+                    <p class="produto-descricao" style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">{{ produto.descricao }}</p>
                     
-                    <div class="card-footer-flex">
+                    <div class="card-footer-flex" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
                         <span class="produto-preco" style="font-weight: bold; color: #2ecc71;">$ {{ produto.preco|floatformat:2 }}</span>
                         
                         <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="add-to-cart-button">
+                            <button type="submit" class="add-to-cart-button" style="background: #222; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer;">
                                 <i class="fas fa-plus"></i>
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <p>No products found in this category.</p>
             {% endfor %}
         </div>
     </section>
