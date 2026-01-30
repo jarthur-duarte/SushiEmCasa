@@ -1,41 +1,41 @@
 document.addEventListener('DOMContentLoaded', function () {
     const track = document.getElementById('track');
+    const container = document.querySelector('.carrossel-viewport'); 
     
-    if (!track) return;
+    if (!track || !container) return;
 
     const slides = Array.from(track.children);
-    
     if (slides.length === 0) return;
 
     let currentIndex = 0;
     let autoRotateInterval = null;
-
     const getSlideWidth = () => {
-        return slides[0].getBoundingClientRect().width;
+        return container.getBoundingClientRect().width; 
+    };
+
+    const updateTrackPosition = () => {
+        const currentWidth = getSlideWidth();
+        track.style.transform = 'translateX(-' + (currentWidth * currentIndex) + 'px)';
     };
 
     const goToIndex = (targetIndex) => {
-        if (targetIndex >= slides.length) {
-            targetIndex = 0;
-        }
-        if (targetIndex < 0) {
-            targetIndex = slides.length - 1;
-        }
+        if (targetIndex >= slides.length) targetIndex = 0;
+        if (targetIndex < 0) targetIndex = slides.length - 1;
 
-        const currentWidth = getSlideWidth();
-        track.style.transform = 'translateX(-' + (currentWidth * targetIndex) + 'px)';
         currentIndex = targetIndex;
+        updateTrackPosition();
     };
+
     window.moveSlide = function(direction) {
         goToIndex(currentIndex + direction);
-        resetAutoRotate(); 
+        resetAutoRotate();
     };
 
     const startAutoRotate = () => {
         clearInterval(autoRotateInterval);
         autoRotateInterval = setInterval(() => {
             window.moveSlide(1);
-        }, 6000); 
+        }, 5000);
     };
 
     const resetAutoRotate = () => {
@@ -45,30 +45,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     startAutoRotate();
 
-    window.addEventListener('resize', () => {
-        const currentWidth = getSlideWidth();
-        track.style.transform = 'translateX(-' + (currentWidth * currentIndex) + 'px)';
-    });
+    window.addEventListener('resize', updateTrackPosition);
 
     let touchStartX = 0;
+    let touchStartY = 0;
     let touchEndX = 0;
+    let touchEndY = 0;
+    const minSwipeDistance = 30; 
 
-    track.addEventListener('touchstart', e => {
+    container.addEventListener('touchstart', e => {
         touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
     }, {passive: true});
 
-    track.addEventListener('touchend', e => {
+    container.addEventListener('touchend', e => {
         touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
     }, {passive: true});
 
     function handleSwipe() {
-        if (touchEndX < touchStartX - 50) {
-            window.moveSlide(1);
-        }
-        
-        if (touchEndX > touchStartX + 50) {
-            window.moveSlide(-1);
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (Math.abs(deltaX) > minSwipeDistance) {
+                if (deltaX < 0) {
+                    window.moveSlide(1); 
+                } else {
+                    window.moveSlide(-1);
+                }
+            }
         }
     }
 });
