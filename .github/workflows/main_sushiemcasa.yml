@@ -32,14 +32,19 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Run Django tests
+        env:
+          TARGET_ENV: Dev
+          DEBUG: 'True'
+          SECRET_KEY: ci-test-secret-key
+        run: python manage.py test sushiemcasa.tests.tests_views -v 2
+
       - name: Cleaning testing files
         run: |
             rm -f .env
 
       - name: Zip artifact for deployment
         run: zip -r release.zip .
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
