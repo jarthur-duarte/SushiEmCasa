@@ -8,6 +8,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -40,13 +43,16 @@ jobs:
         run: python manage.py test sushiemcasa.tests.tests_views -v 2
 
       - name: Cleaning testing files
+        if: ${{ github.event_name == 'push' && vars.ENABLE_AZURE_DEPLOY == 'true' }}
         run: |
             rm -f .env
 
       - name: Zip artifact for deployment
+        if: ${{ github.event_name == 'push' && vars.ENABLE_AZURE_DEPLOY == 'true' }}
         run: zip -r release.zip .
 
       - name: Upload artifact for deployment jobs
+        if: ${{ github.event_name == 'push' && vars.ENABLE_AZURE_DEPLOY == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: python-app
@@ -55,6 +61,12 @@ jobs:
             !venv/
 
   deploy:
+    # O deploy da Azure fica desligado por padrão (o recurso está inativo para
+    # não gerar custos). Para religar, defina a variável de repositório
+    # ENABLE_AZURE_DEPLOY = true em Settings > Secrets and variables > Actions.
+    # Sem a variável, este job é PULADO (skipped) e não deixa o CI vermelho —
+    # os testes no job "build" continuam rodando normalmente.
+    if: ${{ github.event_name == 'push' && vars.ENABLE_AZURE_DEPLOY == 'true' }}
     runs-on: ubuntu-latest
     needs: build
     permissions:
