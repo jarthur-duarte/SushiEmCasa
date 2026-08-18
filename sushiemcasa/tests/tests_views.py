@@ -13,7 +13,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-from django.contrib.messages import get_messages
 
 from sushiemcasa.models import (
     Categoria,
@@ -258,7 +257,7 @@ class BasketViewTests(TestCase):
 
 
 # =========================================================================
-# VIEW DO CARDÁPIO (mensagem de loja aberta/fechada)
+# VIEW DO CARDÁPIO (status de loja aberta/fechada no contexto)
 # =========================================================================
 class CardapioViewTests(TestCase):
     def setUp(self):
@@ -268,27 +267,31 @@ class CardapioViewTests(TestCase):
             categoria=self.categoria, imagem='',
         )
 
-    def test_loja_fechada_mostra_aviso(self):
+    def test_loja_fechada_marca_is_open_false(self):
         _horario_para_todos_os_dias(is_open=False)
         response = self.client.get(reverse('sushiemcasa:cardapio'))
-        mensagens = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertTrue(
-            any('loja fechada' in m.lower() for m in mensagens),
-            f'Esperava aviso de loja fechada, veio: {mensagens}',
-        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['is_open'])
 
-    def test_loja_aberta_nao_mostra_aviso(self):
+    def test_loja_aberta_marca_is_open_true(self):
         _horario_para_todos_os_dias(
             is_open=True,
             open_time=datetime.time(0, 0),
             close_time=datetime.time(23, 59),
         )
         response = self.client.get(reverse('sushiemcasa:cardapio'))
-        mensagens = [m.message for m in get_messages(response.wsgi_request)]
-        self.assertFalse(
-            any('loja fechada' in m.lower() for m in mensagens),
-            f'Não esperava aviso de loja fechada, veio: {mensagens}',
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['is_open'])
+
+    def test_cardapio_lista_apenas_produtos_disponiveis(self):
+        Produto.objects.create(
+            nome='Indisponível', descricao='d', preco=Decimal('9.00'),
+            categoria=self.categoria, imagem='', disponivel=False,
         )
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        nomes = [p.nome for p in response.context['produtos']]
+        self.assertIn('Nigiri', nomes)
+        self.assertNotIn('Indisponível', nomes)
 
 
 # =========================================================================
