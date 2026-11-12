@@ -1,0 +1,35 @@
+{% comment %}
+Linha do tempo do pedido. Uso:
+  {% include 'sushiemcasa/includes/linha_do_tempo.html' with s=pedido.status %}
+Aceita os códigos do model (pendente, preparando, saiu_entrega, entregue,
+cancelado) e os valores antigos em inglês que existem no banco.
+{% endcomment %}
+{% if s == 'cancelado' or s == 'Cancelled' or s == 'Canceled' %}
+    <div class="alerta alerta--erro">
+        <i class="fas fa-circle-xmark" aria-hidden="true"></i>
+        <span><strong>Pedido cancelado.</strong> Se tiver dúvidas, fale com a gente pelo WhatsApp.</span>
+    </div>
+{% else %}
+    <ol class="linha-tempo linha-tempo--{% include 'sushiemcasa/includes/status_chave.html' %}" aria-label="Andamento do pedido">
+        <li class="linha-tempo__etapa feita {% if s == 'pendente' or s == 'Pending' %}atual{% endif %}"
+            {% if s == 'pendente' or s == 'Pending' %}aria-current="step"{% endif %}>
+            <span class="linha-tempo__icone"><i class="fas fa-receipt" aria-hidden="true"></i></span>
+            <span>Recebido</span>
+        </li>
+        <li class="linha-tempo__etapa {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' or s == 'Ready to Pickup' or s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'entregue' or s == 'Delivered' %}feita{% endif %} {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' or s == 'Ready to Pickup' %}atual{% endif %}"
+            {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' or s == 'Ready to Pickup' %}aria-current="step"{% endif %}>
+            <span class="linha-tempo__icone"><i class="fas fa-fire-burner" aria-hidden="true"></i></span>
+            <span>Preparando</span>
+        </li>
+        <li class="linha-tempo__etapa {% if s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'entregue' or s == 'Delivered' %}feita{% endif %} {% if s == 'saiu_entrega' or s == 'Out for Delivery' %}atual{% endif %}"
+            {% if s == 'saiu_entrega' or s == 'Out for Delivery' %}aria-current="step"{% endif %}>
+            <span class="linha-tempo__icone"><i class="fas fa-motorcycle" aria-hidden="true"></i></span>
+            <span>Saiu para entrega</span>
+        </li>
+        <li class="linha-tempo__etapa {% if s == 'entregue' or s == 'Delivered' %}feita atual{% endif %}"
+            {% if s == 'entregue' or s == 'Delivered' %}aria-current="step"{% endif %}>
+            <span class="linha-tempo__icone"><i class="fas fa-house" aria-hidden="true"></i></span>
+            <span>Entregue</span>
+        </li>
+    </ol>
+{% endif %}
