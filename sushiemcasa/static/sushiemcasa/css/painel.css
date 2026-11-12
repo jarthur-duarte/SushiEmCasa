@@ -1,0 +1,130 @@
+/* Painel da administradora (carregado só nas páginas do painel) */
+
+.painel-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding-block: var(--e-5) var(--e-3);
+}
+.painel-topo p { color: var(--cor-texto-suave); }
+
+.painel-nav ul {
+  display: flex;
+  gap: var(--e-1);
+  overflow-x: auto;
+  border-bottom: 1px solid var(--cor-borda);
+  margin-bottom: var(--e-5);
+  scrollbar-width: none;
+}
+.painel-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: 44px;
+  padding: 0 var(--e-4);
+  border-bottom: 3px solid transparent;
+  color: var(--cor-texto-suave);
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.painel-nav a:hover { color: var(--cor-tinta); }
+.painel-nav a[aria-current="page"] { color: var(--cor-marca-escura); border-bottom-color: var(--cor-marca); }
+
+.card--form { max-width: 720px; }
+
+/* o botão flutuante de WhatsApp é para clientes; no painel só atrapalha */
+.whatsapp-flutuante { display: none; }
+
+/* Filtros */
+.painel-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  align-items: center;
+  margin-bottom: var(--e-4);
+}
+.painel-filtros .controle { max-width: 280px; min-height: 40px; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--e-2); }
+.chip {
+  min-height: 36px;
+  padding: 0 var(--e-3);
+  border-radius: var(--raio-pill);
+  border: 1px solid var(--cor-borda-forte);
+  background: var(--cor-superficie);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+.chip[aria-pressed="true"] { background: var(--cor-tinta); border-color: var(--cor-tinta); color: #fff; }
+.contagem-filtro { font-size: var(--fs-sm); color: var(--cor-texto-suave); }
+
+/* Tabela de pedidos / produtos */
+.tabela td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.itens-lista { font-size: var(--fs-sm); }
+.form-status { display: flex; gap: var(--e-1); align-items: center; }
+.form-status select {
+  min-height: 36px;
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-sm);
+  padding: 0 var(--e-2);
+  background: var(--cor-superficie);
+  font-size: var(--fs-sm);
+}
+.acoes-linha { display: flex; gap: var(--e-2); align-items: center; justify-content: flex-end; }
+.miniatura { width: 48px; height: 48px; border-radius: var(--raio-sm); object-fit: cover; background: var(--cor-superficie-2); }
+.linha-vazia td { text-align: center; padding: var(--e-6); color: var(--cor-texto-suave); }
+
+/* Horários */
+.tabela-horarios input[type="time"] { min-height: 40px; border: 1px solid var(--cor-borda-forte); border-radius: var(--raio-sm); padding: 0 var(--e-2); }
+.tabela-horarios input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--cor-marca); }
+.rodape-form { display: flex; gap: var(--e-3); flex-wrap: wrap; margin-top: var(--e-4); }
+
+/* Celular: linhas viram cartões */
+@media (max-width: 767px) {
+  .tabela--cartoes,
+  .tabela--cartoes tbody,
+  .tabela--cartoes tr,
+  .tabela--cartoes td,
+  .tabela--cartoes th[scope="row"] { display: block; width: 100%; }
+  .tabela--cartoes th[scope="row"] {
+    padding: var(--e-2) 0;
+    border-bottom: 1px solid var(--cor-borda);
+    font-size: var(--fs-base);
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--cor-tinta);
+    background: transparent;
+  }
+  .tabela--cartoes thead { display: none; }
+  .tabela-rolagem:has(.tabela--cartoes) { border: 0; background: transparent; overflow: visible; }
+  .tabela--cartoes tbody { display: grid; gap: var(--e-3); }
+  .tabela--cartoes tr {
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    padding: var(--e-2) var(--e-4);
+  }
+  .tabela--cartoes td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--e-3);
+    padding: var(--e-2) 0;
+    border-bottom: 1px solid var(--cor-borda);
+    text-align: right;
+  }
+  .tabela--cartoes td:last-child { border-bottom: 0; }
+  .tabela--cartoes td[data-label]::before {
+    content: attr(data-label);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--cor-texto-suave);
+    text-align: left;
+  }
+  .tabela--cartoes .linha-vazia td { justify-content: center; }
+  .painel-filtros .controle { max-width: none; }
+}

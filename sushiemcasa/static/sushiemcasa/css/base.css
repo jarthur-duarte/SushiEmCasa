@@ -605,7 +605,8 @@ body.gaveta-aberta { overflow: hidden; }
 /* ---------- 15. Tabelas ---------- */
 .tabela-rolagem { overflow-x: auto; border: 1px solid var(--cor-borda); border-radius: var(--raio); background: var(--cor-superficie); }
 .tabela th, .tabela td { padding: var(--e-3) var(--e-4); text-align: left; vertical-align: middle; border-bottom: 1px solid var(--cor-borda); }
-.tabela th { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--cor-texto-suave); background: var(--cor-superficie-2); }
+.tabela tbody th { font-weight: 600; color: var(--cor-tinta); }
+.tabela thead th { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--cor-texto-suave); background: var(--cor-superficie-2); }
 .tabela tbody tr:last-child td { border-bottom: 0; }
 
 /* ---------- 16. Utilitários ---------- */

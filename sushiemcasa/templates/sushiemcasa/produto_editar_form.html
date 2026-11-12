@@ -1,11 +1,50 @@
-{% extends 'sushiemcasa/base.html' %} {% block content %}
-  <h2>Editando: {{ object.nome }}</h2>
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
 
-  <form method="POST">
-    {% csrf_token %} {{ form.as_p }}
+{% block title %}Painel · Editar {{ object.nome }} · Sushi em Casa{% endblock %}
 
-    <button type="submit">Salvar Alterações</button>
-  </form>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
+{% endblock %}
 
-  <a href="{% url 'sushiemcasa:listar_produtos' %}">Cancelar</a>    
+{% block content %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <p><a href="{% url 'sushiemcasa:listar_produtos' %}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Produtos</a></p>
+            <h1>Editar produto</h1>
+            <p>{{ object.nome }}</p>
+        </div>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
+
+    <div class="card card--form">
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for erro in form.non_field_errors %}<div class="alerta alerta--erro" role="alert">{{ erro }}</div>{% endfor %}
+
+            <div class="campo {% if form.nome.errors %}tem-erro{% endif %}">
+                <label for="{{ form.nome.id_for_label }}">Nome</label>
+                {{ form.nome }}
+                {% for erro in form.nome.errors %}<p class="campo__erro" role="alert">{{ erro }}</p>{% endfor %}
+            </div>
+            <div class="campo {% if form.descricao.errors %}tem-erro{% endif %}">
+                <label for="{{ form.descricao.id_for_label }}">Descrição</label>
+                {{ form.descricao }}
+                {% for erro in form.descricao.errors %}<p class="campo__erro" role="alert">{{ erro }}</p>{% endfor %}
+            </div>
+            <div class="campo {% if form.preco.errors %}tem-erro{% endif %}">
+                <label for="{{ form.preco.id_for_label }}">Preço ($)</label>
+                {{ form.preco }}
+                {% for erro in form.preco.errors %}<p class="campo__erro" role="alert">{{ erro }}</p>{% endfor %}
+            </div>
+
+            <div class="rodape-form">
+                <button type="submit" class="btn btn--primario">Salvar alterações</button>
+                <a href="{% url 'sushiemcasa:listar_produtos' %}" class="btn">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}

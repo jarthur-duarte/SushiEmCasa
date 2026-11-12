@@ -1,86 +1,74 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Gerenciar Horários{% endblock %}
+{% block title %}Painel · Horários · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
-<style>
-    /* Estilo para a tabela de horários */
-    .schedule-table {
-        width: 100%; 
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    .schedule-table th, .schedule-table td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-        text-align: left;
-    }
-    .schedule-table th {
-        background-color: #f9f9f9;
-    }
-    .schedule-table td:nth-child(1) {
-        font-weight: bold;
-    }
-    /* Ajusta o tamanho dos inputs */
-    .schedule-table input[type="time"] {
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-    .schedule-table input[type="checkbox"] {
-        transform: scale(1.3);
-    }
-</style>
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
 {% endblock %}
 
 {% block content %}
-<main class="container-carrinho" style="max-width: 900px; margin: 40px auto;">
-    <h1>Gerenciar Horários de Funcionamento</h1>
-    <a href="{% url 'sushiemcasa:painel_controle' %}">&larr; Voltar ao Painel</a>
-    <hr>
-    
-    {% if messages %}
-        {% for message in messages %}
-            <div class.alert 
-                 style="padding: 15px; margin-bottom: 20px; border-radius: 5px; color: white; background-color: {% if message.tags == 'success' %}#28a745{% else %}#dc3545{% endif %};">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <h1>Horários de funcionamento</h1>
+            <p>Fora destes horários o cardápio mostra o aviso de loja fechada.</p>
+        </div>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
 
     <form method="post">
         {% csrf_token %}
-        {{ formset.management_form }} 
+        {{ formset.management_form }}
+        {% for erro in formset.non_form_errors %}<div class="alerta alerta--erro" role="alert">{{ erro }}</div>{% endfor %}
 
-        <table class="schedule-table">
-            <thead>
-                <tr>
-                    <th>Dia</th>
-                    <th>Aberto?</th>
-                    <th>Abre às</th>
-                    <th>Fecha às</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for form in formset %}
-                <tr>
-                    <td>
-                        <strong>{{ form.instance.get_day_of_week_display }}</strong>
-                        
-                        {% if form.non_field_errors %}<div class="errorlist" style="color: red;">{{ form.non_field_errors }}</div>{% endif %}
-                        {% if form.id %}{{ form.id }}{% endif %}
-                    </td>
-                    <td>{{ form.is_open }}</td>
-                    <td>{{ form.open_time }}</td>
-                    <td>{{ form.close_time }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <br>
-        <button type="submit" class="btn-checkout">Salvar Horários</button>
+        <div class="tabela-rolagem">
+            <table class="tabela tabela--cartoes tabela-horarios">
+                <caption class="sr-only">Horários por dia da semana</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Dia</th>
+                        <th scope="col">Aberto?</th>
+                        <th scope="col">Abre às</th>
+                        <th scope="col">Fecha às</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in formset %}
+                    {% with dia=form.instance.get_day_of_week_display %}
+                    <tr>
+                        <th scope="row" data-label="Dia">
+                            {{ dia }}
+                            {% if form.id %}{{ form.id }}{% endif %}
+                            {% for erro in form.non_field_errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
+                        </th>
+                        <td data-label="Aberto?">
+                            <label class="sr-only" for="{{ form.is_open.id_for_label }}">Aberto na {{ dia }}</label>
+                            {{ form.is_open }}
+                            {% for erro in form.is_open.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
+                        </td>
+                        <td data-label="Abre às">
+                            <label class="sr-only" for="{{ form.open_time.id_for_label }}">Abre às ({{ dia }})</label>
+                            {{ form.open_time }}
+                            {% for erro in form.open_time.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
+                        </td>
+                        <td data-label="Fecha às">
+                            <label class="sr-only" for="{{ form.close_time.id_for_label }}">Fecha às ({{ dia }})</label>
+                            {{ form.close_time }}
+                            {% for erro in form.close_time.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
+                        </td>
+                    </tr>
+                    {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="rodape-form">
+            <button type="submit" class="btn btn--primario">Salvar horários</button>
+            <a href="{% url 'sushiemcasa:painel_controle' %}" class="btn">Cancelar</a>
+        </div>
     </form>
-</main>
+</div>
 {% endblock %}
