@@ -1,0 +1,18 @@
+{% extends 'sushiemcasa/base.html' %}
+
+{% block title %}Página não encontrada · Sushi em Casa{% endblock %}
+
+{% block content %}
+<div class="container container--estreito">
+    <div class="vazio">
+        <div class="vazio__icone"><i class="fas fa-fish" aria-hidden="true"></i></div>
+        <p class="texto-suave">Erro 404</p>
+        <h1>Página não encontrada</h1>
+        <p>O endereço pode ter mudado ou o link está incompleto.</p>
+        <div class="acoes">
+            <a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn--primario">Ir para o cardápio</a>
+            <a href="{% url 'sushiemcasa:contato' %}" class="btn">Falar com a gente</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -613,3 +613,6 @@ body.gaveta-aberta { overflow: hidden; }
 .preco { font-weight: 700; color: var(--cor-tinta); font-variant-numeric: tabular-nums; }
 .preco-antigo { text-decoration: line-through; color: var(--cor-texto-suave); font-weight: 400; }
 .acoes { display: flex; flex-wrap: wrap; gap: var(--e-2); align-items: center; }
+.link-alternativo { margin-top: var(--e-4); text-align: center; color: var(--cor-texto-suave); }
+.pilha > .alerta + * { margin-top: var(--e-4); }
+.card > .alerta { margin-bottom: var(--e-4); }

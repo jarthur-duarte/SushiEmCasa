@@ -1,42 +1,41 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Login - Sushi em Casa{% endblock %}
+{% block title %}Entrar · Sushi em Casa{% endblock %}
 
 {% block content %}
-<main class="container-carrinho" style="max-width: 500px; margin: 40px auto;">
-    <h1>Login</h1>
-    <hr>
-    
-    {% if form.errors %}
-        <p style="color: red;">Your username or password was incorrect.</p>
-    {% endif %}
-    
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
+<div class="container container--form">
+    <div class="pagina-titulo">
+        <h1>Entrar</h1>
+        <p>Acesse sua conta para acompanhar seus pedidos.</p>
+    </div>
 
-    <form method="post" action="{% url 'sushiemcasa:login' %}">
-        {% csrf_token %}
-        
-        <div class="form-field" style="margin-bottom: 15px;">
-            
-            <label for="id_username">Username:</label>
-            <input type="text" name="username" id="id_username" class="form-control" required>
-        </div>
-        
-        <div class="form-field" style="margin-bottom: 15px;">
-            <label for="id_password">Password:</label>
-            <input type="password" name="password" id="id_password" class="form-control" required>
-        </div>
-        
-        <button type="submit" class="btn-checkout">Login</button>
-        <input type="hidden" name="next" value="{{ next }}">
-    </form>
-    
-    <hr style="margin-top: 20px;">
-    <p>Don't have an account? <a href="{% url 'sushiemcasa:register' %}">Register here</a>.</p>
-</main>
+    <div class="card">
+        {% if form.errors %}
+            <div class="alerta alerta--erro" role="alert">
+                <i class="fas fa-circle-exclamation" aria-hidden="true"></i>
+                <span>Usuário ou senha incorretos. Confira e tente de novo.</span>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'sushiemcasa:login' %}" class="pilha">
+            {% csrf_token %}
+            <div class="campo">
+                <label for="id_username">Usuário</label>
+                <input type="text" name="username" id="id_username" autocomplete="username" autocapitalize="none"
+                       value="{{ form.username.value|default_if_none:'' }}" required
+                       {% if form.errors %}aria-invalid="true"{% endif %}>
+            </div>
+            <div class="campo">
+                <label for="id_password">Senha</label>
+                <input type="password" name="password" id="id_password" autocomplete="current-password" required
+                       {% if form.errors %}aria-invalid="true"{% endif %}>
+            </div>
+            <input type="hidden" name="next" value="{{ next }}">
+            <button type="submit" class="btn btn--primario btn--bloco btn-checkout">Entrar</button>
+        </form>
+    </div>
+
+    <p class="link-alternativo">Ainda não tem conta? <a href="{% url 'sushiemcasa:register' %}">Criar conta</a></p>
+</div>
 {% endblock %}

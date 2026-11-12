@@ -1,0 +1,43 @@
+/* Contato */
+
+.contato-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: var(--e-5);
+  align-items: start;
+}
+.canais { display: grid; gap: var(--e-3); }
+.canal {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  padding: var(--e-4);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-lg);
+  color: var(--cor-texto);
+  text-decoration: none;
+  transition: box-shadow var(--transicao), border-color var(--transicao);
+}
+a.canal:hover { border-color: var(--cor-borda-forte); box-shadow: var(--sombra-2); }
+.canal__icone {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 1.2rem;
+}
+.canal__icone--whats { background: #1f8f4e; }
+.canal__icone--insta { background: #c13584; }
+.canal__icone--email { background: var(--cor-tinta); }
+.canal__texto { display: grid; }
+.canal__texto small { color: var(--cor-texto-suave); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; }
+.canal__texto strong { color: var(--cor-tinta); overflow-wrap: anywhere; }
+.canal .fa-arrow-up-right-from-square { margin-left: auto; color: var(--cor-texto-suave); }
+
+@media (max-width: 767px) {
+  .contato-grid { grid-template-columns: 1fr; }
+}
