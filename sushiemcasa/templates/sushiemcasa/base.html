@@ -1,235 +1,161 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
+{% load static %}<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Sushi em Casa{% endblock %}</title>
-    
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/admin_style.css' %}">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" type="image/jpg" href="{% static 'sushiemcasa/images/LOGO.jpg' %}">
+    <meta name="description" content="{% block meta_description %}Sushi feito na hora e entregue na sua casa. Veja o cardápio, monte seu pedido e agende a entrega.{% endblock %}">
+    <meta name="theme-color" content="#ffffff">
+    <meta property="og:title" content="Sushi em Casa">
+    <meta property="og:image" content="{% static 'sushiemcasa/images/logo-600.webp' %}">
 
-    <style>
-        /* --- RESET E GERAL --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Open Sans', sans-serif; background-color: #f4f7f6; padding-top: 70px; display: flex; flex-direction: column; min-height: 100vh; }
-        a { text-decoration: none; color: inherit; }
+    <link rel="icon" type="image/png" href="{% static 'sushiemcasa/images/favicon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'sushiemcasa/images/apple-touch-icon.png' %}">
 
-        /* --- HEADER PRETO (DO PRIMEIRO CÓDIGO) --- */
-        .main-header {
-            background-color: #222;
-            color: #fff;
-            height: 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 5%;
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
+    {# Ícones: carregados sem bloquear a renderização #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
 
-        .brand-logo { display: flex; align-items: center; gap: 10px; color: white; font-weight: bold; }
-        .brand-logo img { height: 40px; border-radius: 5px; }
-
-        /* NAVEGAÇÃO DESKTOP */
-        .nav-links { display: flex; align-items: center; }
-        .nav-links ul { display: flex; list-style: none; gap: 20px; align-items: center; }
-        .nav-links a { color: #ccc; font-size: 0.95rem; transition: 0.3s; padding: 5px 10px; }
-        .nav-links a:hover, .nav-links a.active { color: #fff; }
-
-        /* Dropdown Usuário Desktop */
-        .user-menu-desktop { position: relative; margin-left: 20px; }
-        .user-btn { background: none; border: none; color: #8bc34a; font-size: 1.5rem; cursor: pointer; }
-        .dropdown-content { 
-            display: none; position: absolute; right: 0; top: 40px; 
-            background-color: #fff; min-width: 180px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); 
-            border-radius: 8px; overflow: hidden; border: 1px solid #ddd; 
-        }
-        .dropdown-content a { color: #333 !important; padding: 12px 16px; display: block; font-size: 0.9rem; border-bottom: 1px solid #f1f1f1; }
-        .dropdown-content a:hover { background-color: #f8f9fa; color: #000 !important; }
-        .user-menu-desktop:hover .dropdown-content { display: block; }
-
-        /* --- MENU HAMBÚRGUER E SIDEBAR (DO PRIMEIRO CÓDIGO) --- */
-        .mobile-controls { display: none; }
-        .hamburger-btn { background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
-        
-        .mobile-nav-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1001; display: none; }
-        .mobile-nav { 
-            position: fixed; top: 0; right: -280px; width: 280px; height: 100%; 
-            background: white; z-index: 1002; transition: right 0.3s ease; 
-            box-shadow: -2px 0 10px rgba(0,0,0,0.2); padding-top: 20px; 
-        }
-        .mobile-nav.active { right: 0; }
-        .mobile-close-btn { display: block; margin-left: auto; margin-right: 20px; margin-bottom: 20px; background: none; border: none; font-size: 1.8rem; color: #333; }
-        .mobile-user-box { padding: 20px; background-color: #f8f9fa; border-bottom: 1px solid #eee; }
-        .mobile-nav ul li a { display: block; padding: 15px 25px; border-bottom: 1px solid #f9f9f9; color: #333; font-weight: 600; }
-
-        /* =========================================
-           CATÁLOGO DE PRODUTOS MODERNOS (DO SEGUNDO CÓDIGO)
-           Este CSS força o visual "Clean" estilo App
-           ========================================= */
-        .produtos-grid {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
-            gap: 30px !important;
-            padding: 20px !important;
-        }
-
-        .produto-card {
-            background: white !important;
-            border-radius: 16px !important;
-            overflow: hidden !important;
-            border: 1px solid #f0f0f0 !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-            transition: transform 0.3s ease !important;
-            display: flex !important;
-            flex-direction: column !important;
-            height: 100% !important;
-        }
-
-        .produto-card:hover { transform: translateY(-5px) !important; box-shadow: 0 12px 30px rgba(0,0,0,0.1) !important; }
-
-        .produto-card img {
-            width: 100% !important;
-            height: 200px !important;
-            object-fit: cover !important;
-            transition: 0.5s !important;
-        }
-
-        .produto-info { padding: 20px !important; flex-grow: 1 !important; display: flex !important; flex-direction: column !important; }
-        .produto-info h3 { font-size: 1.15rem !important; font-weight: 800 !important; color: #222 !important; margin-bottom: 8px !important; text-transform: uppercase !important; }
-        .produto-descricao { font-size: 0.9rem !important; color: #666 !important; line-height: 1.5 !important; margin-bottom: 15px !important; flex-grow: 1 !important; }
-        .produto-preco { font-size: 1.3rem !important; font-weight: 800 !important; color: #28a745 !important; margin-bottom: 15px !important; }
-
-        .add-to-cart-button {
-            background-color: #222 !important; color: white !important; border: none !important;
-            padding: 12px !important; border-radius: 8px !important; font-weight: bold !important;
-            cursor: pointer !important; transition: 0.2s !important; width: 100% !important;
-        }
-        .add-to-cart-button:hover { background-color: #28a745 !important; }
-
-        /* AJUSTES MOBILE PARA PRODUTOS */
-        @media (max-width: 768px) {
-            .nav-links { display: none; }
-            .mobile-controls { display: flex; align-items: center; gap: 15px; }
-            .cart-mobile { color: white; font-size: 1.4rem; }
-
-            .produtos-grid {
-                grid-template-columns: 1fr 1fr !important; /* 2 colunas no celular */
-                gap: 15px !important;
-                padding: 10px !important;
-            }
-            .produto-card img { height: 140px !important; }
-            .produto-info { padding: 10px !important; }
-            .produto-info h3 { font-size: 0.9rem !important; }
-            .produto-descricao { display: none !important; } /* Esconde descrição no celular para não bagunçar */
-            .produto-preco { font-size: 1rem !important; }
-        }
-
-        /* Rodapé e Extras */
-        .whatsapp-float { position: fixed; width: 60px; height: 60px; bottom: 40px; right: 40px; background-color: #25d366; color: #FFF; border-radius: 50px; display: flex; align-items: center; justify-content: center; z-index: 100; box-shadow: 2px 2px 3px rgba(0,0,0,0.2); }
-        .rodape { background: #222; color: #fff; padding: 30px; text-align: center; margin-top: auto; }
-    </style>
-    
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/base.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
+{% with rota=request.resolver_match.url_name itens_carrinho=request.session.cart|length %}
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
-    <header class="main-header">
-        <a href="{% url 'sushiemcasa:cardapio' %}" class="brand-logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo">
-            <span>SushiEmCasa</span>
-        </a>
-
-        <div class="mobile-controls">
-            <a href="{% url 'sushiemcasa:basket' %}" class="cart-mobile">
-                <i class="fas fa-shopping-basket"></i>
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="{% url 'sushiemcasa:cardapio' %}" class="marca" aria-label="Sushi em Casa, ir para o cardápio">
+                <img src="{% static 'sushiemcasa/images/logo-marca.webp' %}" alt="" width="54" height="36">
+                <span>Sushi em Casa</span>
             </a>
-            <button class="hamburger-btn" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
+
+            <nav class="nav-principal" aria-label="Principal">
+                <ul>
+                    <li><a href="{% url 'sushiemcasa:cardapio' %}" {% if rota == 'cardapio' or rota == 'lista_por_categoria' %}aria-current="page"{% endif %}>Cardápio</a></li>
+                    <li><a href="{% url 'sushiemcasa:orders' %}" {% if rota == 'orders' or rota == 'order_detail' %}aria-current="page"{% endif %}>Meus pedidos</a></li>
+                    <li><a href="{% url 'sushiemcasa:contato' %}" {% if rota == 'contato' %}aria-current="page"{% endif %}>Contato</a></li>
+                </ul>
+            </nav>
+
+            <a href="{% url 'sushiemcasa:basket' %}" class="botao-icone carrinho-link"
+               {% if rota == 'basket' or rota == 'checkout' %}aria-current="page"{% endif %}
+               aria-label="Carrinho{% if itens_carrinho %}, {{ itens_carrinho }} {{ itens_carrinho|pluralize:'item,itens' }}{% else %}, vazio{% endif %}">
+                <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                {% if itens_carrinho %}<span class="contador" aria-hidden="true">{{ itens_carrinho }}</span>{% endif %}
+            </a>
+
+            {% if user.is_authenticated %}
+                <details class="menu-usuario">
+                    <summary aria-label="Menu da conta de {{ user.username }}">
+                        <i class="fas fa-user-circle" aria-hidden="true"></i>
+                        <span>{{ user.username }}</span>
+                        <i class="fas fa-chevron-down seta-menu" aria-hidden="true"></i>
+                    </summary>
+                    <div class="menu-usuario__painel">
+                        <div class="menu-usuario__nome">Conectado como <strong>{{ user.username }}</strong></div>
+                        <a href="{% url 'sushiemcasa:orders' %}"><i class="fas fa-receipt" aria-hidden="true"></i> Meus pedidos</a>
+                        {% if user.is_staff %}
+                            <a href="{% url 'sushiemcasa:painel_controle' %}"><i class="fas fa-gauge" aria-hidden="true"></i> Painel da loja</a>
+                        {% endif %}
+                        <a href="{% url 'sushiemcasa:logout' %}" class="link-sair"><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair</a>
+                    </div>
+                </details>
+            {% else %}
+                <a href="{% url 'sushiemcasa:login' %}" class="btn btn--sm nav-entrar so-desktop">Entrar</a>
+            {% endif %}
+
+            <button type="button" class="botao-icone so-mobile" id="abrir-menu"
+                    aria-label="Abrir menu" aria-expanded="false" aria-controls="gaveta">
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
         </div>
-
-        <nav class="nav-links">
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-            </ul>
-
-            <div class="user-menu-desktop">
-                {% if user.is_authenticated %}
-                    <button class="user-btn"><i class="fas fa-user-circle"></i></button>
-                    <div class="dropdown-content">
-                        <div style="padding: 12px; font-weight: bold; background: #f8f9fa; text-align: center; color: #333; border-bottom: 1px solid #eee;">
-                            {{ user.username }}
-                        </div>
-                        <a href="{% url 'sushiemcasa:orders' %}">Meus Pedidos</a>
-                        {% if user.is_staff %}
-                            <a href="{% url 'sushiemcasa:painel_controle' %}">Painel Admin</a>
-                        {% endif %}
-                        <a href="{% url 'sushiemcasa:logout' %}" style="color: #dc3545 !important;">Sair</a>
-                    </div>
-                {% else %}
-                    <a href="{% url 'sushiemcasa:login' %}" style="color: white; margin-left: 15px;"><i class="fas fa-user-circle" style="font-size: 1.5rem;"></i></a>
-                {% endif %}
-            </div>
-        </nav>
     </header>
 
-    <div class="mobile-nav-overlay" id="overlay" onclick="toggleMenu()"></div>
-    <nav class="mobile-nav" id="sidebar">
-        <button class="mobile-close-btn" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
-        
-        <div class="mobile-user-box">
+    {# Menu mobile #}
+    <div class="gaveta-fundo" id="gaveta-fundo" hidden></div>
+    <aside class="gaveta" id="gaveta" aria-label="Menu" aria-hidden="true">
+        <div class="gaveta__topo">
+            <strong>Menu</strong>
+            <button type="button" class="botao-icone" data-fechar-menu aria-label="Fechar menu">
+                <i class="fas fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="gaveta__usuario">
             {% if user.is_authenticated %}
-                <p style="font-size: 0.8rem; color: #888;">Bem-vindo,</p>
-                <p style="font-weight: bold; font-size: 1.1rem; color: #333;">{{ user.username }}</p>
+                <small>Olá,</small>
+                <strong>{{ user.username }}</strong>
             {% else %}
-                <a href="{% url 'sushiemcasa:login' %}" style="color: #007bff; font-weight: bold;">Login / Registrar</a>
+                <a href="{% url 'sushiemcasa:login' %}" class="btn btn--primario btn--bloco">Entrar ou criar conta</a>
             {% endif %}
         </div>
-
-        <ul>
-            <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-            <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
-            <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-            <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
+        <nav aria-label="Principal (celular)">
+            <a href="{% url 'sushiemcasa:cardapio' %}" {% if rota == 'cardapio' or rota == 'lista_por_categoria' %}aria-current="page"{% endif %}><i class="fas fa-utensils" aria-hidden="true"></i> Cardápio</a>
+            <a href="{% url 'sushiemcasa:basket' %}" {% if rota == 'basket' or rota == 'checkout' %}aria-current="page"{% endif %}><i class="fas fa-shopping-bag" aria-hidden="true"></i> Carrinho{% if itens_carrinho %} ({{ itens_carrinho }}){% endif %}</a>
+            <a href="{% url 'sushiemcasa:orders' %}" {% if rota == 'orders' or rota == 'order_detail' %}aria-current="page"{% endif %}><i class="fas fa-receipt" aria-hidden="true"></i> Meus pedidos</a>
+            <a href="{% url 'sushiemcasa:contato' %}" {% if rota == 'contato' %}aria-current="page"{% endif %}><i class="fas fa-comment-dots" aria-hidden="true"></i> Contato</a>
             {% if user.is_authenticated and user.is_staff %}
-                <li><a href="{% url 'sushiemcasa:painel_controle' %}" style="color: #28a745;">Painel Admin</a></li>
+                <a href="{% url 'sushiemcasa:painel_controle' %}" {% if rota == 'painel_controle' %}aria-current="page"{% endif %}><i class="fas fa-gauge" aria-hidden="true"></i> Painel da loja</a>
             {% endif %}
             {% if user.is_authenticated %}
-                <li><a href="{% url 'sushiemcasa:logout' %}" style="color: #dc3545;">Sair</a></li>
+                <a href="{% url 'sushiemcasa:logout' %}" class="link-sair"><i class="fas fa-arrow-right-from-bracket" aria-hidden="true"></i> Sair</a>
             {% endif %}
-        </ul>
-    </nav>
+        </nav>
+    </aside>
 
-    <main>
+    <main id="conteudo" class="conteudo" tabindex="-1">
+        {% block mensagens %}
+            {% if messages %}
+                <div class="container">
+                    <ul class="messages" role="status">
+                        {% for message in messages %}
+                            <li class="message {{ message.tags }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endblock %}
         {% block content %}{% endblock %}
     </main>
 
-    <a href="https://wa.me/12397719811" class="whatsapp-float" target="_blank">
-        <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp" style="width: 35px;">
+    <a href="https://wa.me/12397719811" class="whatsapp-flutuante" target="_blank" rel="noopener" aria-label="Falar com a Sushi em Casa no WhatsApp (abre em nova aba)">
+        <i class="fab fa-whatsapp" aria-hidden="true"></i>
     </a>
 
-    <footer class="rodape">
-        <p>&copy; 2026 SushiEmCasa. Todos os direitos reservados.</p>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="site-footer__grid">
+                <div>
+                    <h2>Sushi em Casa</h2>
+                    <p>Sushi feito na hora, com entrega agendada.</p>
+                    <p>Pedidos com pelo menos 24 horas de antecedência.</p>
+                </div>
+                <nav aria-label="Rodapé">
+                    <h2>Navegação</h2>
+                    <ul>
+                        <li><a href="{% url 'sushiemcasa:cardapio' %}">Cardápio</a></li>
+                        <li><a href="{% url 'sushiemcasa:basket' %}">Carrinho</a></li>
+                        <li><a href="{% url 'sushiemcasa:orders' %}">Meus pedidos</a></li>
+                        <li><a href="{% url 'sushiemcasa:contato' %}">Contato</a></li>
+                    </ul>
+                </nav>
+                <div>
+                    <h2>Contato</h2>
+                    <ul>
+                        <li><a href="https://www.instagram.com/Sushiemcasausa" target="_blank" rel="noopener">Instagram @Sushiemcasausa</a></li>
+                        <li><a href="mailto:sushiemcasausa@gmail.com">sushiemcasausa@gmail.com</a></li>
+                        <li>770 E Ashland St, Brockton, MA 02302</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="site-footer__copy">&copy; {% now "Y" %} Sushi em Casa. Todos os direitos reservados.</p>
+        </div>
     </footer>
-
-    <script>
-        function toggleMenu() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            sidebar.classList.toggle('active');
-            overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-        }
-    </script>
+{% endwith %}
+    <script src="{% static 'sushiemcasa/js/site.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
