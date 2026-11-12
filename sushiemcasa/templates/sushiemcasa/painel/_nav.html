@@ -2,9 +2,12 @@
 <nav class="painel-nav" aria-label="Dashboard sections">
     <ul>
         <li><a href="{% url 'sushiemcasa:painel_controle' %}" {% if rota == 'painel_controle' %}aria-current="page"{% endif %}><i class="fas fa-receipt" aria-hidden="true"></i> Orders</a></li>
-        <li><a href="{% url 'sushiemcasa:listar_produtos' %}" {% if rota == 'listar_produtos' or rota == 'editar_produto' %}aria-current="page"{% endif %}><i class="fas fa-fish" aria-hidden="true"></i> Products</a></li>
+        <li><a href="{% url 'sushiemcasa:listar_produtos' %}" {% if rota == 'listar_produtos' or rota == 'editar_produto' or rota == 'criar_produto' %}aria-current="page"{% endif %}><i class="fas fa-fish" aria-hidden="true"></i> Products</a></li>
+        <li><a href="{% url 'sushiemcasa:listar_categorias' %}" {% if rota == 'listar_categorias' or rota == 'editar_categoria' or rota == 'criar_categoria' %}aria-current="page"{% endif %}><i class="fas fa-tags" aria-hidden="true"></i> Categories</a></li>
+        <li><a href="{% url 'sushiemcasa:listar_banners' %}" {% if rota == 'listar_banners' or rota == 'editar_banner' or rota == 'criar_banner' %}aria-current="page"{% endif %}><i class="fas fa-percent" aria-hidden="true"></i> Specials</a></li>
         <li><a href="{% url 'sushiemcasa:gerenciar_horarios' %}" {% if rota == 'gerenciar_horarios' %}aria-current="page"{% endif %}><i class="fas fa-clock" aria-hidden="true"></i> Hours</a></li>
-        <li><a href="/admin/"><i class="fas fa-gears" aria-hidden="true"></i> Full admin</a></li>
+        <li><a href="{% url 'sushiemcasa:listar_mensagens' %}" {% if rota == 'listar_mensagens' %}aria-current="page"{% endif %}><i class="fas fa-envelope" aria-hidden="true"></i> Messages</a></li>
+        <li><a href="{% url 'sushiemcasa:listar_usuarios' %}" {% if rota == 'listar_usuarios' %}aria-current="page"{% endif %}><i class="fas fa-users" aria-hidden="true"></i> Users</a></li>
     </ul>
 </nav>
 {% endwith %}

@@ -35,6 +35,23 @@
 
 .card--form { max-width: 720px; }
 
+/* Formulário comum do painel */
+.campo--check label { display: flex; align-items: center; gap: var(--e-2); cursor: pointer; }
+.previa-imagem {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: var(--raio);
+  border: 1px solid var(--cor-borda);
+  background: var(--cor-superficie-2);
+}
+.status--outro { background: var(--cor-superficie-2); color: var(--cor-texto-suave); }
+
+/* Mensagens do contato */
+.lista-mensagens { display: grid; gap: var(--e-3); }
+.mensagem-card__topo { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--e-3); }
+.mensagem-card__texto { margin-top: var(--e-3); white-space: normal; overflow-wrap: anywhere; }
+
 /* o botão flutuante de WhatsApp é para clientes; no painel só atrapalha */
 .whatsapp-flutuante { display: none; }
 

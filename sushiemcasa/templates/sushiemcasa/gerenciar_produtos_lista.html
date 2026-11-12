@@ -12,8 +12,9 @@
     <div class="painel-topo">
         <div>
             <h1>Products</h1>
-            <p>Edit name, description and price. Photos, categories and new products are managed in the Full admin.</p>
+            <p>Add, edit, hide or delete menu items.</p>
         </div>
+        <a href="{% url 'sushiemcasa:criar_produto' %}" class="btn btn--primario"><i class="fas fa-plus" aria-hidden="true"></i> New product</a>
     </div>
 
     {% include 'sushiemcasa/painel/_nav.html' %}
@@ -60,6 +61,13 @@
                             <a href="{% url 'sushiemcasa:editar_produto' produto.pk %}" class="btn btn--sm" aria-label="Edit {{ produto.nome }}">
                                 <i class="fas fa-pen" aria-hidden="true"></i> Edit
                             </a>
+                            <form action="{% url 'sushiemcasa:excluir_produto' produto.pk %}" method="post"
+                                  data-confirmar="Delete &quot;{{ produto.nome }}&quot;? It will disappear from the menu. Past orders keep their item names.">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn--sm btn--perigo" aria-label="Delete {{ produto.nome }}">
+                                    <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

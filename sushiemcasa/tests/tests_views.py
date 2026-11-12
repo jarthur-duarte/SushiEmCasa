@@ -301,3 +301,132 @@ class CheckoutViewTests(TestCase):
     def test_carrinho_vazio_redireciona_para_basket(self):
         response = self.client.get(reverse('sushiemcasa:checkout'))
         self.assertRedirects(response, reverse('sushiemcasa:basket'))
+
+
+# =========================================================================
+# PAINEL DA LOJA (cadastros que substituem o Admin completo)
+# =========================================================================
+import io
+import shutil
+import tempfile
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
+from PIL import Image
+
+from sushiemcasa.models import BannerPromocional
+
+MEDIA_TESTE = tempfile.mkdtemp()
+
+
+def _imagem_png(nome='foto.png'):
+    buf = io.BytesIO()
+    Image.new('RGB', (10, 10), (200, 0, 0)).save(buf, format='PNG')
+    return SimpleUploadedFile(nome, buf.getvalue(), content_type='image/png')
+
+
+@override_settings(
+    MEDIA_ROOT=MEDIA_TESTE,
+    STORAGES={
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    },
+)
+class PainelGestaoTests(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(MEDIA_TESTE, ignore_errors=True)
+
+    def setUp(self):
+        self.admin = User.objects.create_superuser('chefe', 'chefe@example.com', 'senha-de-teste-123')
+        self.staff = User.objects.create_user('equipe', 'equipe@example.com', 'senha-de-teste-123', is_staff=True)
+        self.cliente = User.objects.create_user('cliente', 'cliente@example.com', 'senha-de-teste-123')
+        self.categoria = Categoria.objects.create(nome='Temaki', slug='temaki')
+
+    def test_paginas_do_painel_abrem_para_equipe(self):
+        self.client.force_login(self.staff)
+        for nome in ['listar_produtos', 'criar_produto', 'listar_categorias', 'criar_categoria',
+                     'listar_banners', 'criar_banner', 'listar_mensagens', 'listar_usuarios']:
+            with self.subTest(pagina=nome):
+                self.assertEqual(self.client.get(reverse(f'sushiemcasa:{nome}')).status_code, 200)
+
+    def test_cliente_nao_acessa_o_painel(self):
+        self.client.force_login(self.cliente)
+        response = self.client.get(reverse('sushiemcasa:listar_categorias'))
+        self.assertRedirects(response, reverse('sushiemcasa:cardapio'))
+
+    def test_criar_categoria_gera_link_pelo_nome(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:criar_categoria'), {'nome': 'Hot Rolls', 'slug': ''})
+        self.assertTrue(Categoria.objects.filter(nome='Hot Rolls', slug='hot-rolls').exists())
+
+    def test_nao_apaga_categoria_com_produtos(self):
+        Produto.objects.create(nome='Temaki', descricao='x', preco=Decimal('10'), categoria=self.categoria)
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:excluir_categoria', args=[self.categoria.pk]))
+        self.assertTrue(Categoria.objects.filter(pk=self.categoria.pk).exists())
+        self.assertEqual(Produto.objects.count(), 1)
+
+    def test_criar_editar_e_apagar_produto(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:criar_produto'), {
+            'nome': 'Uramaki', 'categoria': self.categoria.pk, 'descricao': 'Novo',
+            'preco': '12.50', 'imagem': _imagem_png(), 'disponivel': 'on',
+        })
+        produto = Produto.objects.get(nome='Uramaki')
+        self.assertTrue(produto.imagem.name.startswith('produtos/'))
+
+        self.client.post(reverse('sushiemcasa:editar_produto', args=[produto.pk]), {
+            'nome': 'Uramaki', 'categoria': self.categoria.pk, 'descricao': 'Novo',
+            'preco': '13.00',  # sem 'disponivel' = desmarcado; sem imagem = mantém a atual
+        })
+        produto.refresh_from_db()
+        self.assertEqual(produto.preco, Decimal('13.00'))
+        self.assertFalse(produto.disponivel)
+        self.assertTrue(produto.imagem.name.startswith('produtos/'))
+
+        self.client.post(reverse('sushiemcasa:excluir_produto', args=[produto.pk]))
+        self.assertFalse(Produto.objects.filter(pk=produto.pk).exists())
+
+    def test_excluir_so_por_post(self):
+        produto = Produto.objects.create(nome='Hot', descricao='x', preco=Decimal('10'), categoria=self.categoria)
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse('sushiemcasa:excluir_produto', args=[produto.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_criar_promocao(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:criar_banner'), {
+            'titulo': 'Combo', 'descricao': 'Oferta', 'imagem': _imagem_png('b.png'),
+            'preco_promocional': '20', 'ordem': '1', 'ativo': 'on',
+        })
+        self.assertTrue(BannerPromocional.objects.filter(titulo='Combo', ativo=True).exists())
+
+    def test_apagar_mensagem(self):
+        msg = MensagemFeedback.objects.create(nome='Ana', mensagem='Oi')
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:excluir_mensagem', args=[msg.pk]))
+        self.assertFalse(MensagemFeedback.objects.filter(pk=msg.pk).exists())
+
+    def test_admin_da_e_tira_acesso_da_equipe(self):
+        self.client.force_login(self.admin)
+        url = reverse('sushiemcasa:alterar_usuario', args=[self.cliente.pk])
+        self.client.post(url, {'campo': 'is_staff'})
+        self.cliente.refresh_from_db()
+        self.assertTrue(self.cliente.is_staff)
+        self.client.post(url, {'campo': 'is_active'})
+        self.cliente.refresh_from_db()
+        self.assertFalse(self.cliente.is_active)
+
+    def test_equipe_nao_altera_acessos(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:alterar_usuario', args=[self.cliente.pk]), {'campo': 'is_staff'})
+        self.cliente.refresh_from_db()
+        self.assertFalse(self.cliente.is_staff)
+
+    def test_admin_nao_altera_a_propria_conta(self):
+        self.client.force_login(self.admin)
+        self.client.post(reverse('sushiemcasa:alterar_usuario', args=[self.admin.pk]), {'campo': 'is_active'})
+        self.admin.refresh_from_db()
+        self.assertTrue(self.admin.is_active)

@@ -1,0 +1,50 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard · Messages · Sushi em Casa{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <h1>Messages</h1>
+            <p>Feedback sent through the Contact page, newest first.</p>
+        </div>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
+
+    {% if mensagens %}
+    <ul class="lista-mensagens">
+        {% for m in mensagens %}
+        <li class="card mensagem-card">
+            <div class="mensagem-card__topo">
+                <div>
+                    <strong>{{ m.nome|default:"Anonymous" }}</strong>
+                    {% if m.email %}· <a href="mailto:{{ m.email }}">{{ m.email }}</a>{% endif %}
+                    <div class="texto-suave">{{ m.data_envio|date:"M j, Y g:i A" }}</div>
+                </div>
+                <form action="{% url 'sushiemcasa:excluir_mensagem' m.pk %}" method="post" data-confirmar="Delete this message?">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn--sm btn--perigo" aria-label="Delete message from {{ m.nome|default:'Anonymous' }}">
+                        <i class="fas fa-trash-can" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
+            <p class="mensagem-card__texto">{{ m.mensagem|linebreaksbr }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <div class="vazio card">
+            <div class="vazio__icone"><i class="fas fa-envelope-open" aria-hidden="true"></i></div>
+            <h2>No messages yet</h2>
+            <p>Messages sent from the Contact page will show up here.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
