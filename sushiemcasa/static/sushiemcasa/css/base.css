@@ -93,7 +93,7 @@ img { height: auto; }
 input, button, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 a { color: var(--cor-marca-escura); text-underline-offset: 2px; }
-ul[class], ol[class] { list-style: none; padding: 0; }
+ul[class], ol[class], nav ul, nav ol, .site-footer ul { list-style: none; padding: 0; }
 h1, h2, h3, h4 { color: var(--cor-tinta); line-height: 1.2; font-weight: 700; }
 h1 { font-size: var(--fs-3xl); }
 h2 { font-size: var(--fs-2xl); }
@@ -319,9 +319,13 @@ table { border-collapse: collapse; width: 100%; }
 body.gaveta-aberta { overflow: hidden; }
 
 @media (max-width: 767px) {
-  .nav-principal, .menu-usuario, .so-desktop { display: none; }
+  .site-header .nav-principal,
+  .site-header .menu-usuario,
+  .site-header .so-desktop { display: none; }
   .so-mobile { display: inline-flex; }
-  .marca span { font-size: var(--fs-base); }
+  .site-header__inner { gap: var(--e-1); }
+  .marca span { font-size: var(--fs-sm); white-space: nowrap; }
+  .marca img { width: 45px; height: 30px; }
 }
 
 /* ---------- 5. Rodapé ---------- */
