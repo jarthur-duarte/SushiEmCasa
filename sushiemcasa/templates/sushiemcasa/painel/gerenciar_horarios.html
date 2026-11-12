@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Painel · Horários · Sushi em Casa{% endblock %}
+{% block title %}Dashboard · Hours · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
@@ -11,8 +11,8 @@
 <div class="container">
     <div class="painel-topo">
         <div>
-            <h1>Horários de funcionamento</h1>
-            <p>Fora destes horários o cardápio mostra o aviso de loja fechada.</p>
+            <h1>Opening hours</h1>
+            <p>Outside these hours the menu shows a "store closed" notice.</p>
         </div>
     </div>
 
@@ -25,36 +25,36 @@
 
         <div class="tabela-rolagem">
             <table class="tabela tabela--cartoes tabela-horarios">
-                <caption class="sr-only">Horários por dia da semana</caption>
+                <caption class="sr-only">Hours by day of the week</caption>
                 <thead>
                     <tr>
-                        <th scope="col">Dia</th>
-                        <th scope="col">Aberto?</th>
-                        <th scope="col">Abre às</th>
-                        <th scope="col">Fecha às</th>
+                        <th scope="col">Day</th>
+                        <th scope="col">Open?</th>
+                        <th scope="col">Opens at</th>
+                        <th scope="col">Closes at</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for form in formset %}
                     {% with dia=form.instance.get_day_of_week_display %}
                     <tr>
-                        <th scope="row" data-label="Dia">
+                        <th scope="row" data-label="Day">
                             {{ dia }}
                             {% if form.id %}{{ form.id }}{% endif %}
                             {% for erro in form.non_field_errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
                         </th>
-                        <td data-label="Aberto?">
-                            <label class="sr-only" for="{{ form.is_open.id_for_label }}">Aberto na {{ dia }}</label>
+                        <td data-label="Open?">
+                            <label class="sr-only" for="{{ form.is_open.id_for_label }}">Open on {{ dia }}</label>
                             {{ form.is_open }}
                             {% for erro in form.is_open.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
                         </td>
-                        <td data-label="Abre às">
-                            <label class="sr-only" for="{{ form.open_time.id_for_label }}">Abre às ({{ dia }})</label>
+                        <td data-label="Opens at">
+                            <label class="sr-only" for="{{ form.open_time.id_for_label }}">Opens at ({{ dia }})</label>
                             {{ form.open_time }}
                             {% for erro in form.open_time.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
                         </td>
-                        <td data-label="Fecha às">
-                            <label class="sr-only" for="{{ form.close_time.id_for_label }}">Fecha às ({{ dia }})</label>
+                        <td data-label="Closes at">
+                            <label class="sr-only" for="{{ form.close_time.id_for_label }}">Closes at ({{ dia }})</label>
                             {{ form.close_time }}
                             {% for erro in form.close_time.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
                         </td>
@@ -66,8 +66,8 @@
         </div>
 
         <div class="rodape-form">
-            <button type="submit" class="btn btn--primario">Salvar horários</button>
-            <a href="{% url 'sushiemcasa:painel_controle' %}" class="btn">Cancelar</a>
+            <button type="submit" class="btn btn--primario">Save hours</button>
+            <a href="{% url 'sushiemcasa:painel_controle' %}" class="btn">Cancel</a>
         </div>
     </form>
 </div>

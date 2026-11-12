@@ -36,7 +36,7 @@ def pagina_checkout(request):
                 cart_total += total_item_price
 
     if not cart_items:
-        messages.error(request, "Seu carrinho está vazio.")
+        messages.error(request, "Your cart is empty.")
         return redirect('sushiemcasa:basket')
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -64,7 +64,7 @@ def pagina_checkout(request):
                 subtotal = item['quantity'] * item['price']
                 itens_whatsapp += (
                     f"{BULLET} {item['quantity']}x {item['name']} "
-                    f"(R$ {subtotal:.2f})\n"
+                    f"($ {subtotal:.2f})\n"
                 )
             OrderItem.objects.bulk_create(order_items)
             request.session['cart'] = {}
@@ -72,19 +72,19 @@ def pagina_checkout(request):
             nome_cliente = (
                 request.user.username
                 if request.user.is_authenticated
-                else "Cliente visitante"
+                else "Guest customer"
             )
 
-            data_agendada = order.delivery_datetime.strftime("%d/%m/%Y às %H:%M")
+            data_agendada = order.delivery_datetime.strftime("%m/%d/%Y at %I:%M %p")
 
             mensagem = (
-                f"🍣 NOVO PEDIDO - SUSHI EM CASA\n\n"
-                f"📄 Pedido Nº: {order.id}\n"
-                f"👤 Cliente: {nome_cliente}\n"
-                f"📅 Agendado para: {data_agendada}\n\n"
-                f"🛒 ITENS DO PEDIDO\n"
+                f"🍣 NEW ORDER - SUSHI EM CASA\n\n"
+                f"📄 Order #: {order.id}\n"
+                f"👤 Customer: {nome_cliente}\n"
+                f"📅 Scheduled for: {data_agendada}\n\n"
+                f"🛒 ORDER ITEMS\n"
                 f"{itens_whatsapp}\n"
-                f"💰 TOTAL DO PEDIDO: R$ {order.total_price:.2f}*"
+                f"💰 ORDER TOTAL: $ {order.total_price:.2f}"
             )
             numero_whatsapp = "12397719811"
 
@@ -102,7 +102,7 @@ def pagina_checkout(request):
             return redirect(url_whatsapp)
 
         else:
-            messages.error(request, "Por favor, corrija os erros abaixo.")
+            messages.error(request, "Please correct the errors below.")
 
     else:
         form = OrderForm()

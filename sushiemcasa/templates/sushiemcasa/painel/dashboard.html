@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Painel · Pedidos · Sushi em Casa{% endblock %}
+{% block title %}Dashboard · Orders · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
@@ -11,78 +11,78 @@
 <div class="container">
     <div class="painel-topo">
         <div>
-            <h1>Painel da loja</h1>
-            <p>Olá, <strong>{{ user.username }}</strong>. Aqui você acompanha e atualiza os pedidos.</p>
+            <h1>Store dashboard</h1>
+            <p>Hi, <strong>{{ user.username }}</strong>. Track and update orders here.</p>
         </div>
     </div>
 
     {% include 'sushiemcasa/painel/_nav.html' %}
 
     <div class="painel-filtros">
-        <label class="sr-only" for="filtro-busca">Buscar pedido</label>
-        <input type="search" id="filtro-busca" class="controle" placeholder="Buscar por nº, cliente ou item">
-        <div class="chips" role="group" aria-label="Filtrar por status">
-            <button type="button" class="chip" data-filtro-status="todos" aria-pressed="true">Todos</button>
-            <button type="button" class="chip" data-filtro-status="pendente" aria-pressed="false">Pendentes</button>
-            <button type="button" class="chip" data-filtro-status="preparando" aria-pressed="false">Preparando</button>
-            <button type="button" class="chip" data-filtro-status="saiu" aria-pressed="false">Saiu para entrega</button>
-            <button type="button" class="chip" data-filtro-status="entregue" aria-pressed="false">Entregues</button>
-            <button type="button" class="chip" data-filtro-status="cancelado" aria-pressed="false">Cancelados</button>
+        <label class="sr-only" for="filtro-busca">Search orders</label>
+        <input type="search" id="filtro-busca" class="controle" placeholder="Search by #, customer or item">
+        <div class="chips" role="group" aria-label="Filter by status">
+            <button type="button" class="chip" data-filtro-status="todos" aria-pressed="true">All</button>
+            <button type="button" class="chip" data-filtro-status="pendente" aria-pressed="false">Pending</button>
+            <button type="button" class="chip" data-filtro-status="preparando" aria-pressed="false">Preparing</button>
+            <button type="button" class="chip" data-filtro-status="saiu" aria-pressed="false">Out for delivery</button>
+            <button type="button" class="chip" data-filtro-status="entregue" aria-pressed="false">Delivered</button>
+            <button type="button" class="chip" data-filtro-status="cancelado" aria-pressed="false">Canceled</button>
         </div>
         <span id="contagem-filtro" class="contagem-filtro" role="status" aria-live="polite"></span>
     </div>
 
     <div class="tabela-rolagem">
         <table class="tabela tabela--cartoes" data-filtravel>
-            <caption class="sr-only">Pedidos, do mais recente para o mais antigo</caption>
+            <caption class="sr-only">Orders, newest first</caption>
             <thead>
                 <tr>
-                    <th scope="col">Nº</th>
-                    <th scope="col">Feito em</th>
-                    <th scope="col">Cliente</th>
-                    <th scope="col">Itens</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Placed</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Items</th>
                     <th scope="col">Total</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Alterar status</th>
-                    <th scope="col"><span class="sr-only">Excluir</span></th>
+                    <th scope="col">Change status</th>
+                    <th scope="col"><span class="sr-only">Delete</span></th>
                 </tr>
             </thead>
             <tbody>
                 {% for pedido in pedidos %}
                 <tr data-status="{% include 'sushiemcasa/includes/status_chave.html' with s=pedido.status %}"
-                    data-busca="#{{ pedido.id }} {{ pedido.user.username|default:'visitante' }} {% for item in pedido.items.all %}{{ item.item_name }} {% endfor %}">
-                    <td data-label="Pedido"><a href="{% url 'sushiemcasa:order_detail' pedido.id %}"><strong>#{{ pedido.id }}</strong></a></td>
-                    <td data-label="Feito em" class="num">{{ pedido.created_at|date:"d/m H:i" }}</td>
-                    <td data-label="Cliente">{{ pedido.user.username|default:"Visitante" }}</td>
-                    <td data-label="Itens">
+                    data-busca="#{{ pedido.id }} {{ pedido.user.username|default:'guest' }} {% for item in pedido.items.all %}{{ item.item_name }} {% endfor %}">
+                    <td data-label="Order"><a href="{% url 'sushiemcasa:order_detail' pedido.id %}"><strong>#{{ pedido.id }}</strong></a></td>
+                    <td data-label="Placed" class="num">{{ pedido.created_at|date:"m/d g:i A" }}</td>
+                    <td data-label="Customer">{{ pedido.user.username|default:"Guest" }}</td>
+                    <td data-label="Items">
                         <div class="itens-lista">
                             {% for item in pedido.items.all %}<div>{{ item.quantity }}× {{ item.item_name }}</div>{% endfor %}
                         </div>
                     </td>
                     <td data-label="Total" class="num"><strong>$ {{ pedido.total_price|floatformat:2 }}</strong></td>
                     <td data-label="Status">{% include 'sushiemcasa/includes/status_badge.html' with s=pedido.status %}</td>
-                    <td data-label="Alterar">
+                    <td data-label="Change">
                         <form method="post" class="form-status">
                             {% csrf_token %}
                             <input type="hidden" name="order_id" value="{{ pedido.id }}">
-                            <label class="sr-only" for="status-{{ pedido.id }}">Novo status do pedido {{ pedido.id }}</label>
+                            <label class="sr-only" for="status-{{ pedido.id }}">New status for order {{ pedido.id }}</label>
                             <select name="new_status" id="status-{{ pedido.id }}">
                                 {% comment %} Pedidos antigos têm status fora das opções atuais; mantém o valor atual selecionado para não trocá-lo sem querer. {% endcomment %}
                                 {% if pedido.status != 'pendente' and pedido.status != 'preparando' and pedido.status != 'saiu_entrega' and pedido.status != 'entregue' and pedido.status != 'cancelado' %}
-                                    <option value="{{ pedido.status }}" selected>{% include 'sushiemcasa/includes/status_nome.html' with s=pedido.status %} (atual)</option>
+                                    <option value="{{ pedido.status }}" selected>{% include 'sushiemcasa/includes/status_nome.html' with s=pedido.status %} (current)</option>
                                 {% endif %}
                                 {% for codigo, nome in status_choices %}
                                     <option value="{{ codigo }}" {% if pedido.status == codigo %}selected{% endif %}>{% include 'sushiemcasa/includes/status_nome.html' with s=codigo %}</option>
                                 {% endfor %}
                             </select>
-                            <button type="submit" class="btn btn--sm btn--escuro">Salvar</button>
+                            <button type="submit" class="btn btn--sm btn--escuro">Save</button>
                         </form>
                     </td>
-                    <td data-label="Excluir">
+                    <td data-label="Delete">
                         <form action="{% url 'sushiemcasa:deletar_pedido' pedido.id %}" method="post"
-                              data-confirmar="Apagar o pedido #{{ pedido.id }}? Esta ação não pode ser desfeita.">
+                              data-confirmar="Delete order #{{ pedido.id }}? This can't be undone.">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn--sm btn--perigo" aria-label="Apagar pedido {{ pedido.id }}">
+                            <button type="submit" class="btn btn--sm btn--perigo" aria-label="Delete order {{ pedido.id }}">
                                 <i class="fas fa-trash-can" aria-hidden="true"></i>
                             </button>
                         </form>
@@ -90,7 +90,7 @@
                 </tr>
                 {% empty %}
                 <tr class="linha-vazia">
-                    <td colspan="8">Nenhum pedido ainda.</td>
+                    <td colspan="8">No orders yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>

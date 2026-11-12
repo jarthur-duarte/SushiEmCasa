@@ -63,7 +63,7 @@ class CategoriaProdutoModelTests(TestCase):
 class HorarioDeFuncionamentoModelTests(TestCase):
     def test_str_dia_fechado(self):
         horario = HorarioDeFuncionamento(day_of_week=0, is_open=False)
-        self.assertIn('Fechado', str(horario))
+        self.assertIn('Closed', str(horario))
 
     def test_str_dia_aberto_com_horarios(self):
         horario = HorarioDeFuncionamento(
@@ -72,7 +72,7 @@ class HorarioDeFuncionamentoModelTests(TestCase):
             open_time=datetime.time(9, 0),
             close_time=datetime.time(18, 0),
         )
-        self.assertEqual(str(horario), 'Segunda-feira: 09:00 - 18:00')
+        self.assertEqual(str(horario), 'Monday: 09:00 - 18:00')
 
     def test_clean_aberto_sem_horarios_levanta_erro(self):
         horario = HorarioDeFuncionamento(day_of_week=1, is_open=True)
@@ -144,11 +144,11 @@ class OrderModelTests(TestCase):
 class MensagemFeedbackModelTests(TestCase):
     def test_str_com_nome(self):
         msg = MensagemFeedback(nome='Ana', mensagem='Oi')
-        self.assertEqual(str(msg), 'Mensagem de Ana')
+        self.assertEqual(str(msg), 'Message from Ana')
 
     def test_str_anonimo(self):
         msg = MensagemFeedback(mensagem='Oi')
-        self.assertEqual(str(msg), 'Mensagem de Anônimo')
+        self.assertEqual(str(msg), 'Message from Anonymous')
 
 
 # =========================================================================

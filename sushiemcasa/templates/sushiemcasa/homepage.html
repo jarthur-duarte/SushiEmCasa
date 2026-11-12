@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}{% if categoria_selecionada %}{{ categoria_selecionada }} · {% endif %}Cardápio · Sushi em Casa{% endblock %}
+{% block title %}{% if categoria_selecionada %}{{ categoria_selecionada }} · {% endif %}Menu · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/cardapio.css' %}">
@@ -12,18 +12,18 @@
 
     <div class="cardapio-topo">
         <div>
-            <h1>Cardápio</h1>
-            <p>Escolha seus sushis e agende a entrega com pelo menos 24 horas de antecedência.</p>
+            <h1>Menu</h1>
+            <p>Pick your sushi and schedule delivery at least 24 hours in advance.</p>
         </div>
         {% if is_open %}
-            <span class="loja-aberta">Aberto agora</span>
+            <span class="loja-aberta">Open now</span>
         {% endif %}
     </div>
 
     {% if not is_open %}
         <ul class="messages">
             <li class="message warning">
-                <span><strong>Loja fechada no momento.</strong> Você ainda pode montar o carrinho e agendar a entrega para outro horário.</span>
+                <span><strong>The store is currently closed.</strong> You can still fill your cart and schedule delivery for another time.</span>
             </li>
         </ul>
     {% endif %}
@@ -31,26 +31,26 @@
     {% if banners %}
     <section class="promocoes" aria-labelledby="titulo-promocoes">
         <div class="secao-cabecalho">
-            <h2 id="titulo-promocoes">Promoções</h2>
+            <h2 id="titulo-promocoes">Specials</h2>
         </div>
 
-        <div class="carrossel" data-carrossel aria-roledescription="carrossel" aria-label="Promoções">
+        <div class="carrossel" data-carrossel aria-roledescription="carousel" aria-label="Specials">
             <ul class="carrossel__trilho">
                 {% for banner in banners %}
-                <li class="carrossel__slide" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} de {{ banners|length }}">
+                <li class="carrossel__slide" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} of {{ banners|length }}">
                     <article class="promo">
                         <div class="promo__foto">
                             <img src="{{ banner.imagem.url }}" alt="{{ banner.titulo }}" width="640" height="480"
                                  {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async">
                         </div>
                         <div class="promo__texto">
-                            <span class="promo__selo">Oferta</span>
+                            <span class="promo__selo">Deal</span>
                             <h3>{{ banner.titulo }}</h3>
                             <p>{{ banner.descricao }}</p>
                             <div class="promo__precos">
-                                <span class="preco"><span class="sr-only">Por </span>$ {{ banner.preco_promocional|floatformat:2 }}</span>
+                                <span class="preco"><span class="sr-only">Now </span>$ {{ banner.preco_promocional|floatformat:2 }}</span>
                                 {% if banner.preco_antigo %}
-                                    <span class="preco-antigo"><span class="sr-only">de </span>$ {{ banner.preco_antigo|floatformat:2 }}</span>
+                                    <span class="preco-antigo"><span class="sr-only">was </span>$ {{ banner.preco_antigo|floatformat:2 }}</span>
                                 {% endif %}
                             </div>
                             {% if banner.produto_vinculado %}
@@ -58,7 +58,7 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="btn btn--primario btn-add-promocao">
-                                    <i class="fas fa-cart-plus" aria-hidden="true"></i> Adicionar oferta
+                                    <i class="fas fa-cart-plus" aria-hidden="true"></i> Add deal
                                 </button>
                             </form>
                             {% endif %}
@@ -70,15 +70,15 @@
 
             {% if banners|length > 1 %}
             <div class="carrossel__controles">
-                <button type="button" class="carrossel__seta" data-carrossel-anterior aria-label="Promoção anterior">
+                <button type="button" class="carrossel__seta" data-carrossel-anterior aria-label="Previous special">
                     <i class="fas fa-chevron-left" aria-hidden="true"></i>
                 </button>
                 <div class="carrossel__pontos">
                     {% for banner in banners %}
-                        <button type="button" class="carrossel__ponto" aria-label="Ir para a promoção {{ forloop.counter }}: {{ banner.titulo }}"></button>
+                        <button type="button" class="carrossel__ponto" aria-label="Go to special {{ forloop.counter }}: {{ banner.titulo }}"></button>
                     {% endfor %}
                 </div>
-                <button type="button" class="carrossel__seta" data-carrossel-proximo aria-label="Próxima promoção">
+                <button type="button" class="carrossel__seta" data-carrossel-proximo aria-label="Next special">
                     <i class="fas fa-chevron-right" aria-hidden="true"></i>
                 </button>
             </div>
@@ -88,11 +88,11 @@
     {% endif %}
 
     <section id="menu-principal" aria-labelledby="titulo-menu">
-        <h2 id="titulo-menu" class="sr-only">Produtos</h2>
+        <h2 id="titulo-menu" class="sr-only">Products</h2>
 
-        <nav class="filtros" aria-label="Filtrar por categoria">
+        <nav class="filtros" aria-label="Filter by category">
             <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}#menu-principal" {% if not categoria_selecionada %}aria-current="page"{% endif %}>Todos</a></li>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}#menu-principal" {% if not categoria_selecionada %}aria-current="page"{% endif %}>All</a></li>
                 {% for categoria in categorias %}
                     <li>
                         <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}#menu-principal"
@@ -123,8 +123,8 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="btn btn--primario btn--sm add-to-cart-button"
-                                        aria-label="Adicionar {{ produto.nome }} ao carrinho">
-                                    <i class="fas fa-plus" aria-hidden="true"></i> Adicionar
+                                        aria-label="Add {{ produto.nome }} to cart">
+                                    <i class="fas fa-plus" aria-hidden="true"></i> Add
                                 </button>
                             </form>
                         </div>
@@ -136,9 +136,9 @@
         {% else %}
             <div class="vazio">
                 <div class="vazio__icone"><i class="fas fa-fish" aria-hidden="true"></i></div>
-                <h3>Nenhum produto nesta categoria</h3>
-                <p>Veja as outras opções do cardápio.</p>
-                <a href="{% url 'sushiemcasa:cardapio' %}" class="btn">Ver todo o cardápio</a>
+                <h3>No products in this category</h3>
+                <p>Check out the rest of the menu.</p>
+                <a href="{% url 'sushiemcasa:cardapio' %}" class="btn">See the full menu</a>
             </div>
         {% endif %}
     </section>

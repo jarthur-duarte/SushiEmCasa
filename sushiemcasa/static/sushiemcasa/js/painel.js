@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!tr.hidden) visiveis++;
     });
     if (contagem) {
-      contagem.textContent = visiveis + (visiveis === 1 ? ' resultado' : ' resultados');
+      contagem.textContent = visiveis + (visiveis === 1 ? ' result' : ' results');
     }
   }
 

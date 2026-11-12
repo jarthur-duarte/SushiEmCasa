@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Painel · Produtos · Sushi em Casa{% endblock %}
+{% block title %}Dashboard · Products · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
@@ -11,30 +11,30 @@
 <div class="container">
     <div class="painel-topo">
         <div>
-            <h1>Produtos</h1>
-            <p>Edite nome, descrição e preço. Fotos, categorias e novos produtos ficam no Admin completo.</p>
+            <h1>Products</h1>
+            <p>Edit name, description and price. Photos, categories and new products are managed in the Full admin.</p>
         </div>
     </div>
 
     {% include 'sushiemcasa/painel/_nav.html' %}
 
     <div class="painel-filtros">
-        <label class="sr-only" for="filtro-busca">Buscar produto</label>
-        <input type="search" id="filtro-busca" class="controle" placeholder="Buscar produto ou categoria">
+        <label class="sr-only" for="filtro-busca">Search products</label>
+        <input type="search" id="filtro-busca" class="controle" placeholder="Search product or category">
         <span id="contagem-filtro" class="contagem-filtro" role="status" aria-live="polite"></span>
     </div>
 
     <div class="tabela-rolagem">
         <table class="tabela tabela--cartoes" data-filtravel>
-            <caption class="sr-only">Produtos cadastrados</caption>
+            <caption class="sr-only">Products</caption>
             <thead>
                 <tr>
-                    <th scope="col"><span class="sr-only">Foto</span></th>
-                    <th scope="col">Produto</th>
-                    <th scope="col">Categoria</th>
-                    <th scope="col">Preço</th>
-                    <th scope="col">No cardápio</th>
-                    <th scope="col"><span class="sr-only">Ações</span></th>
+                    <th scope="col"><span class="sr-only">Photo</span></th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">On the menu</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -45,27 +45,27 @@
                             <img class="miniatura" src="{{ produto.imagem.url }}" alt="" width="48" height="48">
                         {% endif %}
                     </td>
-                    <td data-label="Produto"><strong>{{ produto.nome }}</strong></td>
-                    <td data-label="Categoria">{{ produto.categoria.nome }}</td>
-                    <td data-label="Preço" class="num">$ {{ produto.preco|floatformat:2 }}</td>
-                    <td data-label="No cardápio">
+                    <td data-label="Product"><strong>{{ produto.nome }}</strong></td>
+                    <td data-label="Category">{{ produto.categoria.nome }}</td>
+                    <td data-label="Price" class="num">$ {{ produto.preco|floatformat:2 }}</td>
+                    <td data-label="On the menu">
                         {% if produto.disponivel %}
-                            <span class="status status--entregue">Disponível</span>
+                            <span class="status status--entregue">Available</span>
                         {% else %}
-                            <span class="status status--cancelado">Indisponível</span>
+                            <span class="status status--cancelado">Unavailable</span>
                         {% endif %}
                     </td>
                     <td>
                         <div class="acoes-linha">
-                            <a href="{% url 'sushiemcasa:editar_produto' produto.pk %}" class="btn btn--sm" aria-label="Editar {{ produto.nome }}">
-                                <i class="fas fa-pen" aria-hidden="true"></i> Editar
+                            <a href="{% url 'sushiemcasa:editar_produto' produto.pk %}" class="btn btn--sm" aria-label="Edit {{ produto.nome }}">
+                                <i class="fas fa-pen" aria-hidden="true"></i> Edit
                             </a>
                         </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr class="linha-vazia">
-                    <td colspan="6">Nenhum produto cadastrado.</td>
+                    <td colspan="6">No products yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>

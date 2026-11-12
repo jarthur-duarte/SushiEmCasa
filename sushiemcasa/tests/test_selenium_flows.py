@@ -159,8 +159,8 @@ class TestBasketCheckoutFlows(StaticLiveServerTestCase):
 
         # Volta ao carrinho para confirmar que está vazio
         self.driver.get(basket_url)
-        carrinho_vazio = wait.until(EC.presence_of_element_located((By.XPATH, "//p[contains(text(), 'Seu carrinho está vazio')]")))
-        self.assertIn('Seu carrinho está vazio', carrinho_vazio.text)
+        carrinho_vazio = wait.until(EC.presence_of_element_located((By.XPATH, "//p[contains(text(), 'Your cart is empty')]")))
+        self.assertIn('Your cart is empty', carrinho_vazio.text)
 
     def test_finalizar_pedido_redireciona_para_whatsapp(self):
         self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto1.id]), {'quantity': 1})
@@ -183,7 +183,7 @@ class TestBasketCheckoutFlows(StaticLiveServerTestCase):
             WebDriverWait(self.driver, 20).until(EC.url_contains('whatsapp.com'))
             url_atual = self.driver.current_url
             self.assertIn('5587988240512', url_atual)
-            self.assertIn('Novo+Pedido', url_atual)
+            self.assertIn('NEW+ORDER', url_atual)
         except TimeoutException:
             body_text = self.driver.find_element(By.TAG_NAME, 'body').text
             self.fail(f"Falha redirecionamento WhatsApp.\nURL: {self.driver.current_url}\nConteúdo:\n{body_text[:2000]}")
@@ -250,7 +250,7 @@ class HorarioFuncionamentoSeleniumTests(StaticLiveServerTestCase):
         try:
             WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.errornote, .errorlist')))
             error_text = self.driver.find_element(By.CSS_SELECTOR, '#content').text
-            self.assertIn('O horário de fechamento não pode ser anterior ou igual ao de abertura', error_text)
+            self.assertIn('Closing time must be later than opening time', error_text)
         except TimeoutException:
             self.fail("Mensagem de erro admin não exibida.")
         
@@ -285,7 +285,7 @@ class HorarioFuncionamentoSeleniumTests(StaticLiveServerTestCase):
         aviso_seletor = (By.CSS_SELECTOR, 'li.message') 
         try:
             aviso = WebDriverWait(self.driver, 5).until(EC.visibility_of_element_located(aviso_seletor))
-            self.assertIn('loja fechada', aviso.text.lower())
+            self.assertIn('store is currently closed', aviso.text.lower())
         except TimeoutException:
             self.fail("Aviso de loja fechada não encontrado.")
 

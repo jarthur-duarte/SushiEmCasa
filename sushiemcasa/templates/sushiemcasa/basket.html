@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Carrinho · Sushi em Casa{% endblock %}
+{% block title %}Cart · Sushi em Casa{% endblock %}
 
 {% block body_class %}{% if cart_items %}tem-barra-acao{% endif %}{% endblock %}
 
@@ -12,11 +12,11 @@
 {% block content %}
 <div class="container">
     <div class="pagina-titulo">
-        <h1>Seu carrinho</h1>
+        <h1>Your cart</h1>
         {% if cart_items %}
-        <ol class="etapas" aria-label="Etapas do pedido">
-            <li aria-current="step"><span class="etapas__num">1</span> Carrinho</li>
-            <li><span class="etapas__num">2</span> Entrega</li>
+        <ol class="etapas" aria-label="Order steps">
+            <li aria-current="step"><span class="etapas__num">1</span> Cart</li>
+            <li><span class="etapas__num">2</span> Delivery</li>
             <li><span class="etapas__num">3</span> WhatsApp</li>
         </ol>
         {% endif %}
@@ -26,14 +26,14 @@
     <div class="pedido-layout">
         <div>
             <table class="tabela-carrinho">
-                <caption class="sr-only">Itens no carrinho</caption>
+                <caption class="sr-only">Items in your cart</caption>
                 <thead>
                     <tr>
-                        <th scope="col" colspan="2">Produto</th>
-                        <th scope="col">Preço</th>
-                        <th scope="col">Quantidade</th>
+                        <th scope="col" colspan="2">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
                         <th scope="col">Subtotal</th>
-                        <th scope="col"><span class="sr-only">Remover</span></th>
+                        <th scope="col"><span class="sr-only">Remove</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,11 +53,11 @@
                                   action="{% url 'sushiemcasa:update_cart' item.product_id %}"
                                   data-product-id="{{ item.product_id }}">
                                 {% csrf_token %}
-                                <label class="sr-only" for="qtd-{{ item.product_id }}">Quantidade de {{ item.name }}</label>
+                                <label class="sr-only" for="qtd-{{ item.product_id }}">Quantity of {{ item.name }}</label>
                                 <input type="number" name="quantity" id="qtd-{{ item.product_id }}"
                                        value="{{ item.quantity }}" min="1" inputmode="numeric"
                                        class="quantidade-automatico">
-                                <button type="submit" class="btn btn--sm btn-atualizar" aria-label="Atualizar quantidade de {{ item.name }}">
+                                <button type="submit" class="btn btn--sm btn-atualizar" aria-label="Update quantity of {{ item.name }}">
                                     <i class="fas fa-rotate" aria-hidden="true"></i>
                                 </button>
                             </form>
@@ -66,7 +66,7 @@
                         <td>
                             <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn--sm btn--fantasma btn-remover" aria-label="Remover {{ item.name }} do carrinho">
+                                <button type="submit" class="btn btn--sm btn--fantasma btn-remover" aria-label="Remove {{ item.name }} from cart">
                                     <i class="fas fa-trash-can" aria-hidden="true"></i>
                                 </button>
                             </form>
@@ -79,27 +79,27 @@
         </div>
 
         <aside class="card resumo" aria-labelledby="titulo-resumo">
-            <h2 id="titulo-resumo" class="card__titulo">Resumo</h2>
+            <h2 id="titulo-resumo" class="card__titulo">Summary</h2>
             <p class="resumo__aviso">
                 <i class="fas fa-clock" aria-hidden="true"></i>
-                <span>As entregas são agendadas com <strong>pelo menos 24 horas de antecedência</strong>. Você escolhe o horário na próxima etapa.</span>
+                <span>Deliveries are scheduled <strong>at least 24 hours in advance</strong>. You'll pick the time in the next step.</span>
             </p>
             <div class="barra-acao">
                 <p class="barra-acao__total">Total <strong id="total-geral">$ {{ cart_total|stringformat:".2f" }}</strong></p>
                 <a href="{% url 'sushiemcasa:checkout' %}" class="btn btn--primario btn-checkout">
-                    Escolher entrega <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    Choose delivery <i class="fas fa-arrow-right" aria-hidden="true"></i>
                 </a>
             </div>
-            <a href="{% url 'sushiemcasa:cardapio' %}" class="resumo__continuar">Continuar comprando</a>
+            <a href="{% url 'sushiemcasa:cardapio' %}" class="resumo__continuar">Keep shopping</a>
         </aside>
     </div>
 
     {% else %}
         <div class="vazio card">
             <div class="vazio__icone"><i class="fas fa-shopping-bag" aria-hidden="true"></i></div>
-            <h2>Carrinho vazio</h2>
-            <p>Seu carrinho está vazio. Que tal escolher alguns sushis?</p>
-            <a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn--primario">Ver o cardápio</a>
+            <h2>Empty cart</h2>
+            <p>Your cart is empty. How about picking some sushi?</p>
+            <a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn--primario">See the menu</a>
         </div>
     {% endif %}
 </div>

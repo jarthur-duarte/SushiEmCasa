@@ -1,10 +1,10 @@
 {% with rota=request.resolver_match.url_name %}
-<nav class="painel-nav" aria-label="Seções do painel">
+<nav class="painel-nav" aria-label="Dashboard sections">
     <ul>
-        <li><a href="{% url 'sushiemcasa:painel_controle' %}" {% if rota == 'painel_controle' %}aria-current="page"{% endif %}><i class="fas fa-receipt" aria-hidden="true"></i> Pedidos</a></li>
-        <li><a href="{% url 'sushiemcasa:listar_produtos' %}" {% if rota == 'listar_produtos' or rota == 'editar_produto' %}aria-current="page"{% endif %}><i class="fas fa-fish" aria-hidden="true"></i> Produtos</a></li>
-        <li><a href="{% url 'sushiemcasa:gerenciar_horarios' %}" {% if rota == 'gerenciar_horarios' %}aria-current="page"{% endif %}><i class="fas fa-clock" aria-hidden="true"></i> Horários</a></li>
-        <li><a href="/admin/"><i class="fas fa-gears" aria-hidden="true"></i> Admin completo</a></li>
+        <li><a href="{% url 'sushiemcasa:painel_controle' %}" {% if rota == 'painel_controle' %}aria-current="page"{% endif %}><i class="fas fa-receipt" aria-hidden="true"></i> Orders</a></li>
+        <li><a href="{% url 'sushiemcasa:listar_produtos' %}" {% if rota == 'listar_produtos' or rota == 'editar_produto' %}aria-current="page"{% endif %}><i class="fas fa-fish" aria-hidden="true"></i> Products</a></li>
+        <li><a href="{% url 'sushiemcasa:gerenciar_horarios' %}" {% if rota == 'gerenciar_horarios' %}aria-current="page"{% endif %}><i class="fas fa-clock" aria-hidden="true"></i> Hours</a></li>
+        <li><a href="/admin/"><i class="fas fa-gears" aria-hidden="true"></i> Full admin</a></li>
     </ul>
 </nav>
 {% endwith %}

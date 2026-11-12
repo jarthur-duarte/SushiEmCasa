@@ -21,4 +21,4 @@ def create_operating_hours(sender, **kwargs):
     for day_int, day_name in days:
         HorarioDeFuncionamento.objects.create(day_of_week=day_int, is_open=False)
     
-    print("Horários de funcionamento padrão criados.")
+    print("Default opening hours created.")

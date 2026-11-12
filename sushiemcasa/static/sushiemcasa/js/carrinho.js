@@ -44,10 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
         var subtotal = document.getElementById('subtotal-' + form.dataset.productId);
         if (subtotal) subtotal.textContent = dinheiro(dados.item_total);
         if (totalGeral) totalGeral.textContent = dinheiro(dados.cart_total);
-        if (aviso) aviso.textContent = 'Quantidade atualizada. Novo total: ' + dinheiro(dados.cart_total) + '.';
+        if (aviso) aviso.textContent = 'Quantity updated. New total: ' + dinheiro(dados.cart_total) + '.';
       })
       .catch(function () {
-        if (aviso) aviso.textContent = 'Não foi possível atualizar a quantidade. Tente de novo.';
+        if (aviso) aviso.textContent = 'Could not update the quantity. Please try again.';
       })
       .finally(function () {
         linha.classList.remove('atualizando');

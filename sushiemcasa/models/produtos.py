@@ -9,8 +9,8 @@ class Categoria(models.Model):
         return self.nome
     
     class Meta:
-        verbose_name_plural = "Categorias"
-        verbose_name = "Categoria"
+        verbose_name_plural = "Categories"
+        verbose_name = "Category"
 
 
 class Produto(models.Model):
@@ -31,6 +31,6 @@ class Produto(models.Model):
         return f"{self.nome} ({self.categoria.nome})" 
     
     class Meta:
-        verbose_name_plural = "Produtos"
-        verbose_name = "Produto"
+        verbose_name_plural = "Products"
+        verbose_name = "Product"
 

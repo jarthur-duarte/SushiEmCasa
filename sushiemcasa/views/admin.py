@@ -46,7 +46,7 @@ def painel_controle(request):
             pedido = get_object_or_404(Order, id=order_id)
             pedido.status = new_status
             pedido.save()
-            messages.success(request, f"Status do pedido #{order_id} atualizado!")
+            messages.success(request, f"Order #{order_id} status updated!")
             return redirect('sushiemcasa:painel_controle')
     todos_pedidos = Order.objects.all().order_by('-created_at')
     status_choices = Order.STATUS_CHOICES
@@ -63,18 +63,18 @@ def painel_controle(request):
 @login_required(login_url='sushiemcasa:login')
 def deletar_pedido(request, pk):
     if not request.user.is_staff:
-        messages.error(request, "Acesso negado.")
+        messages.error(request, "Access denied.")
         return redirect('sushiemcasa:cardapio')
     
     pedido = get_object_or_404(Order, pk=pk)
     
     if request.method == 'POST':
-        if pedido.status in ['Cancelled', 'Delivered']:
+        if pedido.status in ['entregue', 'cancelado', 'Cancelled', 'Canceled', 'Delivered']:
             pedido_id = pedido.id
             pedido.delete()
-            messages.success(request, f"Pedido #{pedido_id} foi excluído permanentemente.")
+            messages.success(request, f"Order #{pedido_id} was permanently deleted.")
         else:
-            messages.error(request, "Erro: Você só pode excluir pedidos que já foram Entregues ou Cancelados.")
+            messages.error(request, "You can only delete orders that are Delivered or Canceled.")
         
     return redirect('sushiemcasa:painel_controle')
 
@@ -95,10 +95,10 @@ def gerenciar_horarios(request):
         
         if formset.is_valid():
             formset.save() 
-            messages.success(request, "Horários atualizados com sucesso!")
+            messages.success(request, "Opening hours updated!")
             return redirect('sushiemcasa:painel_controle')
         else:
-            messages.error(request, "Erro ao salvar. Verifique os campos.")
+            messages.error(request, "Could not save. Please check the fields.")
             
     else:
         formset = HorarioFormSet(queryset=HorarioDeFuncionamento.objects.order_by('day_of_week'))

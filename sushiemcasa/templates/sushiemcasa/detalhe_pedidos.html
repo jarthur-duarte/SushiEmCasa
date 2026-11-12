@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Pedido nº {{ order.id }} · Sushi em Casa{% endblock %}
+{% block title %}Order #{{ order.id }} · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos.css' %}">
@@ -10,13 +10,13 @@
 {% block content %}
 <div class="container container--estreito">
     <div class="pagina-titulo">
-        <p><a href="{% url 'sushiemcasa:orders' %}"><i class="fas fa-arrow-left" aria-hidden="true"></i> Meus pedidos</a></p>
-        <h1>Pedido nº {{ order.id }}</h1>
+        <p><a href="{% url 'sushiemcasa:orders' %}"><i class="fas fa-arrow-left" aria-hidden="true"></i> My orders</a></p>
+        <h1>Order #{{ order.id }}</h1>
     </div>
 
     <article class="card">
         <div class="pedido-card__topo">
-            <h2>Andamento</h2>
+            <h2>Progress</h2>
             {% include 'sushiemcasa/includes/status_badge.html' with s=order.status %}
         </div>
 
@@ -24,27 +24,27 @@
 
         <dl class="detalhe-dados">
             <div>
-                <dt>Cliente</dt>
-                <dd>{% if order.user %}{{ order.user.username }}{% else %}Visitante{% endif %}</dd>
+                <dt>Customer</dt>
+                <dd>{% if order.user %}{{ order.user.username }}{% else %}Guest{% endif %}</dd>
             </div>
             <div>
-                <dt>Feito em</dt>
-                <dd>{{ order.created_at|date:"d/m/Y H:i" }}</dd>
+                <dt>Placed</dt>
+                <dd>{{ order.created_at|date:"M j, Y g:i A" }}</dd>
             </div>
             <div>
-                <dt>Entrega agendada</dt>
-                <dd>{% if order.delivery_datetime %}{{ order.delivery_datetime|date:"d/m/Y H:i" }}{% else %}A combinar{% endif %}</dd>
+                <dt>Scheduled delivery</dt>
+                <dd>{% if order.delivery_datetime %}{{ order.delivery_datetime|date:"M j, Y g:i A" }}{% else %}To be arranged{% endif %}</dd>
             </div>
         </dl>
     </article>
 
     <section class="card" aria-labelledby="titulo-itens">
-        <h2 id="titulo-itens" class="card__titulo">Itens</h2>
+        <h2 id="titulo-itens" class="card__titulo">Items</h2>
         <ul class="pedido-itens">
             {% for item in order.items.all %}
                 <li class="item-pedido"><span>{{ item.quantity }}× {{ item.item_name }}</span><span class="preco">$ {{ item.price|floatformat:2 }}</span></li>
             {% empty %}
-                <li>Nenhum item encontrado neste pedido.</li>
+                <li>No items found in this order.</li>
             {% endfor %}
         </ul>
         <div class="pedido-total"><span>Total</span><span>$ {{ order.total_price|floatformat:2 }}</span></div>

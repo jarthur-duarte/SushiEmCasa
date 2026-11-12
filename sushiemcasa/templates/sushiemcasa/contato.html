@@ -1,8 +1,8 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Contato · Sushi em Casa{% endblock %}
-{% block meta_description %}Fale com a Sushi em Casa pelo WhatsApp, Instagram ou e-mail, ou deixe sua opinião.{% endblock %}
+{% block title %}Contact · Sushi em Casa{% endblock %}
+{% block meta_description %}Reach Sushi em Casa on WhatsApp, Instagram or email, or leave us your feedback.{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/contato.css' %}">
@@ -11,20 +11,20 @@
 {% block content %}
 <div class="container">
     <div class="pagina-titulo">
-        <h1>Contato</h1>
-        <p>Tire dúvidas sobre o seu pedido ou conte o que achou.</p>
+        <h1>Contact</h1>
+        <p>Ask about your order or tell us what you thought.</p>
     </div>
 
     <div class="contato-grid">
         <section aria-labelledby="titulo-canais">
-            <h2 id="titulo-canais" class="sr-only">Canais de atendimento</h2>
+            <h2 id="titulo-canais" class="sr-only">Ways to reach us</h2>
             <ul class="canais">
                 <li>
-                    <a class="canal" href="https://wa.me/12397719811?text=Ol%C3%A1%21%20Gostaria%20de%20saber%20mais%20sobre%20o%20meu%20pedido." target="_blank" rel="noopener">
+                    <a class="canal" href="https://wa.me/12397719811?text=Hi%21%20I%27d%20like%20to%20know%20more%20about%20my%20order." target="_blank" rel="noopener">
                         <span class="canal__icone canal__icone--whats"><i class="fab fa-whatsapp" aria-hidden="true"></i></span>
                         <span class="canal__texto"><small>WhatsApp</small><strong>+1 (239) 771-9811</strong></span>
                         <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
-                        <span class="sr-only">(abre em nova aba)</span>
+                        <span class="sr-only">(opens in a new tab)</span>
                     </a>
                 </li>
                 <li>
@@ -32,41 +32,41 @@
                         <span class="canal__icone canal__icone--insta"><i class="fab fa-instagram" aria-hidden="true"></i></span>
                         <span class="canal__texto"><small>Instagram</small><strong>@Sushiemcasausa</strong></span>
                         <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
-                        <span class="sr-only">(abre em nova aba)</span>
+                        <span class="sr-only">(opens in a new tab)</span>
                     </a>
                 </li>
                 <li>
                     <a class="canal" href="mailto:sushiemcasausa@gmail.com">
                         <span class="canal__icone canal__icone--email"><i class="fas fa-envelope" aria-hidden="true"></i></span>
-                        <span class="canal__texto"><small>E-mail</small><strong>sushiemcasausa@gmail.com</strong></span>
+                        <span class="canal__texto"><small>Email</small><strong>sushiemcasausa@gmail.com</strong></span>
                     </a>
                 </li>
             </ul>
         </section>
 
         <section class="card" aria-labelledby="titulo-feedback">
-            <h2 id="titulo-feedback" class="card__titulo">Deixe sua opinião</h2>
+            <h2 id="titulo-feedback" class="card__titulo">Leave your feedback</h2>
             <form method="post" class="feedback-form" novalidate>
                 {% csrf_token %}
                 {% for erro in form.non_field_errors %}<div class="alerta alerta--erro" role="alert">{{ erro }}</div>{% endfor %}
 
                 <div class="campo {% if form.nome.errors %}tem-erro{% endif %}">
-                    <label for="{{ form.nome.id_for_label }}">Nome <span class="texto-suave">(opcional)</span></label>
+                    <label for="{{ form.nome.id_for_label }}">Name <span class="texto-suave">(optional)</span></label>
                     {{ form.nome }}
                     {% for erro in form.nome.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
                 </div>
                 <div class="campo {% if form.email.errors %}tem-erro{% endif %}">
-                    <label for="{{ form.email.id_for_label }}">E-mail <span class="texto-suave">(opcional)</span></label>
+                    <label for="{{ form.email.id_for_label }}">Email <span class="texto-suave">(optional)</span></label>
                     {{ form.email }}
                     {% for erro in form.email.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
                 </div>
                 <div class="campo {% if form.mensagem.errors %}tem-erro{% endif %}">
-                    <label for="{{ form.mensagem.id_for_label }}">Mensagem</label>
+                    <label for="{{ form.mensagem.id_for_label }}">Message</label>
                     {{ form.mensagem }}
                     {% for erro in form.mensagem.errors %}<p class="campo__erro">{{ erro }}</p>{% endfor %}
                 </div>
                 <button type="submit" class="btn btn--primario btn-submit">
-                    <i class="fas fa-paper-plane" aria-hidden="true"></i> Enviar
+                    <i class="fas fa-paper-plane" aria-hidden="true"></i> Send
                 </button>
             </form>
         </section>

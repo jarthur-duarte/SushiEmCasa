@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Meus pedidos · Sushi em Casa{% endblock %}
+{% block title %}My orders · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos.css' %}">
@@ -10,8 +10,8 @@
 {% block content %}
 <div class="container container--estreito">
     <div class="pagina-titulo">
-        <h1>{% if user.is_staff %}Todos os pedidos{% else %}Meus pedidos{% endif %}</h1>
-        <p>Acompanhe aqui o andamento de cada pedido.</p>
+        <h1>{% if user.is_staff %}All orders{% else %}My orders{% endif %}</h1>
+        <p>Track the progress of each order here.</p>
     </div>
 
     {% if pedidos %}
@@ -20,16 +20,16 @@
         <li>
             <article class="card pedido-card" aria-labelledby="pedido-{{ pedido.id }}">
                 <div class="pedido-card__topo">
-                    <h2 id="pedido-{{ pedido.id }}">Pedido nº {{ pedido.id }}</h2>
+                    <h2 id="pedido-{{ pedido.id }}">Order #{{ pedido.id }}</h2>
                     {% include 'sushiemcasa/includes/status_badge.html' with s=pedido.status %}
                 </div>
                 <div class="pedido-card__meta">
-                    <span><i class="fas fa-calendar" aria-hidden="true"></i> Feito em {{ pedido.created_at|date:"d/m/Y H:i" }}</span>
+                    <span><i class="fas fa-calendar" aria-hidden="true"></i> Placed {{ pedido.created_at|date:"M j, Y g:i A" }}</span>
                     {% if pedido.delivery_datetime %}
-                        <span><i class="fas fa-clock" aria-hidden="true"></i> Entrega: {{ pedido.delivery_datetime|date:"d/m/Y H:i" }}</span>
+                        <span><i class="fas fa-clock" aria-hidden="true"></i> Delivery: {{ pedido.delivery_datetime|date:"M j, Y g:i A" }}</span>
                     {% endif %}
                     {% if user.is_staff %}
-                        <span><i class="fas fa-user" aria-hidden="true"></i> {{ pedido.user.username|default:"Visitante" }}</span>
+                        <span><i class="fas fa-user" aria-hidden="true"></i> {{ pedido.user.username|default:"Guest" }}</span>
                     {% endif %}
                 </div>
 
@@ -43,7 +43,7 @@
                 <div class="pedido-total"><span>Total</span><span>$ {{ pedido.total_price|floatformat:2 }}</span></div>
 
                 <div class="pedido-card__rodape">
-                    <a href="{% url 'sushiemcasa:order_detail' pedido.id %}" class="btn btn--sm">Ver detalhes <span class="sr-only">do pedido {{ pedido.id }}</span></a>
+                    <a href="{% url 'sushiemcasa:order_detail' pedido.id %}" class="btn btn--sm">View details <span class="sr-only">for order {{ pedido.id }}</span></a>
                 </div>
             </article>
         </li>
@@ -52,9 +52,9 @@
     {% else %}
         <div class="vazio card">
             <div class="vazio__icone"><i class="fas fa-receipt" aria-hidden="true"></i></div>
-            <h2>Nenhum pedido ainda</h2>
-            <p>Quando você fizer um pedido com a sua conta, ele aparece aqui com o andamento.</p>
-            <a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn--primario">Ver o cardápio</a>
+            <h2>No orders yet</h2>
+            <p>When you place an order while logged in, it will show up here with its progress.</p>
+            <a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn--primario">See the menu</a>
         </div>
     {% endif %}
 </div>

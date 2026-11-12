@@ -1,13 +1,13 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Criar conta · Sushi em Casa{% endblock %}
+{% block title %}Sign up · Sushi em Casa{% endblock %}
 
 {% block content %}
 <div class="container container--form">
     <div class="pagina-titulo">
-        <h1>Criar conta</h1>
-        <p>Com uma conta você acompanha seus pedidos pelo site.</p>
+        <h1>Create an account</h1>
+        <p>With an account you can track your orders on the site.</p>
     </div>
 
     <div class="card">
@@ -22,42 +22,42 @@
             {% endif %}
 
             <div class="campo {% if form.username.errors %}tem-erro{% endif %}">
-                <label for="{{ form.username.id_for_label }}">Usuário</label>
+                <label for="{{ form.username.id_for_label }}">Username</label>
                 {{ form.username }}
                 {% for error in form.username.errors %}<p class="campo__erro" role="alert"><i class="fas fa-circle-exclamation" aria-hidden="true"></i> {{ error }}</p>{% endfor %}
-                <p class="campo__ajuda">Até 150 caracteres: letras, números e @ . + - _</p>
+                <p class="campo__ajuda">Up to 150 characters: letters, numbers and @ . + - _</p>
             </div>
 
             <div class="campo {% if form.email.errors %}tem-erro{% endif %}">
-                <label for="{{ form.email.id_for_label }}">E-mail</label>
+                <label for="{{ form.email.id_for_label }}">Email</label>
                 {{ form.email }}
                 {% for error in form.email.errors %}<p class="campo__erro" role="alert"><i class="fas fa-circle-exclamation" aria-hidden="true"></i> {{ error }}</p>{% endfor %}
             </div>
 
             <div class="campo {% if form.password1.errors %}tem-erro{% endif %}">
-                <label for="{{ form.password1.id_for_label }}">Senha</label>
+                <label for="{{ form.password1.id_for_label }}">Password</label>
                 {{ form.password1 }}
                 {% for error in form.password1.errors %}<p class="campo__erro" role="alert"><i class="fas fa-circle-exclamation" aria-hidden="true"></i> {{ error }}</p>{% endfor %}
                 <div class="campo__ajuda">
-                    A senha precisa:
+                    Your password must:
                     <ul>
-                        <li>ter pelo menos 8 caracteres;</li>
-                        <li>não ser parecida com seu usuário ou e-mail;</li>
-                        <li>não ser uma senha comum nem só números.</li>
+                        <li>be at least 8 characters long;</li>
+                        <li>not be too similar to your username or email;</li>
+                        <li>not be a common password or only numbers.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="campo {% if form.password2.errors %}tem-erro{% endif %}">
-                <label for="{{ form.password2.id_for_label }}">Confirme a senha</label>
+                <label for="{{ form.password2.id_for_label }}">Confirm password</label>
                 {{ form.password2 }}
                 {% for error in form.password2.errors %}<p class="campo__erro" role="alert"><i class="fas fa-circle-exclamation" aria-hidden="true"></i> {{ error }}</p>{% endfor %}
             </div>
 
-            <button type="submit" class="btn btn--primario btn--bloco btn-checkout">Criar conta</button>
+            <button type="submit" class="btn btn--primario btn--bloco btn-checkout">Create account</button>
         </form>
     </div>
 
-    <p class="link-alternativo">Já tem conta? <a href="{% url 'sushiemcasa:login' %}">Entrar</a></p>
+    <p class="link-alternativo">Already have an account? <a href="{% url 'sushiemcasa:login' %}">Log in</a></p>
 </div>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Agendar entrega · Sushi em Casa{% endblock %}
+{% block title %}Schedule delivery · Sushi em Casa{% endblock %}
 
 {% block body_class %}tem-barra-acao{% endblock %}
 
@@ -12,10 +12,10 @@
 {% block content %}
 <div class="container">
     <div class="pagina-titulo">
-        <h1>Agendar entrega</h1>
-        <ol class="etapas" aria-label="Etapas do pedido">
-            <li class="feita"><span class="etapas__num"><i class="fas fa-check" aria-hidden="true"></i><span class="sr-only">Concluída:</span></span> Carrinho</li>
-            <li aria-current="step"><span class="etapas__num">2</span> Entrega</li>
+        <h1>Schedule delivery</h1>
+        <ol class="etapas" aria-label="Order steps">
+            <li class="feita"><span class="etapas__num"><i class="fas fa-check" aria-hidden="true"></i><span class="sr-only">Done:</span></span> Cart</li>
+            <li aria-current="step"><span class="etapas__num">2</span> Delivery</li>
             <li><span class="etapas__num">3</span> WhatsApp</li>
         </ol>
     </div>
@@ -24,9 +24,9 @@
         <div class="alerta alerta--aviso" role="note">
             <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
             <span>
-                <strong>Você não está conectado.</strong>
-                Sem login, o pedido não aparece em “Meus pedidos” e o acompanhamento é feito só pelo WhatsApp.
-                <a href="{% url 'sushiemcasa:login' %}?next={% url 'sushiemcasa:checkout' %}">Entrar na conta</a>
+                <strong>You're not logged in.</strong>
+                Without an account, the order won't show up in “My orders” and you can only follow it on WhatsApp.
+                <a href="{% url 'sushiemcasa:login' %}?next={% url 'sushiemcasa:checkout' %}">Log in</a>
             </span>
         </div>
     {% endif %}
@@ -36,12 +36,12 @@
         {% csrf_token %}
 
         <section class="card" aria-labelledby="titulo-entrega">
-            <h2 id="titulo-entrega" class="card__titulo">Quando você quer receber?</h2>
+            <h2 id="titulo-entrega" class="card__titulo">When would you like it delivered?</h2>
 
             <ul class="regras-entrega">
-                <li><i class="fas fa-clock" aria-hidden="true"></i> <span>Pelo menos <strong>24 horas de antecedência</strong> (o sushi é preparado sob encomenda).</span></li>
-                <li><i class="fas fa-calendar-day" aria-hidden="true"></i> <span>De segunda a sábado, das 10:00 às 20:00.</span></li>
-                <li><i class="fas fa-ban" aria-hidden="true"></i> <span>Não fazemos entregas aos domingos.</span></li>
+                <li><i class="fas fa-clock" aria-hidden="true"></i> <span>At least <strong>24 hours in advance</strong> (sushi is made to order).</span></li>
+                <li><i class="fas fa-calendar-day" aria-hidden="true"></i> <span>Monday to Saturday, 10:00 AM to 8:00 PM.</span></li>
+                <li><i class="fas fa-ban" aria-hidden="true"></i> <span>No deliveries on Sundays.</span></li>
             </ul>
 
             {% if form.non_field_errors %}
@@ -51,7 +51,7 @@
             {% endif %}
 
             <div class="campo {% if form.delivery_datetime.errors %}tem-erro{% endif %}">
-                <label for="id_delivery_datetime">Data e horário da entrega</label>
+                <label for="id_delivery_datetime">Delivery date and time</label>
                 <input type="datetime-local" name="delivery_datetime" id="id_delivery_datetime"
                        value="{{ form.delivery_datetime.value|default_if_none:'' }}"
                        required aria-describedby="feedback-data{% if form.delivery_datetime.errors %} erro-data{% endif %}"
@@ -67,12 +67,12 @@
 
             <p class="como-funciona">
                 <i class="fab fa-whatsapp" aria-hidden="true"></i>
-                Ao enviar, abrimos o WhatsApp com o resumo do pedido. Lá você combina o endereço e a forma de pagamento.
+                When you submit, we'll open WhatsApp with your order summary. There you can confirm the address and payment method.
             </p>
         </section>
 
         <aside class="card resumo" aria-labelledby="titulo-resumo">
-            <h2 id="titulo-resumo" class="card__titulo">Resumo do pedido</h2>
+            <h2 id="titulo-resumo" class="card__titulo">Order summary</h2>
             <ul class="resumo__itens">
                 {% for item in cart_items %}
                     <li class="resumo__linha item-pedido">
@@ -84,10 +84,10 @@
             <div class="barra-acao">
                 <p class="barra-acao__total">Total <strong>$ {{ cart_total|floatformat:2 }}</strong></p>
                 <button type="submit" class="btn btn--primario btn-submit" id="confirm-order-btn" disabled>
-                    <i class="fab fa-whatsapp" aria-hidden="true"></i> Enviar pedido
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i> Send order
                 </button>
             </div>
-            <a href="{% url 'sushiemcasa:basket' %}" class="resumo__continuar">Voltar ao carrinho</a>
+            <a href="{% url 'sushiemcasa:basket' %}" class="resumo__continuar">Back to cart</a>
         </aside>
     </form>
     {% endif %}

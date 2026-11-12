@@ -34,24 +34,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!valor) {
       botao.disabled = true;
-      mensagem('Escolha a data e o horário da entrega para continuar.');
+      mensagem('Choose a delivery date and time to continue.');
       return;
     }
 
     var data = new Date(valor);
     var hora = data.getHours() + data.getMinutes() / 60;
 
-    if (isNaN(data.getTime())) erro = 'Data inválida.';
-    else if (data.getTime() <= Date.now() + UM_DIA) erro = 'Escolha um horário com pelo menos 24 horas de antecedência.';
-    else if (data.getDay() === 0) erro = 'Não fazemos entregas aos domingos. Escolha outro dia.';
-    else if (hora < ABRE || hora >= FECHA) erro = 'As entregas são feitas entre 10:00 e 20:00.';
+    if (isNaN(data.getTime())) erro = 'Invalid date.';
+    else if (data.getTime() <= Date.now() + UM_DIA) erro = 'Choose a time at least 24 hours from now.';
+    else if (data.getDay() === 0) erro = 'We don\'t deliver on Sundays. Please choose another day.';
+    else if (hora < ABRE || hora >= FECHA) erro = 'Deliveries are made between 10:00 AM and 8:00 PM.';
 
     botao.disabled = !!erro;
     if (erro) {
       mensagem(erro, 'erro');
     } else {
-      var texto = data.toLocaleString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' });
-      mensagem('Entrega agendada para ' + texto + '.', 'ok');
+      var texto = data.toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+      mensagem('Delivery scheduled for ' + texto + '.', 'ok');
     }
   }
 
