@@ -111,7 +111,7 @@
   width: 64px;
   min-height: 40px;
   text-align: center;
-  border: 1px solid var(--cor-borda-forte);
+  border: 1px solid var(--cor-borda-campo);
   border-radius: var(--raio-sm);
   font-size: 16px;
   padding: var(--e-1);

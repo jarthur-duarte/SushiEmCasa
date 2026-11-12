@@ -66,7 +66,7 @@
 .form-status { display: flex; gap: var(--e-1); align-items: center; }
 .form-status select {
   min-height: 36px;
-  border: 1px solid var(--cor-borda-forte);
+  border: 1px solid var(--cor-borda-campo);
   border-radius: var(--raio-sm);
   padding: 0 var(--e-2);
   background: var(--cor-superficie);
@@ -77,7 +77,7 @@
 .linha-vazia td { text-align: center; padding: var(--e-6); color: var(--cor-texto-suave); }
 
 /* Horários */
-.tabela-horarios input[type="time"] { min-height: 40px; border: 1px solid var(--cor-borda-forte); border-radius: var(--raio-sm); padding: 0 var(--e-2); }
+.tabela-horarios input[type="time"] { min-height: 40px; border: 1px solid var(--cor-borda-campo); border-radius: var(--raio-sm); padding: 0 var(--e-2); }
 .tabela-horarios input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--cor-marca); }
 .rodape-form { display: flex; gap: var(--e-3); flex-wrap: wrap; margin-top: var(--e-4); }
 

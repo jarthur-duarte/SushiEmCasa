@@ -15,6 +15,7 @@
   --cor-texto-suave: #6b5f5f;     /* 5.9:1 sobre o fundo */
   --cor-borda: #ece4df;
   --cor-borda-forte: #d8ccc5;
+  --cor-borda-campo: #8a7d78;   /* 3.9:1 sobre branco (WCAG 1.4.11) */
   --cor-fundo: #faf7f4;
   --cor-superficie: #ffffff;
   --cor-superficie-2: #f4efeb;
@@ -418,7 +419,7 @@ body.gaveta-aberta { overflow: hidden; }
   width: 100%;
   min-height: 46px;
   padding: var(--e-2) var(--e-3);
-  border: 1px solid var(--cor-borda-forte);
+  border: 1px solid var(--cor-borda-campo);
   border-radius: var(--raio-sm);
   background: var(--cor-superficie);
   font-size: 16px; /* evita zoom no iOS */
