@@ -159,8 +159,8 @@ class TestBasketCheckoutFlows(StaticLiveServerTestCase):
 
         # Volta ao carrinho para confirmar que está vazio
         self.driver.get(basket_url)
-        carrinho_vazio = wait.until(EC.presence_of_element_located((By.XPATH, "//p[contains(text(), 'Your basket is empty')]")))
-        self.assertIn('Your basket is empty', carrinho_vazio.text)
+        carrinho_vazio = wait.until(EC.presence_of_element_located((By.XPATH, "//p[contains(text(), 'Seu carrinho está vazio')]")))
+        self.assertIn('Seu carrinho está vazio', carrinho_vazio.text)
 
     def test_finalizar_pedido_redireciona_para_whatsapp(self):
         self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto1.id]), {'quantity': 1})
