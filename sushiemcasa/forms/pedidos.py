@@ -8,7 +8,8 @@ class OrderForm(forms.ModelForm):
     delivery_datetime = forms.DateTimeField(
         label="Delivery Date and Time",
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        required=False,
+        required=True,
+        error_messages={'required': 'Choose a delivery date and time.'},
         help_text="Select the desired date and time for delivery (minimum 24 hours in advance)."
     )
 

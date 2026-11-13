@@ -430,3 +430,46 @@ class PainelGestaoTests(TestCase):
         self.client.post(reverse('sushiemcasa:alterar_usuario', args=[self.admin.pk]), {'campo': 'is_active'})
         self.admin.refresh_from_db()
         self.assertTrue(self.admin.is_active)
+
+
+# =========================================================================
+# CORREÇÕES ACHADAS NO TESTE DO CAMINHO DO CLIENTE
+# =========================================================================
+class CheckoutSemDataTests(TestCase):
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Uramaki', slug='uramaki')
+        self.produto = Produto.objects.create(nome='Uramaki', descricao='x', preco=Decimal('10'), categoria=cat)
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto.id]), {'quantity': 2})
+
+    def test_sem_data_nao_quebra_nem_cria_pedido(self):
+        response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Choose a delivery date and time.')
+        self.assertEqual(Order.objects.count(), 0)
+        self.assertTrue(self.client.session.get('cart'))  # carrinho preservado
+
+
+class DetalheDoPedidoAcessoTests(TestCase):
+    def setUp(self):
+        self.dono = User.objects.create_user('dono', password='senha-de-teste-123')
+        self.outro = User.objects.create_user('outro', password='senha-de-teste-123')
+        self.equipe = User.objects.create_user('equipe', password='senha-de-teste-123', is_staff=True)
+        self.pedido = Order.objects.create(user=self.dono, total_price=Decimal('10'))
+        self.url = reverse('sushiemcasa:order_detail', args=[self.pedido.id])
+
+    def test_visitante_vai_para_o_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('sushiemcasa:login'), response['Location'])
+
+    def test_outro_cliente_nao_ve(self):
+        self.client.force_login(self.outro)
+        self.assertEqual(self.client.get(self.url).status_code, 404)
+
+    def test_dono_ve(self):
+        self.client.force_login(self.dono)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_equipe_ve(self):
+        self.client.force_login(self.equipe)
+        self.assertEqual(self.client.get(self.url).status_code, 200)

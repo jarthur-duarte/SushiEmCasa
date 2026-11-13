@@ -1,5 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.views import redirect_to_login
+from django.db import transaction
+from django.http import Http404
+from django.urls import reverse
+from django.utils import timezone
 from decimal import Decimal
 from urllib.parse import quote_plus
 
@@ -45,37 +50,41 @@ def pagina_checkout(request):
             order = form.save(commit=False)
             order.user = request.user if request.user.is_authenticated else None
             order.total_price = cart_total
-            order.save()
             order_items = []
             itens_whatsapp = ""
             BULLET = "▪"
 
-            for item in cart_items:
-                order_items.append(
-                    OrderItem(
-                        order=order,
-                        produto=item['product'],
-                        item_name=item['name'],
-                        quantity=item['quantity'],
-                        price=item['price']
+            # Pedido e itens são gravados juntos: se algo falhar, nada fica salvo
+            # e o carrinho do cliente continua intacto.
+            with transaction.atomic():
+                order.save()
+                for item in cart_items:
+                    order_items.append(
+                        OrderItem(
+                            order=order,
+                            produto=item['product'],
+                            item_name=item['name'],
+                            quantity=item['quantity'],
+                            price=item['price']
+                        )
                     )
-                )
 
-                subtotal = item['quantity'] * item['price']
-                itens_whatsapp += (
-                    f"{BULLET} {item['quantity']}x {item['name']} "
-                    f"($ {subtotal:.2f})\n"
-                )
-            OrderItem.objects.bulk_create(order_items)
-            request.session['cart'] = {}
-            request.session.modified = True
+                    subtotal = item['quantity'] * item['price']
+                    itens_whatsapp += (
+                        f"{BULLET} {item['quantity']}x {item['name']} "
+                        f"($ {subtotal:.2f})\n"
+                    )
+                OrderItem.objects.bulk_create(order_items)
+
             nome_cliente = (
                 request.user.username
                 if request.user.is_authenticated
                 else "Guest customer"
             )
 
-            data_agendada = order.delivery_datetime.strftime("%m/%d/%Y at %I:%M %p")
+            data_agendada = timezone.localtime(order.delivery_datetime).strftime("%m/%d/%Y at %I:%M %p")
+            request.session['cart'] = {}
+            request.session.modified = True
 
             mensagem = (
                 f"🍣 NEW ORDER - SUSHI EM CASA\n\n"
@@ -117,7 +126,12 @@ def pagina_checkout(request):
 
 
 def order_detail(request, order_id):
+    # Só o dono do pedido e a equipe da loja podem ver os detalhes.
+    if not request.user.is_authenticated:
+        return redirect_to_login(request.get_full_path(), reverse('sushiemcasa:login'))
     order = get_object_or_404(Order, id=order_id)
+    if not request.user.is_staff and order.user_id != request.user.id:
+        raise Http404("Order not found.")
     return render(
         request,
         'sushiemcasa/detalhe_pedidos.html',
