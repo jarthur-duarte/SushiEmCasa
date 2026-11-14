@@ -1,14 +1,60 @@
 /* Cardápio (homepage): destaque, promoções, filtro e grade de produtos */
 
-.cardapio-topo {
-  padding-block: var(--e-5) var(--e-3);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--e-3);
+/* ---------- Destaque do topo (tema Brasa) ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--e-7);
+  align-items: center;
+  padding-block: var(--e-7) var(--e-6);
 }
-.cardapio-topo p { color: var(--cor-texto-suave); }
+.hero__texto { display: grid; gap: var(--e-5); justify-items: start; }
+.hero h1 {
+  font-size: clamp(2.5rem, 1.4rem + 4vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+.hero__lead { font-size: var(--fs-lg); color: var(--cor-texto-suave); max-width: 44ch; }
+.btn--grande { min-height: 52px; padding-inline: var(--e-6); font-size: var(--fs-lg); }
+.hero__foto { position: relative; min-height: 420px; }
+.hero__foto > img {
+  position: absolute;
+  inset: 0 0 0 var(--e-6);
+  width: calc(100% - var(--e-6));
+  height: 100%;
+  object-fit: cover;
+  border-radius: 28px;
+}
+.hero__cartao {
+  position: absolute;
+  left: 0;
+  bottom: var(--e-6);
+  display: flex;
+  gap: var(--e-3);
+  align-items: center;
+  max-width: 300px;
+  padding: var(--e-3) var(--e-4);
+  border-radius: 20px;
+  background: var(--cor-tinta);
+  color: var(--cor-sobre-claro);
+  box-shadow: var(--sombra-3);
+  text-decoration: none;
+}
+.hero__cartao img { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; flex-shrink: 0; }
+.hero__cartao small { display: block; color: #a8231a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: var(--fs-xs); }
+.hero__cartao strong { display: block; color: var(--cor-sobre-claro); }
+.loja-fechada {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  padding: 6px 12px;
+  border-radius: var(--raio-pill);
+  background: var(--cor-superficie-2);
+  color: var(--cor-texto-suave);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+}
+.loja-fechada::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--cor-aviso); }
 .loja-aberta {
   display: inline-flex;
   align-items: center;
@@ -165,7 +211,7 @@
 .filtros a[aria-current="page"] {
   background: var(--cor-tinta);
   border-color: var(--cor-tinta);
-  color: #fff;
+  color: var(--cor-sobre-claro);
 }
 
 /* ---------- Grade de produtos ---------- */
@@ -202,11 +248,24 @@
   padding: var(--e-4);
   flex: 1;
 }
-.produto-card__nome {
-  font-size: var(--fs-base);
-  font-weight: 700;
+.produto-card__categoria {
+  font-size: var(--fs-xs);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
+  color: var(--cor-marca-escura);
+}
+.produto-card__nome {
+  font-size: var(--fs-lg);
+  font-weight: 600;
+}
+.btn-redondo {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  flex-shrink: 0;
 }
 .produto-card__descricao {
   color: var(--cor-texto-suave);
@@ -224,9 +283,18 @@
   justify-content: space-between;
   gap: var(--e-2);
 }
-.produto-card__rodape .preco { font-size: var(--fs-lg); }
+.produto-card__rodape .preco { font-size: var(--fs-xl); }
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: var(--e-5); padding-block: var(--e-5) var(--e-4); }
+  .hero__foto { min-height: 300px; }
+}
 
 @media (max-width: 767px) {
+  .hero__foto { min-height: 260px; }
+  .hero__foto > img { inset: 0; width: 100%; border-radius: var(--raio-lg); }
+  .hero__cartao { left: var(--e-3); bottom: var(--e-3); right: var(--e-3); max-width: none; }
+  .hero .acoes .btn { flex: 1; }
   .promo { grid-template-columns: 1fr; }
   .promo__foto img { aspect-ratio: 2 / 1; }
   .promo__texto { padding: var(--e-4); gap: var(--e-2); }
@@ -238,7 +306,5 @@
   .produto-card__corpo { padding: var(--e-3); gap: var(--e-1); }
   .produto-card__nome { font-size: var(--fs-sm); }
   .produto-card__descricao { font-size: var(--fs-xs); }
-  .produto-card__rodape { flex-direction: column; align-items: stretch; }
   .produto-card__rodape .preco { font-size: var(--fs-base); }
-  .produto-card__rodape .btn { width: 100%; }
 }

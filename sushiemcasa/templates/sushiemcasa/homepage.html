@@ -10,15 +10,39 @@
 {% block content %}
 <div class="container">
 
-    <div class="cardapio-topo">
-        <div>
-            <h1>Menu</h1>
-            <p>Pick your sushi and schedule delivery at least 24 hours in advance.</p>
+    <section class="hero" aria-labelledby="titulo-hero">
+        <div class="hero__texto">
+            {% if is_open %}
+                <span class="loja-aberta">Open now</span>
+            {% else %}
+                <span class="loja-fechada">Closed now · schedule for later</span>
+            {% endif %}
+            <h1 id="titulo-hero">Fresh sushi,<br>made to order.</h1>
+            <p class="hero__lead">Pick your rolls, schedule delivery at least 24 hours ahead and confirm your order on WhatsApp.</p>
+            <div class="acoes">
+                <a href="#menu-principal" class="btn btn--primario btn--grande">See the menu</a>
+                <a href="{% url 'sushiemcasa:contato' %}" class="btn btn--grande">Contact us</a>
+            </div>
         </div>
-        {% if is_open %}
-            <span class="loja-aberta">Open now</span>
+        {# foto do topo: o último banner (o carrossel começa pelo primeiro), senão o 1º produto #}
+        {% with ultimo_banner=banners|last %}{% with foto=ultimo_banner.imagem|default:produtos.0.imagem destaque=produtos.0 %}
+        {% if foto %}
+        <div class="hero__foto">
+            <img src="{{ foto.url }}" alt="" width="640" height="480" fetchpriority="high">
+            {% if destaque %}
+            <a class="hero__cartao" href="#menu-principal">
+                {% if destaque.imagem %}<img src="{{ destaque.imagem.url }}" alt="" width="64" height="64">{% endif %}
+                <span>
+                    <small>{{ destaque.categoria.nome }}</small>
+                    <strong>{{ destaque.nome }}</strong>
+                    $ {{ destaque.preco|floatformat:2 }}
+                </span>
+            </a>
+            {% endif %}
+        </div>
         {% endif %}
-    </div>
+        {% endwith %}{% endwith %}
+    </section>
 
     {% if not is_open %}
         <ul class="messages">
@@ -115,16 +139,17 @@
                         {% endif %}
                     </div>
                     <div class="produto-card__corpo">
+                        <span class="produto-card__categoria">{{ produto.categoria.nome }}</span>
                         <h3 class="produto-card__nome">{{ produto.nome }}</h3>
                         {% if produto.descricao %}<p class="produto-card__descricao">{{ produto.descricao }}</p>{% endif %}
                         <div class="produto-card__rodape">
-                            <span class="preco">$ {{ produto.preco|floatformat:2 }}</span>
+                            <span class="preco preco--destaque">$ {{ produto.preco|floatformat:2 }}</span>
                             <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn btn--primario btn--sm add-to-cart-button"
+                                <button type="submit" class="btn btn--primario btn-redondo add-to-cart-button"
                                         aria-label="Add {{ produto.nome }} to cart">
-                                    <i class="fas fa-plus" aria-hidden="true"></i> Add
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
                                 </button>
                             </form>
                         </div>

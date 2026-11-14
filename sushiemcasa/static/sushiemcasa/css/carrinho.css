@@ -32,7 +32,7 @@
   border: 2px solid var(--cor-borda-forte);
   background: var(--cor-superficie);
 }
-.etapas .feita .etapas__num { background: var(--st-entregue); border-color: var(--st-entregue); color: #fff; }
+.etapas .feita .etapas__num { background: var(--st-entregue); border-color: var(--st-entregue); color: var(--cor-fundo); }
 .etapas [aria-current="step"] { color: var(--cor-tinta); font-weight: 600; }
 .etapas [aria-current="step"] .etapas__num { background: var(--cor-marca); border-color: var(--cor-marca); color: #fff; }
 
@@ -169,7 +169,7 @@
   .tabela-carrinho td:nth-child(4) { grid-area: qtd; padding-top: var(--e-2); }
   .tabela-carrinho td:nth-child(5) { grid-area: subtotal; padding-top: var(--e-2); text-align: right; }
   .tabela-carrinho td:nth-child(6) { grid-area: remover; }
-  .tabela-carrinho td:nth-child(3)::after { content: " cada"; }
+  .tabela-carrinho td:nth-child(3)::after { content: " each"; }
 
   .resumo .barra-acao { display: flex; }
 }

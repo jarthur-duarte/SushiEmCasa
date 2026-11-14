@@ -5,41 +5,47 @@
    ========================================================= */
 
 /* ---------- 1. Tokens ---------- */
+/* Tema "Brasa": fundo quase preto e quente, vermelho do logo como destaque. */
 :root {
-  /* Marca (tirada do logo: vermelho #D30303 e tinta quase preta) */
-  --cor-marca: #d30303;
-  --cor-marca-escura: #a80202;
-  --cor-marca-clara: #fdeceb;
-  --cor-tinta: #1f1414;
-  --cor-texto: #2b2222;
-  --cor-texto-suave: #6b5f5f;     /* 5.9:1 sobre o fundo */
-  --cor-borda: #ece4df;
-  --cor-borda-forte: #d8ccc5;
-  --cor-borda-campo: #8a7d78;   /* 3.9:1 sobre branco (WCAG 1.4.11) */
-  --cor-fundo: #faf7f4;
-  --cor-superficie: #ffffff;
-  --cor-superficie-2: #f4efeb;
-  --cor-foco: #1d4ed8;
+  color-scheme: dark;
+  /* Marca */
+  --cor-marca: #d42b1b;          /* fundo de botão: branco sobre ele = 5:1 */
+  --cor-marca-hover: #b52314;
+  --cor-marca-escura: #ff9a85;   /* destaque em TEXTO sobre o fundo escuro (links, item ativo) */
+  --cor-marca-clara: #3a1f1a;    /* fundo de item ativo */
+  --cor-tinta: #fbf3ee;          /* títulos */
+  --cor-texto: #eadfd8;
+  --cor-texto-suave: #b8a89f;    /* 8:1 sobre o fundo */
+  --cor-borda: #33271f;
+  --cor-borda-forte: #4a3b33;
+  --cor-borda-campo: #85736a;    /* 3.4:1 sobre a superfície (WCAG 1.4.11) */
+  --cor-fundo: #17110f;
+  --cor-superficie: #221916;
+  --cor-superficie-2: #2c211d;
+  --cor-rodape: #0f0b0a;
+  --cor-foco: #7cb2ff;
+  --cor-sobre-claro: #17110f;    /* texto sobre fundos claros (chip ativo, botão claro) */
 
-  /* Feedback */
-  --cor-sucesso: #166534;
-  --cor-sucesso-fundo: #dcfce7;
-  --cor-aviso: #92400e;
-  --cor-aviso-fundo: #fef3c7;
-  --cor-erro: #b91c1c;
-  --cor-erro-fundo: #fee2e2;
-  --cor-info: #1e40af;
-  --cor-info-fundo: #dbeafe;
+  /* Feedback (texto claro sobre fundo escuro tingido) */
+  --cor-sucesso: #86efac;
+  --cor-sucesso-fundo: #12301f;
+  --cor-aviso: #fcd34d;
+  --cor-aviso-fundo: #3a2a0c;
+  --cor-erro: #fca5a5;
+  --cor-erro-fundo: #3b1414;
+  --cor-info: #93c5fd;
+  --cor-info-fundo: #13233f;
 
   /* Status dos pedidos */
-  --st-pendente: #92400e;      --st-pendente-fundo: #fef3c7;
-  --st-preparando: #1e40af;    --st-preparando-fundo: #dbeafe;
-  --st-saiu: #6d28d9;          --st-saiu-fundo: #ede9fe;
-  --st-entregue: #166534;      --st-entregue-fundo: #dcfce7;
-  --st-cancelado: #b91c1c;     --st-cancelado-fundo: #fee2e2;
+  --st-pendente: #fcd34d;      --st-pendente-fundo: #3a2a0c;
+  --st-preparando: #93c5fd;    --st-preparando-fundo: #13233f;
+  --st-saiu: #c4b5fd;          --st-saiu-fundo: #2a1f45;
+  --st-entregue: #86efac;      --st-entregue-fundo: #12301f;
+  --st-cancelado: #fca5a5;     --st-cancelado-fundo: #3b1414;
 
   /* Tipografia */
   --fonte: "Rubik", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fonte-titulo: "Fraunces", Georgia, "Times New Roman", serif;
   --fs-xs: 0.8125rem;
   --fs-sm: 0.875rem;
   --fs-base: 1rem;
@@ -64,9 +70,9 @@
   --raio: 12px;
   --raio-lg: 18px;
   --raio-pill: 999px;
-  --sombra-1: 0 1px 2px rgb(31 20 20 / 0.06), 0 1px 3px rgb(31 20 20 / 0.08);
-  --sombra-2: 0 4px 14px rgb(31 20 20 / 0.08);
-  --sombra-3: 0 12px 32px rgb(31 20 20 / 0.14);
+  --sombra-1: 0 1px 2px rgb(0 0 0 / 0.3);
+  --sombra-2: 0 6px 18px rgb(0 0 0 / 0.35);
+  --sombra-3: 0 18px 40px rgb(0 0 0 / 0.5);
 
   /* Layout */
   --largura-max: 1180px;
@@ -96,6 +102,7 @@ button { cursor: pointer; }
 a { color: var(--cor-marca-escura); text-underline-offset: 2px; }
 ul[class], ol[class], nav ul, nav ol, .site-footer ul { list-style: none; padding: 0; }
 h1, h2, h3, h4 { color: var(--cor-tinta); line-height: 1.2; font-weight: 700; }
+h1, h2 { font-family: var(--fonte-titulo); font-weight: 800; letter-spacing: -0.01em; }
 h1 { font-size: var(--fs-3xl); }
 h2 { font-size: var(--fs-2xl); }
 h3 { font-size: var(--fs-lg); }
@@ -129,7 +136,7 @@ table { border-collapse: collapse; width: 100%; }
   top: -100px;
   z-index: 2000;
   background: var(--cor-tinta);
-  color: #fff;
+  color: var(--cor-sobre-claro);
   padding: var(--e-2) var(--e-4);
   border-radius: var(--raio-sm);
 }
@@ -158,7 +165,7 @@ table { border-collapse: collapse; width: 100%; }
   position: sticky;
   top: 0;
   z-index: 900;
-  background: rgb(255 255 255 / 0.96);
+  background: rgb(23 17 15 / 0.92);
   backdrop-filter: saturate(1.4) blur(8px);
   border-bottom: 1px solid var(--cor-borda);
 }
@@ -228,7 +235,7 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 700;
   line-height: 20px;
   text-align: center;
-  border: 2px solid #fff;
+  border: 2px solid var(--cor-fundo);
 }
 
 /* Menu do usuário (desktop) usando <details> */
@@ -274,7 +281,7 @@ table { border-collapse: collapse; width: 100%; }
 .gaveta-fundo {
   position: fixed;
   inset: 0;
-  background: rgb(31 20 20 / 0.45);
+  background: rgb(0 0 0 / 0.6);
   z-index: 1000;
 }
 .gaveta {
@@ -332,7 +339,8 @@ body.gaveta-aberta { overflow: hidden; }
 /* ---------- 5. Rodapé ---------- */
 .site-footer {
   flex-shrink: 0;
-  background: var(--cor-tinta);
+  background: var(--cor-rodape);
+  border-top: 1px solid var(--cor-borda);
   color: #e9e1dd;
   padding-block: var(--e-6);
   font-size: var(--fs-sm);
@@ -383,10 +391,11 @@ body.gaveta-aberta { overflow: hidden; }
   --btn-cor: #fff;
   --btn-borda: var(--cor-marca);
 }
-.btn--primario:hover { background: var(--cor-marca-escura); border-color: var(--cor-marca-escura); }
-.btn--escuro { --btn-fundo: var(--cor-tinta); --btn-cor: #fff; --btn-borda: var(--cor-tinta); }
-.btn--escuro:hover { background: #3a2a2a; }
-.btn--perigo { --btn-fundo: var(--cor-superficie); --btn-cor: var(--cor-erro); --btn-borda: #f3b4b4; }
+.btn--primario:hover { background: var(--cor-marca-hover); border-color: var(--cor-marca-hover); }
+/* "escuro" = botão de contraste máximo; no tema escuro ele é claro */
+.btn--escuro { --btn-fundo: var(--cor-tinta); --btn-cor: var(--cor-sobre-claro); --btn-borda: var(--cor-tinta); }
+.btn--escuro:hover { background: #e6d9d0; }
+.btn--perigo { --btn-fundo: transparent; --btn-cor: var(--cor-erro); --btn-borda: #7a3030; }
 .btn--perigo:hover { background: var(--cor-erro-fundo); }
 .btn--fantasma { --btn-borda: transparent; --btn-fundo: transparent; }
 .btn--bloco { width: 100%; }
@@ -429,7 +438,7 @@ body.gaveta-aberta { overflow: hidden; }
 .campo input:focus, .campo select:focus, .campo textarea:focus, .controle:focus {
   outline: none;
   border-color: var(--cor-foco);
-  box-shadow: 0 0 0 3px rgb(29 78 216 / 0.25);
+  box-shadow: 0 0 0 3px rgb(124 178 255 / 0.3);
 }
 .campo input[aria-invalid="true"], .campo.tem-erro input, .campo.tem-erro textarea, .campo.tem-erro select {
   border-color: var(--cor-erro);
@@ -459,10 +468,10 @@ body.gaveta-aberta { overflow: hidden; }
   font-weight: 500;
 }
 .message::before, .alerta > i:first-child { flex-shrink: 0; }
-.message.success, .alerta--sucesso { background: var(--cor-sucesso-fundo); color: var(--cor-sucesso); border-color: #bbf7d0; }
-.message.error, .alerta--erro { background: var(--cor-erro-fundo); color: var(--cor-erro); border-color: #fecaca; }
-.message.warning, .alerta--aviso { background: var(--cor-aviso-fundo); color: var(--cor-aviso); border-color: #fde68a; }
-.message.info, .alerta--info { background: var(--cor-info-fundo); color: var(--cor-info); border-color: #bfdbfe; }
+.message.success, .alerta--sucesso { background: var(--cor-sucesso-fundo); color: var(--cor-sucesso); border-color: #1f5133; }
+.message.error, .alerta--erro { background: var(--cor-erro-fundo); color: var(--cor-erro); border-color: #5c2222; }
+.message.warning, .alerta--aviso { background: var(--cor-aviso-fundo); color: var(--cor-aviso); border-color: #5c4414; }
+.message.info, .alerta--info { background: var(--cor-info-fundo); color: var(--cor-info); border-color: #233d66; }
 .alerta a { color: inherit; font-weight: 700; }
 
 /* ---------- 10. Badge de status ---------- */
@@ -532,7 +541,7 @@ body.gaveta-aberta { overflow: hidden; }
 }
 .linha-tempo__etapa.feita { color: var(--cor-tinta); font-weight: 600; }
 .linha-tempo__etapa.feita::before { background: var(--st-entregue); }
-.linha-tempo__etapa.feita .linha-tempo__icone { background: var(--st-entregue); border-color: var(--st-entregue); color: #fff; }
+.linha-tempo__etapa.feita .linha-tempo__icone { background: var(--st-entregue); border-color: var(--st-entregue); color: var(--cor-fundo); }
 .linha-tempo__etapa.atual .linha-tempo__icone { box-shadow: 0 0 0 4px var(--st-entregue-fundo); }
 .linha-tempo--pendente .linha-tempo__etapa.atual .linha-tempo__icone { background: var(--st-pendente); border-color: var(--st-pendente); box-shadow: 0 0 0 4px var(--st-pendente-fundo); }
 .linha-tempo--preparando .linha-tempo__etapa.atual .linha-tempo__icone { background: var(--st-preparando); border-color: var(--st-preparando); box-shadow: 0 0 0 4px var(--st-preparando-fundo); }
@@ -597,7 +606,7 @@ body.gaveta-aberta { overflow: hidden; }
     padding: var(--e-3) var(--e-4) calc(var(--e-3) + env(safe-area-inset-bottom));
     background: var(--cor-superficie);
     border-top: 1px solid var(--cor-borda);
-    box-shadow: 0 -6px 20px rgb(31 20 20 / 0.08);
+    box-shadow: 0 -8px 24px rgb(0 0 0 / 0.45);
   }
   .barra-acao .btn { flex: 1; }
   body.tem-barra-acao .conteudo { padding-bottom: 120px; }
@@ -613,6 +622,7 @@ body.gaveta-aberta { overflow: hidden; }
 /* ---------- 16. Utilitários ---------- */
 .texto-suave { color: var(--cor-texto-suave); }
 .preco { font-weight: 700; color: var(--cor-tinta); font-variant-numeric: tabular-nums; }
+.preco--destaque { font-family: var(--fonte-titulo); font-weight: 800; }
 .preco-antigo { text-decoration: line-through; color: var(--cor-texto-suave); font-weight: 400; }
 .acoes { display: flex; flex-wrap: wrap; gap: var(--e-2); align-items: center; }
 .link-alternativo { margin-top: var(--e-4); text-align: center; color: var(--cor-texto-suave); }

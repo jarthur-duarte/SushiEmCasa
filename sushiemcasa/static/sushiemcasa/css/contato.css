@@ -32,7 +32,7 @@ a.canal:hover { border-color: var(--cor-borda-forte); box-shadow: var(--sombra-2
 }
 .canal__icone--whats { background: #1f8f4e; }
 .canal__icone--insta { background: #c13584; }
-.canal__icone--email { background: var(--cor-tinta); }
+.canal__icone--email { background: #4a3b33; }
 .canal__texto { display: grid; }
 .canal__texto small { color: var(--cor-texto-suave); font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; }
 .canal__texto strong { color: var(--cor-tinta); overflow-wrap: anywhere; }

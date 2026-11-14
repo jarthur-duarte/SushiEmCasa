@@ -74,7 +74,7 @@
   font-size: var(--fs-sm);
   font-weight: 500;
 }
-.chip[aria-pressed="true"] { background: var(--cor-tinta); border-color: var(--cor-tinta); color: #fff; }
+.chip[aria-pressed="true"] { background: var(--cor-tinta); border-color: var(--cor-tinta); color: var(--cor-sobre-claro); }
 .contagem-filtro { font-size: var(--fs-sm); color: var(--cor-texto-suave); }
 
 /* Tabela de pedidos / produtos */
