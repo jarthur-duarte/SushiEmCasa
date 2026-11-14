@@ -539,3 +539,60 @@ class ProdutoEmDestaqueTests(TestCase):
         self.assertTrue(self.b.destaque)
         response = self.client.post(url, {**base, 'destaque': 'on'})  # escondido + destaque
         self.assertContains(response, 'A featured product must also be shown on the menu.')
+
+
+class PedidosComDoisClientesTests(TestCase):
+    """Dois clientes fazem pedidos pelo site: cada um só vê o próprio; a equipe vê os dois."""
+    SENHA = 'senha-de-teste-123'
+
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Uramaki', slug='uramaki')
+        self.uramaki = Produto.objects.create(nome='Uramaki', descricao='x', preco=Decimal('10'), categoria=cat)
+        self.temaki = Produto.objects.create(nome='Temaki', descricao='x', preco=Decimal('20'), categoria=cat)
+        self.ana = User.objects.create_user('ana', password=self.SENHA)
+        self.beto = User.objects.create_user('beto', password=self.SENHA)
+        self.equipe = User.objects.create_user('equipe', password=self.SENHA, is_staff=True)
+
+    def _data_entrega(self):
+        dt = timezone.localtime(timezone.now()) + datetime.timedelta(days=2)
+        dt = dt.replace(hour=14, minute=0, second=0, microsecond=0)
+        while dt.weekday() == 6:
+            dt += datetime.timedelta(days=1)
+        return dt.strftime('%Y-%m-%d %H:%M')
+
+    def _pedir(self, usuario, produto, quantidade):
+        self.assertTrue(self.client.login(username=usuario.username, password=self.SENHA))
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[produto.id]), {'quantity': quantidade})
+        response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': self._data_entrega()})
+        self.assertEqual(response.status_code, 302, getattr(response, 'context', None) and response.context['form'].errors)
+        pedido = Order.objects.filter(user=usuario).latest('id')
+        lista = self.client.get(reverse('sushiemcasa:orders')).context['pedidos']
+        self.client.get(reverse('sushiemcasa:logout'))
+        return pedido, list(lista)
+
+    def test_cada_cliente_ve_so_o_proprio_pedido(self):
+        pedido_ana, lista_ana = self._pedir(self.ana, self.uramaki, 2)
+        pedido_beto, lista_beto = self._pedir(self.beto, self.temaki, 1)
+
+        self.assertEqual(lista_ana, [pedido_ana])
+        self.assertEqual(lista_beto, [pedido_beto])
+        self.assertEqual(pedido_ana.total_price, Decimal('20'))
+        self.assertEqual(pedido_beto.total_price, Decimal('20'))
+        self.assertEqual([i.item_name for i in pedido_beto.items.all()], ['Temaki'])
+
+        # Ana entra de novo: continua vendo só o dela e não abre o do Beto.
+        self.client.login(username='ana', password=self.SENHA)
+        self.assertEqual(list(self.client.get(reverse('sushiemcasa:orders')).context['pedidos']), [pedido_ana])
+        self.assertEqual(self.client.get(reverse('sushiemcasa:order_detail', args=[pedido_beto.id])).status_code, 404)
+        self.client.logout()
+
+        # A equipe vê os dois.
+        self.client.force_login(self.equipe)
+        self.assertEqual(set(self.client.get(reverse('sushiemcasa:orders')).context['pedidos']), {pedido_ana, pedido_beto})
+
+    def test_carrinho_nao_passa_de_um_cliente_para_o_outro(self):
+        self.client.login(username='ana', password=self.SENHA)
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.uramaki.id]), {'quantity': 3})
+        self.client.get(reverse('sushiemcasa:logout'))
+        self.client.login(username='beto', password=self.SENHA)
+        self.assertEqual(self.client.session.get('cart', {}), {})
