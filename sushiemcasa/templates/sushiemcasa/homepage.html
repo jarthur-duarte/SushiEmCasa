@@ -1,239 +1,178 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Sushi em Casa - Menu{% endblock %}
+{% block title %}{% if categoria_selecionada %}{{ categoria_selecionada }} · {% endif %}Menu · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-   <style>
-        /* --- CONFIGURAÇÃO PADRÃO (PC/DESKTOP) --- */
-        .secao-promocoes, .secao-menu {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
-
-        .carrossel-container {
-            width: 100%;
-            overflow: hidden;
-            position: relative;
-            padding: 0 45px; /* No PC mantemos espaço para as setas */
-        }
-
-        .carrossel-track {
-            display: flex;
-            list-style: none !important;
-            transition: transform 0.5s ease-in-out;
-        }
-
-        .cartao-promocao {
-            min-width: 100%;
-            display: flex;
-            align-items: center;
-            background: #fff;
-            border-radius: 12px;
-            border: 1px solid #eee;
-        }
-
-        .imagem-promocao img {
-            max-height: 250px;
-            width: 350px;
-            object-fit: contain;
-        }
-
-        .seta {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: #222;
-            color: #fff;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        /* --- GRID DE PRODUTOS (PC) --- */
-        .produtos-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 25px;
-            padding: 20px 0;
-        }
-
-        .produto-card {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .produto-card:hover { transform: translateY(-5px); }
-        .produto-card img { width: 100%; height: 200px; object-fit: cover; }
-        .produto-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
-
-        /* --- RESPONSIVIDADE (MOBILE) --- */
-        @media (max-width: 1024px) {
-            .produtos-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        @media (max-width: 768px) {
-            /* 1. Removemos o padding lateral para o banner esticar */
-            .carrossel-container {
-                padding: 0 !important; 
-            }
-
-            .secao-promocoes {
-                padding: 0 10px; /* Pequena margem apenas para não colar na borda da tela */
-            }
-
-            /* 2. Banner mais horizontal */
-            .cartao-promocao {
-                flex-direction: column;
-                text-align: center;
-                border-radius: 16px; /* Bordas mais arredondadas */
-            }
-
-            .imagem-promocao img {
-                width: 100%;
-                height: 120px; /* Reduzimos a altura (era 140px) para parecer mais horizontal */
-                object-fit: contain;
-                padding: 5px; /* Menos padding interno */
-            }
-
-            /* 3. Setas grandes e transparentes sobre a imagem */
-            .seta { 
-                width: 45px !important; 
-                height: 45px !important; 
-                background-color: rgba(0,0,0,0.4) !important; /* Mais transparente */
-            }
-            .seta-esquerda { left: 0px !important; border-radius: 0 10px 10px 0 !important; }
-            .seta-direita { right: 0px !important; border-radius: 10px 0 0 10px !important; }
-
-            /* Grid e Produtos Mobile */
-            .produtos-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-            .produto-card img { height: 130px; }
-            .produto-descricao { display: none; }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/cardapio.css' %}">
 {% endblock %}
 
 {% block content %}
-<main>
-    {% if messages %}
+<div class="container">
+
+    <section class="hero" aria-labelledby="titulo-hero">
+        <div class="hero__texto">
+            {% if is_open %}
+                <span class="loja-aberta">Open now</span>
+            {% else %}
+                <span class="loja-fechada">Closed now · schedule for later</span>
+            {% endif %}
+            <h1 id="titulo-hero">Fresh sushi,<br>made to order.</h1>
+            <p class="hero__lead">Pick your rolls, schedule delivery at least 24 hours ahead and confirm your order on WhatsApp.</p>
+            <div class="acoes">
+                <a href="#menu-principal" class="btn btn--primario btn--grande">See the menu</a>
+                <a href="{% url 'sushiemcasa:contato' %}" class="btn btn--grande">Contact us</a>
+            </div>
+        </div>
+        {# foto_topo e destaque vêm da view (exibir_cardapio) #}
+        {% if foto_topo %}
+        <div class="hero__foto">
+            {# a foto grande é a do produto em destaque; o cartão descreve essa mesma foto #}
+            <img src="{{ foto_topo.url }}" alt="{{ destaque.nome }}" width="640" height="480" fetchpriority="high">
+            <div class="hero__cartao">
+                <span>
+                    <small>{{ destaque.categoria.nome }}</small>
+                    <strong>{{ destaque.nome }}</strong>
+                    $ {{ destaque.preco|floatformat:2 }}
+                </span>
+                <form action="{% url 'sushiemcasa:add_to_cart' product_id=destaque.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn--primario btn-redondo btn-add-destaque" aria-label="Add {{ destaque.nome }} to cart">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+    </section>
+
+    {% if not is_open %}
         <ul class="messages">
-            {% for message in messages %}
-                <li class="message {{ message.tags }}">{{ message }}</li>
-            {% endfor %}
+            <li class="message warning">
+                <span><strong>The store is currently closed.</strong> You can still fill your cart and schedule delivery for another time.</span>
+            </li>
         </ul>
     {% endif %}
-    
-    <section class="secao-promocoes">
-        <h2>Deals</h2>
-        <div class="carrossel-container">
-            <button class="seta seta-esquerda" onclick="moveSlide(-1)"><i class="fas fa-chevron-left"></i></button>
-            <div class="carrossel-viewport">
-                <div class="carrossel-track" id="track">
-                    {% for banner in banners %}
-                    <div class="cartao-promocao">
-                        <div class="imagem-promocao">
-                            <img src="{{ banner.imagem.url }}" alt="{{ banner.titulo }}">
+
+    {% if banners %}
+    <section class="promocoes" aria-labelledby="titulo-promocoes">
+        <div class="secao-cabecalho">
+            <h2 id="titulo-promocoes">Specials</h2>
+        </div>
+
+        <div class="carrossel" data-carrossel aria-roledescription="carousel" aria-label="Specials">
+            <ul class="carrossel__trilho">
+                {% for banner in banners %}
+                <li class="carrossel__slide" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} of {{ banners|length }}">
+                    <article class="promo">
+                        <div class="promo__foto">
+                            <img src="{{ banner.imagem.url }}" alt="{{ banner.titulo }}" width="640" height="480"
+                                 {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async">
                         </div>
-                        <div class="descricao-promocao">
-                            <h3 style="padding: 10px 20px 0 20px;">{{ banner.titulo }}</h3>
-                            <p style="padding: 0 20px;">{{ banner.descricao }}</p> 
-                            <div class="precos" style="padding: 0 20px 15px 20px;">
+                        <div class="promo__texto">
+                            <span class="promo__selo">Deal</span>
+                            <h3>{{ banner.titulo }}</h3>
+                            <p>{{ banner.descricao }}</p>
+                            <div class="promo__precos">
+                                <span class="preco"><span class="sr-only">Now </span>$ {{ banner.preco_promocional|floatformat:2 }}</span>
                                 {% if banner.preco_antigo %}
-                                    <span class="preco-antigo" style="text-decoration: line-through; color: #999; margin-right: 10px;">$ {{ banner.preco_antigo }}</span>
+                                    <span class="preco-antigo"><span class="sr-only">was </span>$ {{ banner.preco_antigo|floatformat:2 }}</span>
                                 {% endif %}
-                                <span class="preco-novo" style="font-weight: bold; color: #d32f2f; font-size: 1.2rem;">$ {{ banner.preco_promocional }}</span>
                             </div>
                             {% if banner.produto_vinculado %}
-                            <form action="{% url 'sushiemcasa:add_to_cart' product_id=banner.produto_vinculado.id %}" method="post" style="padding: 0 20px 20px 20px;">
+                            <form action="{% url 'sushiemcasa:add_to_cart' product_id=banner.produto_vinculado.id %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn-add-promocao" style="background: #28a745; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; width: 100%;">
-                                    Add Deal <i class="fas fa-cart-plus"></i>
+                                <button type="submit" class="btn btn--primario btn-add-promocao">
+                                    <i class="fas fa-cart-plus" aria-hidden="true"></i> Add deal
                                 </button>
                             </form>
                             {% endif %}
                         </div>
-                    </div>
-                    {% empty %}
-                    <div class="cartao-promocao" style="padding: 40px; justify-content: center; width: 100%;">
-                        <p>None Promos today.</p>
-                    </div>
+                    </article>
+                </li>
+                {% endfor %}
+            </ul>
+
+            {% if banners|length > 1 %}
+            <div class="carrossel__controles">
+                <button type="button" class="carrossel__seta" data-carrossel-anterior aria-label="Previous special">
+                    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div class="carrossel__pontos">
+                    {% for banner in banners %}
+                        <button type="button" class="carrossel__ponto" aria-label="Go to special {{ forloop.counter }}: {{ banner.titulo }}"></button>
                     {% endfor %}
                 </div>
+                <button type="button" class="carrossel__seta" data-carrossel-proximo aria-label="Next special">
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </button>
             </div>
-            <button class="seta seta-direita" onclick="moveSlide(1)"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </section>
-
-    <hr class="separador">
-
-    <section id="menu-principal" class="secao-menu">
-        <div class="cabecalho-menu">
-            <h2>Menu</h2>
-            {% if categoria_selecionada %}
-                <a href="{% url 'sushiemcasa:cardapio' %}#menu-principal">All Sushis</a>
             {% endif %}
         </div>
-
-        <div class="filtros-menu">
-            {% for categoria in categorias %}
-                <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}#menu-principal" 
-                   class="botao-filtro {% if categoria.nome == categoria_selecionada %}ativo{% endif %}">
-                   {{ categoria.nome }}
-                </a>
-            {% endfor %}
-        </div>
-
-        <div class="produtos-grid">
-            {% for produto in produtos %}
-            <div class="produto-card">
-                {% if produto.imagem %}
-                <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}">
-                {% endif %}
-                <div class="produto-info">
-                    <h3 style="font-size: 1rem; margin-bottom: 8px;">{{ produto.nome|upper }}</h3>
-                    <p class="produto-descricao" style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">{{ produto.descricao }}</p>
-                    
-                    <div class="card-footer-flex" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto;">
-                        <span class="produto-preco" style="font-weight: bold; color: #2ecc71;">$ {{ produto.preco|floatformat:2 }}</span>
-                        
-                        <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="add-to-cart-button" style="background: #222; color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer;">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <p>No products found in this category.</p>
-            {% endfor %}
-        </div>
     </section>
-</main>
-{% endblock content %}
+    {% endif %}
+
+    <section id="menu-principal" aria-labelledby="titulo-menu">
+        <h2 id="titulo-menu" class="sr-only">Products</h2>
+
+        <nav class="filtros" aria-label="Filter by category">
+            <ul>
+                <li><a href="{% url 'sushiemcasa:cardapio' %}#menu-principal" {% if not categoria_selecionada %}aria-current="page"{% endif %}>All</a></li>
+                {% for categoria in categorias %}
+                    <li>
+                        <a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}#menu-principal"
+                           {% if categoria.nome == categoria_selecionada %}aria-current="page"{% endif %}>{{ categoria.nome }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        {% if produtos %}
+        <ul class="produtos">
+            {% for produto in produtos %}
+            <li>
+                <article class="produto-card">
+                    <div class="produto-card__foto">
+                        {% if produto.imagem %}
+                            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" width="400" height="400" loading="lazy" decoding="async">
+                        {% else %}
+                            <i class="fas fa-fish" aria-hidden="true"></i>
+                        {% endif %}
+                    </div>
+                    <div class="produto-card__corpo">
+                        <span class="produto-card__categoria">{{ produto.categoria.nome }}</span>
+                        <h3 class="produto-card__nome">{{ produto.nome }}</h3>
+                        {% if produto.descricao %}<p class="produto-card__descricao">{{ produto.descricao }}</p>{% endif %}
+                        <div class="produto-card__rodape">
+                            <span class="preco preco--destaque">$ {{ produto.preco|floatformat:2 }}</span>
+                            <form action="{% url 'sushiemcasa:add_to_cart' product_id=produto.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="btn btn--primario btn-redondo add-to-cart-button"
+                                        aria-label="Add {{ produto.nome }} to cart">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <div class="vazio">
+                <div class="vazio__icone"><i class="fas fa-fish" aria-hidden="true"></i></div>
+                <h3>No products in this category</h3>
+                <p>Check out the rest of the menu.</p>
+                <a href="{% url 'sushiemcasa:cardapio' %}" class="btn">See the full menu</a>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'sushiemcasa/js/carrossel.js' %}"></script>
-    <script src="{% static 'sushiemcasa/js/filtros.js' %}"></script> 
+    <script src="{% static 'sushiemcasa/js/carrossel.js' %}" defer></script>
 {% endblock %}

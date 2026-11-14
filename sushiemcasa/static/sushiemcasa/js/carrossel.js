@@ -1,81 +1,60 @@
+/* Carrossel de promoções.
+   O deslize no celular é nativo (scroll-snap); este script só liga
+   as setas e os pontos e mantém o estado acessível atualizado.
+   Não há troca automática de slide (evita conteúdo que se move sozinho). */
 document.addEventListener('DOMContentLoaded', function () {
-    const track = document.getElementById('track');
-    const container = document.querySelector('.carrossel-viewport'); 
-    
-    if (!track || !container) return;
+  'use strict';
 
-    const slides = Array.from(track.children);
-    if (slides.length === 0) return;
+  var carrossel = document.querySelector('[data-carrossel]');
+  if (!carrossel) return;
 
-    let currentIndex = 0;
-    let autoRotateInterval = null;
-    const getSlideWidth = () => {
-        return container.getBoundingClientRect().width; 
-    };
+  var trilho = carrossel.querySelector('.carrossel__trilho');
+  var slides = Array.prototype.slice.call(trilho.children);
+  var anterior = carrossel.querySelector('[data-carrossel-anterior]');
+  var proximo = carrossel.querySelector('[data-carrossel-proximo]');
+  var pontos = Array.prototype.slice.call(carrossel.querySelectorAll('.carrossel__ponto'));
+  var atual = 0;
 
-    const updateTrackPosition = () => {
-        const currentWidth = getSlideWidth();
-        track.style.transform = 'translateX(-' + (currentWidth * currentIndex) + 'px)';
-    };
+  if (slides.length < 2) return;
 
-    const goToIndex = (targetIndex) => {
-        if (targetIndex >= slides.length) targetIndex = 0;
-        if (targetIndex < 0) targetIndex = slides.length - 1;
+  function irPara(indice) {
+    indice = Math.max(0, Math.min(slides.length - 1, indice));
+    trilho.scrollTo({ left: slides[indice].offsetLeft - trilho.offsetLeft, behavior: 'smooth' });
+  }
 
-        currentIndex = targetIndex;
-        updateTrackPosition();
-    };
+  function atualizar(indice) {
+    atual = indice;
+    anterior.disabled = indice === 0;
+    proximo.disabled = indice === slides.length - 1;
+    pontos.forEach(function (p, i) {
+      p.setAttribute('aria-current', i === indice ? 'true' : 'false');
+    });
+    slides.forEach(function (s, i) {
+      // slides fora da tela saem da ordem de tabulação
+      s.querySelectorAll('a, button').forEach(function (el) {
+        if (i === indice) el.removeAttribute('tabindex'); else el.setAttribute('tabindex', '-1');
+      });
+    });
+  }
 
-    window.moveSlide = function(direction) {
-        goToIndex(currentIndex + direction);
-        resetAutoRotate();
-    };
+  anterior.addEventListener('click', function () { irPara(atual - 1); });
+  proximo.addEventListener('click', function () { irPara(atual + 1); });
+  pontos.forEach(function (p, i) { p.addEventListener('click', function () { irPara(i); }); });
 
-    const startAutoRotate = () => {
-        clearInterval(autoRotateInterval);
-        autoRotateInterval = setInterval(() => {
-            window.moveSlide(1);
-        }, 5000);
-    };
+  var espera;
+  trilho.addEventListener('scroll', function () {
+    clearTimeout(espera);
+    espera = setTimeout(function () {
+      var passo = slides[1].offsetLeft - slides[0].offsetLeft; // largura + espaço
+      var indice = Math.round(trilho.scrollLeft / passo);
+      if (indice !== atual) atualizar(indice);
+    }, 60);
+  }, { passive: true });
 
-    const resetAutoRotate = () => {
-        clearInterval(autoRotateInterval);
-        startAutoRotate();
-    };
+  trilho.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); irPara(atual + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); irPara(atual - 1); }
+  });
 
-    startAutoRotate();
-
-    window.addEventListener('resize', updateTrackPosition);
-
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-    const minSwipeDistance = 30; 
-
-    container.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-        touchStartY = e.changedTouches[0].screenY;
-    }, {passive: true});
-
-    container.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        touchEndY = e.changedTouches[0].screenY;
-        handleSwipe();
-    }, {passive: true});
-
-    function handleSwipe() {
-        const deltaX = touchEndX - touchStartX;
-        const deltaY = touchEndY - touchStartY;
-
-        if (Math.abs(deltaX) > Math.abs(deltaY)) {
-            if (Math.abs(deltaX) > minSwipeDistance) {
-                if (deltaX < 0) {
-                    window.moveSlide(1); 
-                } else {
-                    window.moveSlide(-1);
-                }
-            }
-        }
-    }
+  atualizar(0);
 });

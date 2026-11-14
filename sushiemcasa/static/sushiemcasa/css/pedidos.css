@@ -1,0 +1,56 @@
+/* Meus pedidos e detalhe do pedido */
+
+.lista-pedidos { display: grid; gap: var(--e-4); }
+
+.pedido-card__topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-2);
+}
+.pedido-card__topo h2 { font-size: var(--fs-lg); }
+.pedido-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-1) var(--e-5);
+  margin-top: var(--e-2);
+  font-size: var(--fs-sm);
+  color: var(--cor-texto-suave);
+}
+.pedido-card__meta i { margin-right: 4px; }
+
+.pedido-itens {
+  margin-top: var(--e-4);
+  border-top: 1px solid var(--cor-borda);
+}
+.pedido-itens li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding-block: var(--e-2);
+  border-bottom: 1px dashed var(--cor-borda);
+  font-size: var(--fs-sm);
+}
+.pedido-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: var(--e-3);
+  font-weight: 700;
+  font-size: var(--fs-lg);
+  color: var(--cor-tinta);
+}
+.pedido-card__rodape { margin-top: var(--e-4); }
+
+.detalhe-dados {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--e-3);
+  margin-top: var(--e-4);
+}
+.detalhe-dados dt { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--cor-texto-suave); }
+.detalhe-dados dd { font-weight: 600; color: var(--cor-tinta); }
+
+@media (max-width: 480px) {
+  .linha-tempo__etapa span:last-child { font-size: 0.72rem; }
+}

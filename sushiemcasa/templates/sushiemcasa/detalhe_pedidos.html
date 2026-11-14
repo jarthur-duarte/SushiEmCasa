@@ -1,147 +1,53 @@
+{% extends 'sushiemcasa/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Detail #{{ order.id }} - Sushi em Casa</title>
-    
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'sushiemcasa/images/LOGO.ico' %}">
 
-</head>
-<body>
+{% block title %}Order #{{ order.id }} · Sushi em Casa{% endblock %}
 
-    <header class="barra-navegacao">
-        <div class="logo">
-             <a href="{% url 'sushiemcasa:cardapio' %}"> 
-                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
-            </a>
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container container--estreito">
+    <div class="pagina-titulo">
+        <p><a href="{% url 'sushiemcasa:orders' %}"><i class="fas fa-arrow-left" aria-hidden="true"></i> My orders</a></p>
+        <h1>Order #{{ order.id }}</h1>
+    </div>
+
+    <article class="card">
+        <div class="pedido-card__topo">
+            <h2>Progress</h2>
+            {% include 'sushiemcasa/includes/status_badge.html' with s=order.status %}
         </div>
-        <nav>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}" class="ativo">Orders</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-            </ul>
-        </nav>
-        <div class="icone-usuario">
-            <a href="#">
-                <i class="fas fa-user-circle"></i>
-            </a>
-        </div>
-    </header>
 
-    <main class="container-pedidos">
-        {% if messages %}
-            <ul class="messages" style="list-style-type: none; padding: 10px; margin: 10px 0; background-color: #f0f0f0; border: 1px solid #ddd;">
-                {% for message in messages %}
-                    <li class="message {{ message.tags }}" 
-                        style="color: {% if message.tags == 'success' %}green{% elif message.tags == 'error' %}red{% else %}black{% endif %};">
-                        {{ message }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        
-        <h1>Order Detail #{{ order.id }}</h1>
-        <div class="pedido">
-            <div class="pedido-header">
-                <h2>Order #{{ order.id }}</h2>
-                <span class="pedido-status status-{{ order.status|slugify }}">{{ order.get_status_display }}</span>
+        {% include 'sushiemcasa/includes/linha_do_tempo.html' with s=order.status %}
+
+        <dl class="detalhe-dados">
+            <div>
+                <dt>Customer</dt>
+                <dd>{% if order.user %}{{ order.user.username }}{% else %}Guest{% endif %}</dd>
             </div>
-            
-            <p><strong>Customer:</strong> 
-                {% if order.user %}
-                    {{ order.user.username }}
-                {% else %}
-                    Guest (Visitante)
-                {% endif %}
-            </p>
-
-            <p><strong>Order date:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
-            
-            {% if order.delivery_datetime %}
-                <p><strong>Scheduled delivery for:</strong> {{ order.delivery_datetime|date:"d/m/Y H:i" }}</p>
-            {% else %}
-                <p><strong>Delivery:</strong> ASAP</p>
-            {% endif %}
-
-            <h4>Items:</h4>
-            <ul class="items-list">
-                {% for item in order.items.all %}
-                    <li class="item-pedido">
-                        {{ item.quantity }}x {{ item.item_name }} - $ {{ item.price|floatformat:2 }}
-                    </li>
-                {% empty %}
-                    <li>No items found in this order.</li>
-                {% endfor %}
-            </ul>
-            <hr>
-            <p><strong>Total: $ {{ order.total_price|floatformat:2 }}</strong></p>
-        </div>
-
-        {% if order.status != 'Cancelled' %}
-            <div class="stepper-wrapper">
-                
-                <div class="stepper-item {% if order.status == 'Pending' or order.status == 'In Preparation' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
-                    <div class="step-counter"><i class="fas fa-check"></i></div>
-                    <div class="step-name">Order Accepted</div>
-                </div>
-
-                <div class="stepper-item {% if order.status == 'In Preparation' or order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
-                    <div class="step-counter"><i class="fas fa-utensils"></i></div>
-                    <div class="step-name">In preparation</div>
-                </div>
-
-                <div class="stepper-item {% if order.status == 'Out for Delivery' or order.status == 'Delivered' %}completed{% endif %}">
-                    <div class="step-counter"><i class="fas fa-truck"></i></div>
-                    <div class="step-name">On the way</div>
-                </div>
-
-                <div class="stepper-item {% if order.status == 'Delivered' %}completed entregue{% endif %}">
-                    <div class="step-counter"><i class="fas fa-box-open"></i></div>
-                    <div class="step-name">Delivered</div>
-                </div>
-
+            <div>
+                <dt>Placed</dt>
+                <dd>{{ order.created_at|date:"M j, Y g:i A" }}</dd>
             </div>
-        {% else %}
-             <div class="alert alert-danger" style="text-align: center; margin-top: 20px; color: red;">
-                <strong>Order Cancelled.</strong> Please contact us.
+            <div>
+                <dt>Scheduled delivery</dt>
+                <dd>{% if order.delivery_datetime %}{{ order.delivery_datetime|date:"M j, Y g:i A" }}{% else %}To be arranged{% endif %}</dd>
             </div>
-        {% endif %}
+        </dl>
+    </article>
 
-        <p style="text-align: center; margin-top: 20px;">
-            <a href="{% url 'sushiemcasa:orders' %}" class="btn btn-secondary">Back to My Orders</a>
-        </p>
-    </main>
-
-    <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
-        <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
-    </a>
-
-    <footer class="rodape">
-        <div class="logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa"> 
-        </div>
-        <div class="links-rodape">
-            <h4>Tabs</h4>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}" class="ativo">Orders</a></li> 
-            </ul>
-        </div>
-        <div class="contato-rodape">
-            <h4>Contact</h4>
-            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
-            <p>+1(239)7719811</p>
-        </div>
-    </footer>
-
-</body>
-</html>
+    <section class="card" aria-labelledby="titulo-itens">
+        <h2 id="titulo-itens" class="card__titulo">Items</h2>
+        <ul class="pedido-itens">
+            {% for item in order.items.all %}
+                <li class="item-pedido"><span>{{ item.quantity }}× {{ item.item_name }}</span><span class="preco">$ {{ item.price|floatformat:2 }}</span></li>
+            {% empty %}
+                <li>No items found in this order.</li>
+            {% endfor %}
+        </ul>
+        <div class="pedido-total"><span>Total</span><span>$ {{ order.total_price|floatformat:2 }}</span></div>
+    </section>
+</div>
+{% endblock %}

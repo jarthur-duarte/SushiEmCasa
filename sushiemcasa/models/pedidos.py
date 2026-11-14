@@ -29,7 +29,7 @@ class Order(models.Model):
         if self.user:
             nome_cliente = self.user.username
         else:
-            nome_cliente = "Convidado (Sem Login)"
+            nome_cliente = "Guest (not logged in)"
             
         return f"Order #{self.id} - {nome_cliente}"
     

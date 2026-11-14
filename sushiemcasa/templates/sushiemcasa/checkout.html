@@ -1,210 +1,99 @@
+{% extends 'sushiemcasa/base.html' %}
 {% load static %}
-{% load l10n %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Sushi em Casa - Finish Order</title>
-    
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/homepage_style.css' %}">
-    <link rel="stylesheet" href="{% static 'sushiemcasa/css/pedidos_style.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'sushiemcasa/images/LOGO.ico' %}">
 
-    <style>
-        /* Estilo local para o aviso de login (Desktop e Mobile) */
-        .alert-login-warning {
-            background-color: #fff3cd; 
-            color: #856404; 
-            padding: 15px; 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
-            border: 1px solid #ffeeba;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-    </style>
-</head>
-<body>
+{% block title %}Schedule delivery · Sushi em Casa{% endblock %}
 
-    <header class="barra-navegacao">
-        <div class="logo">
-            <a href="{% url 'sushiemcasa:cardapio' %}">
-                <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa">
-            </a>
+{% block body_class %}tem-barra-acao{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/carrinho.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="pagina-titulo">
+        <h1>Schedule delivery</h1>
+        <ol class="etapas" aria-label="Order steps">
+            <li class="feita"><span class="etapas__num"><i class="fas fa-check" aria-hidden="true"></i><span class="sr-only">Done:</span></span> Cart</li>
+            <li aria-current="step"><span class="etapas__num">2</span> Delivery</li>
+            <li><span class="etapas__num">3</span> WhatsApp</li>
+        </ol>
+    </div>
+
+    {% if not user.is_authenticated %}
+        <div class="alerta alerta--aviso" role="note">
+            <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>
+            <span>
+                <strong>You're not logged in.</strong>
+                Without an account, the order won't show up in “My orders” and you can only follow it on WhatsApp.
+                <a href="{% url 'sushiemcasa:login' %}?next={% url 'sushiemcasa:checkout' %}">Log in</a>
+            </span>
         </div>
-        <nav>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}" class="ativo">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
+    {% endif %}
+
+    {% if cart_items %}
+    <form method="post" action="{% url 'sushiemcasa:checkout' %}" class="pedido-layout" novalidate>
+        {% csrf_token %}
+
+        <section class="card" aria-labelledby="titulo-entrega">
+            <h2 id="titulo-entrega" class="card__titulo">When would you like it delivered?</h2>
+
+            <ul class="regras-entrega">
+                <li><i class="fas fa-clock" aria-hidden="true"></i> <span>At least <strong>24 hours in advance</strong> (sushi is made to order).</span></li>
+                <li><i class="fas fa-calendar-day" aria-hidden="true"></i> <span>Monday to Saturday, 10:00 AM to 8:00 PM.</span></li>
+                <li><i class="fas fa-ban" aria-hidden="true"></i> <span>No deliveries on Sundays.</span></li>
             </ul>
-        </nav>
-        <div class="icone-usuario">
-            {% if user.is_authenticated %}
-                <a href="{% url 'sushiemcasa:logout' %}" title="Logout ({{ user.username }})">
-                    <i class="fas fa-user-circle" style="color: #4CAF50;"></i> 
-                </a>
-            {% else %}
-                <a href="{% url 'sushiemcasa:login' %}" title="Login / Register">
-                    <i class="fas fa-user-circle"></i>
-                </a>
+
+            {% if form.non_field_errors %}
+                <div class="alerta alerta--erro" role="alert">
+                    {% for error in form.non_field_errors %}<span>{{ error }}</span>{% endfor %}
+                </div>
             {% endif %}
-        </div>
-    </header>
 
-    <main class="container-pedidos">
-        
-        {% if not user.is_authenticated %}
-            <div class="alert-login-warning">
-                <strong><i class="fas fa-exclamation-triangle"></i> Warning:</strong> You are not logged in.
-                <br>
-                <small>Without login, you cannot see your order status on the site. 
-                Please, track your order sending the receipt on 
-                <a href="https://wa.me/12397719811" target="_blank" style="text-decoration: underline; color: #856404;"><strong>WhatsApp</strong></a>.</small>
+            <div class="campo {% if form.delivery_datetime.errors %}tem-erro{% endif %}">
+                <label for="id_delivery_datetime">Delivery date and time</label>
+                <input type="datetime-local" name="delivery_datetime" id="id_delivery_datetime"
+                       value="{{ form.delivery_datetime.value|default_if_none:'' }}"
+                       required aria-describedby="feedback-data{% if form.delivery_datetime.errors %} erro-data{% endif %}"
+                       {% if form.delivery_datetime.errors %}aria-invalid="true"{% endif %}>
+                {% if form.delivery_datetime.errors %}
+                    <div id="erro-data" class="campo__erro" role="alert">
+                        <i class="fas fa-circle-exclamation" aria-hidden="true"></i>
+                        <span>{% for error in form.delivery_datetime.errors %}{{ error }} {% endfor %}</span>
+                    </div>
+                {% endif %}
+                <p id="feedback-data" class="feedback-data" aria-live="polite"></p>
             </div>
-        {% endif %}
 
-        <h1>Finalize Order</h1>
+            <p class="como-funciona">
+                <i class="fab fa-whatsapp" aria-hidden="true"></i>
+                When you submit, we'll open WhatsApp with your order summary. There you can confirm the address and payment method.
+            </p>
+        </section>
 
-        {% if messages %}
-            <ul class="messages" style="list-style: none; padding: 0;">
-                {% for message in messages %}
-                    <li class="message {{ message.tags }}" 
-                        style="padding: 10px; margin-bottom: 10px; border-radius: 5px; 
-                               {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24;{% endif %}">
-                        {{ message }}
+        <aside class="card resumo" aria-labelledby="titulo-resumo">
+            <h2 id="titulo-resumo" class="card__titulo">Order summary</h2>
+            <ul class="resumo__itens">
+                {% for item in cart_items %}
+                    <li class="resumo__linha item-pedido">
+                        <span>{{ item.quantity }}× {{ item.name }}</span>
+                        <span class="preco">$ {{ item.total|floatformat:2 }}</span>
                     </li>
                 {% endfor %}
             </ul>
-        {% endif %}
+            <div class="barra-acao">
+                <p class="barra-acao__total">Total <strong>$ {{ cart_total|floatformat:2 }}</strong></p>
+                <button type="submit" class="btn btn--primario btn-submit" id="confirm-order-btn" disabled>
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i> Send order
+                </button>
+            </div>
+            <a href="{% url 'sushiemcasa:basket' %}" class="resumo__continuar">Back to cart</a>
+        </aside>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
 
-        <div class="pedido">
-            <h2>Order Resume</h2>
-            {% if cart_items %}
-                <ul class="items-list">
-                    {% for item in cart_items %}
-                        <li class="item-pedido">
-                            <span>{{ item.quantity }}x {{ item.product.nome }}</span>
-                            <span>$ {{ item.total|floatformat:2 }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-                <hr>
-                <p style="font-size: 1.2rem; margin-top: 10px;"><strong>Total: $ {{ cart_total|floatformat:2 }}</strong></p>
-            {% else %}
-                <p>Your basket is empty.</p>
-                <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn-submit">Back to Menu</a></p>
-            {% endif %}
-        </div>
-
-        {% if cart_items %}
-        <div class="pedido">
-            <h2>Order Details</h2>
-            <form method="post" action="{% url 'sushiemcasa:checkout' %}">
-                {% csrf_token %}
-
-                <div class="form-field">
-                    <label for="{{ form.delivery_datetime.id_for_label }}" style="font-weight: bold; display: block; margin-bottom: 5px;">
-                        Delivery Date & Time:
-                    </label>
-                    
-                    {{ form.delivery_datetime }}
-                    
-                    {% if form.delivery_datetime.help_text %}
-                        <small style="color: #666; display: block; margin-top: 5px;">{{ form.delivery_datetime.help_text }}</small>
-                    {% endif %}
-                    
-                    {% if form.delivery_datetime.errors %}
-                        <div class="errorlist">
-                            {% for error in form.delivery_datetime.errors %}
-                                <p style="color: red; margin-top: 5px;"><i class="fas fa-exclamation-circle"></i> {{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                </div>
-
-                {% if form.non_field_errors %} 
-                    <div class="errorlist">
-                        {% for error in form.non_field_errors %}
-                            <p style="color: red;">{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-
-                <button type="submit" class="btn-submit" id="confirm-order-btn" disabled>Confirm Order</button>
-            </form>
-        </div>
-        {% endif %}
-
-    </main>
-
-    <a href="https://wa.me/12397719811?text=Oi%20tudo%20bem" class="whatsapp-float" target="_blank">
-        <img src="{% static 'sushiemcasa/images/whatsapp.png' %}" alt="whatsapp">
-    </a>
-
-    <footer class="rodape">
-        <div class="logo">
-            <img src="{% static 'sushiemcasa/images/LOGO.jpg' %}" alt="Logo Sushi em Casa"> 
-        </div>
-        <div class="links-rodape">
-            <h4>Tabs</h4>
-            <ul>
-                <li><a href="{% url 'sushiemcasa:cardapio' %}">Home</a></li>
-                <li><a href="{% url 'sushiemcasa:basket' %}">Basket</a></li>
-                <li><a href="{% url 'sushiemcasa:contato' %}">Contact</a></li>
-                <li><a href="{% url 'sushiemcasa:orders' %}">Orders</a></li>
-            </ul>
-        </div>
-        <div class="contato-rodape">
-            <h4>Contact</h4>
-            <p>770 E Ashland St Apt 1009, Brockton, MA 02302</p>
-            <p>+1(239)7719811</p>
-        </div>
-    </footer>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-       
-       const dateTimeInput = document.getElementById("id_delivery_datetime");
-       const submitButton = document.getElementById("confirm-order-btn");
-
-       if (!dateTimeInput || !submitButton) {
-           console.error("Input de data ou botão não encontrados.");
-           return;
-       }
-
-       function validateDateTime() {
-           const selectedValue = dateTimeInput.value;
-
-           if (!selectedValue) {
-               submitButton.disabled = true;
-               submitButton.style.opacity = "0.6"; 
-               return;
-           }
-           
-           const selectedDate = new Date(selectedValue);
-           const now = new Date();
-           const minTime = now.getTime() + (24 * 60 * 60 * 1000);
-           const minDate = new Date(minTime);
-
-           if (selectedDate > minDate) {
-               submitButton.disabled = false;
-               submitButton.style.opacity = "1";
-               submitButton.style.cursor = "pointer";
-           } else {
-               submitButton.disabled = true;
-               submitButton.style.opacity = "0.6";
-               submitButton.style.cursor = "not-allowed";
-           }
-       }
-
-       dateTimeInput.addEventListener("input", validateDateTime);
-       validateDateTime();
-    });
-</script>
-
-</body>
-</html>
+{% block extra_js %}
+    <script src="{% static 'sushiemcasa/js/checkout.js' %}" defer></script>
+{% endblock %}

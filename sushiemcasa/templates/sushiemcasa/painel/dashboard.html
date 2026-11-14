@@ -1,338 +1,104 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Painel de Controle{% endblock %}
+{% block title %}Dashboard · Orders · Sushi em Casa{% endblock %}
 
 {% block extra_css %}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <style>
-        /* --- ESTILOS GERAIS --- */
-        .container-admin {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-            padding-bottom: 80px;
-        }
-
-        h1 { color: #333; margin-bottom: 10px; }
-        
-        /* --- BOTÕES DE TOPO (LINKS RÁPIDOS) --- */
-        .admin-actions {
-            display: flex; 
-            gap: 15px; 
-            flex-wrap: wrap; 
-            margin-bottom: 30px;
-            margin-top: 20px;
-        }
-        
-        .btn-action {
-            flex: 1;
-            min-width: 200px;
-            padding: 15px;
-            text-align: center;
-            text-decoration: none;
-            color: white;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .btn-produtos { background-color: #17a2b8; } /* Azul Petróleo */
-        .btn-horarios { background-color: #ffc107; color: #333; } /* Amarelo */
-        .btn-django { background-color: #343a40; } /* Cinza Escuro */
-
-        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); filter: brightness(1.1); }
-
-        /* --- TABELA DE PEDIDOS --- */
-        .titulo-secao {
-            margin-bottom: 20px; 
-            color: #333; 
-            border-left: 5px solid #28a745; 
-            padding-left: 15px;
-            font-size: 1.5rem;
-        }
-
-        .tabela-container {
-            overflow-x: auto; /* Rolagem lateral se necessário no desktop */
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        .tabela-admin {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-
-        .tabela-admin th {
-            background-color: #f8f9fa;
-            color: #555;
-            font-weight: bold;
-            text-transform: uppercase;
-            padding: 15px;
-            text-align: left;
-            border-bottom: 2px solid #ddd;
-        }
-
-        .tabela-admin td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            vertical-align: middle;
-            color: #444;
-        }
-
-        /* Select de Status */
-        .status-select {
-            padding: 8px;
-            border-radius: 5px;
-            border: 1px solid #ced4da;
-            background-color: #fff;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        /* Botões da Tabela (Salvar/Excluir) */
-        .btn-icon {
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: 0.2s;
-            font-size: 1rem;
-        }
-        .btn-save { background-color: #28a745; }
-        .btn-save:hover { background-color: #218838; }
-        
-        .btn-delete { background-color: #dc3545; margin-left: 5px; }
-        .btn-delete:hover { background-color: #c82333; }
-
-        /* Badges de Status (Visualização) */
-        .badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            display: inline-block;
-            white-space: nowrap;
-        }
-        .bg-pending { background-color: #ffc107; color: #333; }
-        .bg-accepted { background-color: #69069e; }
-        .bg-in-preparation { background-color: #17a2b8; }
-        .bg-ready-to-pickup { background-color: #fd7e14; }
-        .bg-out-for-delivery { background-color: #007bff; }
-        .bg-delivered { background-color: #28a745; }
-        .bg-cancelled { background-color: #dc3545; }
-
-
-        /* =========================================
-           VISÃO MOBILE (TABELA VIRA CARDS)
-           ========================================= */
-        @media (max-width: 768px) {
-            
-            /* Ajuste dos botões de topo */
-            .admin-actions { flex-direction: column; gap: 10px; }
-            .btn-action { width: 100%; margin: 0; }
-
-            /* Esconde cabeçalho da tabela */
-            .tabela-admin thead { display: none; }
-            
-            /* Container vira transparente */
-            .tabela-container { background: transparent; box-shadow: none; }
-
-            /* Transforma linhas em blocos (Cards) */
-            .tabela-admin, .tabela-admin tbody, .tabela-admin tr, .tabela-admin td {
-                display: block;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            .tabela-admin tr {
-                background: #fff;
-                margin-bottom: 20px;
-                border-radius: 12px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-                border: 1px solid #f0f0f0;
-                overflow: hidden;
-            }
-
-            /* Células viram linhas flexíveis */
-            .tabela-admin td {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                text-align: right;
-                padding: 12px 15px;
-                border-bottom: 1px solid #f5f5f5;
-            }
-            
-            .tabela-admin td:last-child { 
-                border-bottom: none; 
-                background-color: #fcfcfc; /* Destaque para a área de ação */
-                padding: 15px;
-                justify-content: flex-end; /* Alinha botões à direita */
-            }
-
-            /* Rótulo (Label) à esquerda */
-            .tabela-admin td::before {
-                content: attr(data-label);
-                font-weight: bold;
-                text-transform: uppercase;
-                font-size: 0.8rem;
-                color: #888;
-                margin-right: 10px;
-            }
-
-            /* Ajustes específicos de inputs no mobile */
-            .status-select { 
-                width: 100%; 
-                max-width: 150px; 
-                padding: 10px;
-            }
-            
-            .btn-icon {
-                width: 45px; height: 45px; /* Botões maiores para o dedo */
-                font-size: 1.2rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
 {% endblock %}
 
 {% block content %}
-<main class="container-admin">
-    
-    <h1>Painel de Controle</h1>
-    <p style="color: #666;">Bem-vindo, <strong>{{ user.username }}</strong>.</p>
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-
-    <div class="admin-actions">
-        <a href="{% url 'sushiemcasa:listar_produtos' %}" class="btn-action btn-produtos">
-            <i class="fas fa-sitemap"></i> Gerenciar Produtos
-        </a>
-        <a href="{% url 'sushiemcasa:gerenciar_horarios' %}" class="btn-action btn-horarios">
-            <i class="fas fa-calendar-alt"></i> Gerenciar Horários
-        </a>
-        <a href="/admin/" class="btn-action btn-django">
-            <i class="fas fa-cogs"></i> Admin Completo
-        </a>
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <h1>Store dashboard</h1>
+            <p>Hi, <strong>{{ user.username }}</strong>. Track and update orders here.</p>
+        </div>
     </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div style="padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; font-weight: bold;
-                        {% if message.tags == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% endif %}
-                        {% if message.tags == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    {% include 'sushiemcasa/painel/_nav.html' %}
 
-    <h2 class="titulo-secao">📦 Pedidos em Tempo Real</h2>
+    <div class="painel-filtros">
+        <label class="sr-only" for="filtro-busca">Search orders</label>
+        <input type="search" id="filtro-busca" class="controle" placeholder="Search by #, customer or item">
+        <div class="chips" role="group" aria-label="Filter by status">
+            <button type="button" class="chip" data-filtro-status="todos" aria-pressed="true">All</button>
+            <button type="button" class="chip" data-filtro-status="pendente" aria-pressed="false">Pending</button>
+            <button type="button" class="chip" data-filtro-status="preparando" aria-pressed="false">Preparing</button>
+            <button type="button" class="chip" data-filtro-status="saiu" aria-pressed="false">Out for delivery</button>
+            <button type="button" class="chip" data-filtro-status="entregue" aria-pressed="false">Delivered</button>
+            <button type="button" class="chip" data-filtro-status="cancelado" aria-pressed="false">Canceled</button>
+        </div>
+        <span id="contagem-filtro" class="contagem-filtro" role="status" aria-live="polite"></span>
+    </div>
 
-    <div class="tabela-container">
-        <table class="tabela-admin">
+    <div class="tabela-rolagem">
+        <table class="tabela tabela--cartoes" data-filtravel>
+            <caption class="sr-only">Orders, newest first</caption>
             <thead>
                 <tr>
-                    <th>#ID</th>
-                    <th>Data/Hora</th>
-                    <th>Cliente</th>
-                    <th>Itens</th>
-                    <th>Total</th>
-                    <th>Status Atual</th>
-                    <th>Ação</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Placed</th>
+                    <th scope="col">Customer</th>
+                    <th scope="col">Items</th>
+                    <th scope="col">Total</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Change status</th>
+                    <th scope="col"><span class="sr-only">Delete</span></th>
                 </tr>
             </thead>
             <tbody>
                 {% for pedido in pedidos %}
-                <tr>
-                    <td data-label="ID Pedido">
-                        <strong>#{{ pedido.id }}</strong>
-                    </td>
-                    
-                    <td data-label="Data/Hora">
-                        {{ pedido.created_at|date:"d/m" }} - {{ pedido.created_at|date:"H:i" }}
-                    </td>
-                    
-                    <td data-label="Cliente">
-                        {% if pedido.user %}
-                            {{ pedido.user.username }}
-                        {% else %}
-                            <span style="color: #999; font-style: italic;">Visitante</span>
-                        {% endif %}
-                    </td>
-                    
-                    <td data-label="Itens">
-                        <div style="text-align: right; width: 100%;">
-                            {% for item in pedido.items.all %}
-                                <div style="font-size: 0.9rem;">{{ item.quantity }}x {{ item.item_name }}</div>
-                            {% endfor %}
+                <tr data-status="{% include 'sushiemcasa/includes/status_chave.html' with s=pedido.status %}"
+                    data-busca="#{{ pedido.id }} {{ pedido.user.username|default:'guest' }} {% for item in pedido.items.all %}{{ item.item_name }} {% endfor %}">
+                    <td data-label="Order"><a href="{% url 'sushiemcasa:order_detail' pedido.id %}"><strong>#{{ pedido.id }}</strong></a></td>
+                    <td data-label="Placed" class="num">{{ pedido.created_at|date:"m/d g:i A" }}</td>
+                    <td data-label="Customer">{{ pedido.user.username|default:"Guest" }}</td>
+                    <td data-label="Items">
+                        <div class="itens-lista">
+                            {% for item in pedido.items.all %}<div>{{ item.quantity }}× {{ item.item_name }}</div>{% endfor %}
                         </div>
                     </td>
-                    
-                    <td data-label="Total" style="font-weight: bold; color: #28a745;">
-                        $ {{ pedido.total_price|floatformat:2 }}
+                    <td data-label="Total" class="num"><strong>$ {{ pedido.total_price|floatformat:2 }}</strong></td>
+                    <td data-label="Status">{% include 'sushiemcasa/includes/status_badge.html' with s=pedido.status %}</td>
+                    <td data-label="Change">
+                        <form method="post" class="form-status">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ pedido.id }}">
+                            <label class="sr-only" for="status-{{ pedido.id }}">New status for order {{ pedido.id }}</label>
+                            <select name="new_status" id="status-{{ pedido.id }}">
+                                {% comment %} Pedidos antigos têm status fora das opções atuais; mantém o valor atual selecionado para não trocá-lo sem querer. {% endcomment %}
+                                {% if pedido.status != 'pendente' and pedido.status != 'preparando' and pedido.status != 'saiu_entrega' and pedido.status != 'entregue' and pedido.status != 'cancelado' %}
+                                    <option value="{{ pedido.status }}" selected>{% include 'sushiemcasa/includes/status_nome.html' with s=pedido.status %} (current)</option>
+                                {% endif %}
+                                {% for codigo, nome in status_choices %}
+                                    <option value="{{ codigo }}" {% if pedido.status == codigo %}selected{% endif %}>{% include 'sushiemcasa/includes/status_nome.html' with s=codigo %}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="btn btn--sm btn--escuro">Save</button>
+                        </form>
                     </td>
-                    
-                    <td data-label="Status">
-                        <span class="badge bg-{{ pedido.status|slugify }}">
-                            {{ pedido.get_status_display }}
-                        </span>
-                    </td>
-
-                    <td data-label="Gerenciar">
-                        <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end; width: 100%;">
-                            
-                            <form method="POST" style="display: flex; gap: 5px; align-items: center; flex-grow: 1; justify-content: flex-end;">
-                                {% csrf_token %}
-                                <input type="hidden" name="order_id" value="{{ pedido.id }}">
-                                
-                                <select name="new_status" class="status-select">
-                                    {% for codigo, nome in status_choices %}
-                                        <option value="{{ codigo }}" {% if pedido.status == codigo %}selected{% endif %}>
-                                            {{ nome }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                
-                                <button type="submit" class="btn-icon btn-save" title="Salvar">
-                                    <i class="fas fa-save"></i>
-                                </button>
-                            </form>
-
-                            <form action="{% url 'sushiemcasa:deletar_pedido' pedido.id %}" method="POST" onsubmit="return confirm('Tem certeza que deseja apagar o pedido #{{ pedido.id }}?');">
-                                {% csrf_token %}
-                                <button type="submit" class="btn-icon btn-delete" title="Excluir">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                            
-                        </div>
+                    <td data-label="Delete">
+                        <form action="{% url 'sushiemcasa:deletar_pedido' pedido.id %}" method="post"
+                              data-confirmar="Delete order #{{ pedido.id }}? This can't be undone.">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn--sm btn--perigo" aria-label="Delete order {{ pedido.id }}">
+                                <i class="fas fa-trash-can" aria-hidden="true"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% empty %}
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px; color: #777;">
-                        <i class="fas fa-inbox" style="font-size: 2rem; display: block; margin-bottom: 10px; color: #ddd;"></i>
-                        Nenhum pedido realizado ainda.
-                    </td>
+                <tr class="linha-vazia">
+                    <td colspan="8">No orders yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
+{% endblock %}
 
-</main>
+{% block extra_js %}
+    <script src="{% static 'sushiemcasa/js/painel.js' %}" defer></script>
 {% endblock %}

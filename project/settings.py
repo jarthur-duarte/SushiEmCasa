@@ -11,13 +11,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
 
 
-DEBUG = True
+# Local continua com DEBUG ligado; na Vercel defina DEBUG=False nas variáveis do projeto.
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('1', 'true', 'yes')
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-chave-padrao-para-sushiemcasa')
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://*.pythonanywhere.com']
+CSRF_TRUSTED_ORIGINS = ['https://*.pythonanywhere.com', 'https://*.vercel.app']
+CSRF_TRUSTED_ORIGINS += [o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS_EXTRA', '').split(',') if o.strip()]
+
+# A Vercel termina o HTTPS antes de chegar no Django
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -65,12 +73,21 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Com DATABASE_URL (Postgres da Vercel/Neon) usa o Postgres; sem ela, o SQLite local.
+if os.getenv('DATABASE_URL'):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(
+            os.environ['DATABASE_URL'], conn_max_age=0, ssl_require=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 
@@ -93,6 +110,16 @@ MEDIA_URL = '/media/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Fotos enviadas pelo painel: no Vercel Blob quando houver token; senão, na pasta media/.
+STORAGES = {
+    'default': {
+        'BACKEND': 'project.storage.VercelBlobStorage'
+        if os.getenv('BLOB_READ_WRITE_TOKEN')
+        else 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+}
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

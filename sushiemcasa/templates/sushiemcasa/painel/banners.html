@@ -1,0 +1,72 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard · Specials · Sushi em Casa{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <h1>Specials</h1>
+            <p>The deals shown in the carousel at the top of the menu.</p>
+        </div>
+        <a href="{% url 'sushiemcasa:criar_banner' %}" class="btn btn--primario"><i class="fas fa-plus" aria-hidden="true"></i> New special</a>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
+
+    <div class="tabela-rolagem">
+        <table class="tabela tabela--cartoes">
+            <caption class="sr-only">Specials</caption>
+            <thead>
+                <tr>
+                    <th scope="col"><span class="sr-only">Image</span></th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Order</th>
+                    <th scope="col">On the menu</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for banner in banners %}
+                <tr>
+                    <td>{% if banner.imagem %}<img class="miniatura" src="{{ banner.imagem.url }}" alt="" width="48" height="48">{% endif %}</td>
+                    <td data-label="Title"><strong>{{ banner.titulo }}</strong></td>
+                    <td data-label="Product">{{ banner.produto_vinculado.nome|default:"—" }}</td>
+                    <td data-label="Price" class="num">
+                        $ {{ banner.preco_promocional|floatformat:2 }}
+                        {% if banner.preco_antigo %}<s class="texto-suave">$ {{ banner.preco_antigo|floatformat:2 }}</s>{% endif %}
+                    </td>
+                    <td data-label="Order" class="num">{{ banner.ordem }}</td>
+                    <td data-label="On the menu">
+                        {% if banner.ativo %}<span class="status status--entregue">Active</span>{% else %}<span class="status status--cancelado">Hidden</span>{% endif %}
+                    </td>
+                    <td>
+                        <div class="acoes-linha">
+                            <a href="{% url 'sushiemcasa:editar_banner' banner.pk %}" class="btn btn--sm" aria-label="Edit {{ banner.titulo }}">
+                                <i class="fas fa-pen" aria-hidden="true"></i> Edit
+                            </a>
+                            <form action="{% url 'sushiemcasa:excluir_banner' banner.pk %}" method="post"
+                                  data-confirmar="Delete the special &quot;{{ banner.titulo }}&quot;?">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn--sm btn--perigo" aria-label="Delete {{ banner.titulo }}">
+                                    <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="linha-vazia"><td colspan="7">No specials yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

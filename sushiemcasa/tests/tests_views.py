@@ -63,7 +63,7 @@ class CategoriaProdutoModelTests(TestCase):
 class HorarioDeFuncionamentoModelTests(TestCase):
     def test_str_dia_fechado(self):
         horario = HorarioDeFuncionamento(day_of_week=0, is_open=False)
-        self.assertIn('Fechado', str(horario))
+        self.assertIn('Closed', str(horario))
 
     def test_str_dia_aberto_com_horarios(self):
         horario = HorarioDeFuncionamento(
@@ -72,7 +72,7 @@ class HorarioDeFuncionamentoModelTests(TestCase):
             open_time=datetime.time(9, 0),
             close_time=datetime.time(18, 0),
         )
-        self.assertEqual(str(horario), 'Segunda-feira: 09:00 - 18:00')
+        self.assertEqual(str(horario), 'Monday: 09:00 - 18:00')
 
     def test_clean_aberto_sem_horarios_levanta_erro(self):
         horario = HorarioDeFuncionamento(day_of_week=1, is_open=True)
@@ -144,11 +144,11 @@ class OrderModelTests(TestCase):
 class MensagemFeedbackModelTests(TestCase):
     def test_str_com_nome(self):
         msg = MensagemFeedback(nome='Ana', mensagem='Oi')
-        self.assertEqual(str(msg), 'Mensagem de Ana')
+        self.assertEqual(str(msg), 'Message from Ana')
 
     def test_str_anonimo(self):
         msg = MensagemFeedback(mensagem='Oi')
-        self.assertEqual(str(msg), 'Mensagem de Anônimo')
+        self.assertEqual(str(msg), 'Message from Anonymous')
 
 
 # =========================================================================
@@ -301,3 +301,241 @@ class CheckoutViewTests(TestCase):
     def test_carrinho_vazio_redireciona_para_basket(self):
         response = self.client.get(reverse('sushiemcasa:checkout'))
         self.assertRedirects(response, reverse('sushiemcasa:basket'))
+
+
+# =========================================================================
+# PAINEL DA LOJA (cadastros que substituem o Admin completo)
+# =========================================================================
+import io
+import shutil
+import tempfile
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import override_settings
+from PIL import Image
+
+from sushiemcasa.models import BannerPromocional
+
+MEDIA_TESTE = tempfile.mkdtemp()
+
+
+def _imagem_png(nome='foto.png'):
+    buf = io.BytesIO()
+    Image.new('RGB', (10, 10), (200, 0, 0)).save(buf, format='PNG')
+    return SimpleUploadedFile(nome, buf.getvalue(), content_type='image/png')
+
+
+@override_settings(
+    MEDIA_ROOT=MEDIA_TESTE,
+    STORAGES={
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    },
+)
+class PainelGestaoTests(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(MEDIA_TESTE, ignore_errors=True)
+
+    def setUp(self):
+        self.admin = User.objects.create_superuser('chefe', 'chefe@example.com', 'senha-de-teste-123')
+        self.staff = User.objects.create_user('equipe', 'equipe@example.com', 'senha-de-teste-123', is_staff=True)
+        self.cliente = User.objects.create_user('cliente', 'cliente@example.com', 'senha-de-teste-123')
+        self.categoria = Categoria.objects.create(nome='Temaki', slug='temaki')
+
+    def test_paginas_do_painel_abrem_para_equipe(self):
+        self.client.force_login(self.staff)
+        for nome in ['listar_produtos', 'criar_produto', 'listar_categorias', 'criar_categoria',
+                     'listar_banners', 'criar_banner', 'listar_mensagens', 'listar_usuarios']:
+            with self.subTest(pagina=nome):
+                self.assertEqual(self.client.get(reverse(f'sushiemcasa:{nome}')).status_code, 200)
+
+    def test_cliente_nao_acessa_o_painel(self):
+        self.client.force_login(self.cliente)
+        response = self.client.get(reverse('sushiemcasa:listar_categorias'))
+        self.assertRedirects(response, reverse('sushiemcasa:cardapio'))
+
+    def test_criar_categoria_gera_link_pelo_nome(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:criar_categoria'), {'nome': 'Hot Rolls', 'slug': ''})
+        self.assertTrue(Categoria.objects.filter(nome='Hot Rolls', slug='hot-rolls').exists())
+
+    def test_nao_apaga_categoria_com_produtos(self):
+        Produto.objects.create(nome='Temaki', descricao='x', preco=Decimal('10'), categoria=self.categoria)
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:excluir_categoria', args=[self.categoria.pk]))
+        self.assertTrue(Categoria.objects.filter(pk=self.categoria.pk).exists())
+        self.assertEqual(Produto.objects.count(), 1)
+
+    def test_criar_editar_e_apagar_produto(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:criar_produto'), {
+            'nome': 'Uramaki', 'categoria': self.categoria.pk, 'descricao': 'Novo',
+            'preco': '12.50', 'imagem': _imagem_png(), 'disponivel': 'on',
+        })
+        produto = Produto.objects.get(nome='Uramaki')
+        self.assertTrue(produto.imagem.name.startswith('produtos/'))
+
+        self.client.post(reverse('sushiemcasa:editar_produto', args=[produto.pk]), {
+            'nome': 'Uramaki', 'categoria': self.categoria.pk, 'descricao': 'Novo',
+            'preco': '13.00',  # sem 'disponivel' = desmarcado; sem imagem = mantém a atual
+        })
+        produto.refresh_from_db()
+        self.assertEqual(produto.preco, Decimal('13.00'))
+        self.assertFalse(produto.disponivel)
+        self.assertTrue(produto.imagem.name.startswith('produtos/'))
+
+        self.client.post(reverse('sushiemcasa:excluir_produto', args=[produto.pk]))
+        self.assertFalse(Produto.objects.filter(pk=produto.pk).exists())
+
+    def test_excluir_so_por_post(self):
+        produto = Produto.objects.create(nome='Hot', descricao='x', preco=Decimal('10'), categoria=self.categoria)
+        self.client.force_login(self.staff)
+        response = self.client.get(reverse('sushiemcasa:excluir_produto', args=[produto.pk]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_criar_promocao(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:criar_banner'), {
+            'titulo': 'Combo', 'descricao': 'Oferta', 'imagem': _imagem_png('b.png'),
+            'preco_promocional': '20', 'ordem': '1', 'ativo': 'on',
+        })
+        self.assertTrue(BannerPromocional.objects.filter(titulo='Combo', ativo=True).exists())
+
+    def test_apagar_mensagem(self):
+        msg = MensagemFeedback.objects.create(nome='Ana', mensagem='Oi')
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:excluir_mensagem', args=[msg.pk]))
+        self.assertFalse(MensagemFeedback.objects.filter(pk=msg.pk).exists())
+
+    def test_admin_da_e_tira_acesso_da_equipe(self):
+        self.client.force_login(self.admin)
+        url = reverse('sushiemcasa:alterar_usuario', args=[self.cliente.pk])
+        self.client.post(url, {'campo': 'is_staff'})
+        self.cliente.refresh_from_db()
+        self.assertTrue(self.cliente.is_staff)
+        self.client.post(url, {'campo': 'is_active'})
+        self.cliente.refresh_from_db()
+        self.assertFalse(self.cliente.is_active)
+
+    def test_equipe_nao_altera_acessos(self):
+        self.client.force_login(self.staff)
+        self.client.post(reverse('sushiemcasa:alterar_usuario', args=[self.cliente.pk]), {'campo': 'is_staff'})
+        self.cliente.refresh_from_db()
+        self.assertFalse(self.cliente.is_staff)
+
+    def test_admin_nao_altera_a_propria_conta(self):
+        self.client.force_login(self.admin)
+        self.client.post(reverse('sushiemcasa:alterar_usuario', args=[self.admin.pk]), {'campo': 'is_active'})
+        self.admin.refresh_from_db()
+        self.assertTrue(self.admin.is_active)
+
+
+# =========================================================================
+# CORREÇÕES ACHADAS NO TESTE DO CAMINHO DO CLIENTE
+# =========================================================================
+class CheckoutSemDataTests(TestCase):
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Uramaki', slug='uramaki')
+        self.produto = Produto.objects.create(nome='Uramaki', descricao='x', preco=Decimal('10'), categoria=cat)
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto.id]), {'quantity': 2})
+
+    def test_sem_data_nao_quebra_nem_cria_pedido(self):
+        response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': ''})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Choose a delivery date and time.')
+        self.assertEqual(Order.objects.count(), 0)
+        self.assertTrue(self.client.session.get('cart'))  # carrinho preservado
+
+
+class DetalheDoPedidoAcessoTests(TestCase):
+    def setUp(self):
+        self.dono = User.objects.create_user('dono', password='senha-de-teste-123')
+        self.outro = User.objects.create_user('outro', password='senha-de-teste-123')
+        self.equipe = User.objects.create_user('equipe', password='senha-de-teste-123', is_staff=True)
+        self.pedido = Order.objects.create(user=self.dono, total_price=Decimal('10'))
+        self.url = reverse('sushiemcasa:order_detail', args=[self.pedido.id])
+
+    def test_visitante_vai_para_o_login(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('sushiemcasa:login'), response['Location'])
+
+    def test_outro_cliente_nao_ve(self):
+        self.client.force_login(self.outro)
+        self.assertEqual(self.client.get(self.url).status_code, 404)
+
+    def test_dono_ve(self):
+        self.client.force_login(self.dono)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+    def test_equipe_ve(self):
+        self.client.force_login(self.equipe)
+        self.assertEqual(self.client.get(self.url).status_code, 200)
+
+
+@override_settings(STORAGES={
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+})
+class TopoDoCardapioTests(TestCase):
+    """O topo do cardápio quebrou em produção com banners cadastrados (QuerySet + |last)."""
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Temaki', slug='temaki')
+        Produto.objects.create(nome='Temaki', descricao='x', preco=Decimal('10'), categoria=cat, imagem='produtos/t.jpg')
+
+    def test_sem_banners_usa_foto_do_produto(self):
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'produtos/t.jpg')
+
+    def test_com_banners_a_foto_e_do_produto_em_destaque(self):
+        # A foto grande precisa ser do mesmo produto descrito no cartão flutuante.
+        BannerPromocional.objects.create(titulo='A', descricao='a', imagem='banners/a.jpg', preco_promocional=1, ordem=1)
+        BannerPromocional.objects.create(titulo='B', descricao='b', imagem='banners/b.jpg', preco_promocional=1, ordem=2)
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['foto_topo'].name, response.context['destaque'].imagem.name)
+
+
+@override_settings(STORAGES={
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+})
+class ProdutoEmDestaqueTests(TestCase):
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Temaki', slug='temaki')
+        self.a = Produto.objects.create(nome='A', descricao='x', preco=Decimal('1'), categoria=cat, imagem='produtos/a.jpg')
+        self.b = Produto.objects.create(nome='B', descricao='x', preco=Decimal('2'), categoria=cat, imagem='produtos/b.jpg')
+        self.equipe = User.objects.create_user('equipe', password='senha-de-teste-123', is_staff=True)
+
+    def test_sem_destaque_usa_o_primeiro_com_foto(self):
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.context['destaque'], self.a)
+
+    def test_produto_marcado_aparece_no_topo(self):
+        self.b.destaque = True
+        self.b.save()
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.context['destaque'], self.b)
+        self.assertEqual(response.context['foto_topo'].name, 'produtos/b.jpg')
+
+    def test_marcar_outro_desmarca_o_anterior(self):
+        self.a.destaque = True
+        self.a.save()
+        self.b.destaque = True
+        self.b.save()
+        self.a.refresh_from_db()
+        self.assertFalse(self.a.destaque)
+        self.assertEqual(Produto.objects.filter(destaque=True).count(), 1)
+
+    def test_painel_marca_destaque_e_exige_produto_visivel(self):
+        self.client.force_login(self.equipe)
+        url = reverse('sushiemcasa:editar_produto', args=[self.b.pk])
+        base = {'nome': 'B', 'categoria': self.b.categoria_id, 'descricao': 'x', 'preco': '2'}
+        self.client.post(url, {**base, 'disponivel': 'on', 'destaque': 'on'})
+        self.b.refresh_from_db()
+        self.assertTrue(self.b.destaque)
+        response = self.client.post(url, {**base, 'destaque': 'on'})  # escondido + destaque
+        self.assertContains(response, 'A featured product must also be shown on the menu.')

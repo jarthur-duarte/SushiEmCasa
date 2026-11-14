@@ -19,10 +19,10 @@ def pagina_contato(request):
         form = FeedbackForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Seu feedback foi enviado com sucesso!')
+            messages.success(request, 'Your feedback was sent. Thank you!')
             return redirect('sushiemcasa:contato')
         else:
-            messages.error(request, 'Não foi possível enviar seu feedback. Por favor, corrija os erros abaixo.')
+            messages.error(request, 'We could not send your feedback. Please correct the errors below.')
             print("ERROS DE VALIDAÇÃO DO FORMULÁRIO:", form.errors)
     else:
         form = FeedbackForm()

@@ -8,7 +8,8 @@ class OrderForm(forms.ModelForm):
     delivery_datetime = forms.DateTimeField(
         label="Delivery Date and Time",
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        required=False,
+        required=True,
+        error_messages={'required': 'Choose a delivery date and time.'},
         help_text="Select the desired date and time for delivery (minimum 24 hours in advance)."
     )
 
@@ -37,7 +38,7 @@ class OrderForm(forms.ModelForm):
             
             hora = delivery_dt_aware.time()
             if hora < datetime.time(10, 0) or hora >= datetime.time(20, 0):
-                raise forms.ValidationError("Our delivery times are between 10:00 and 20:00.")
+                raise forms.ValidationError("Our delivery hours are between 10:00 AM and 8:00 PM.")
             
             feriados = [
                 datetime.date(2024, 12, 25),
@@ -45,7 +46,7 @@ class OrderForm(forms.ModelForm):
                 datetime.date(2025, 12, 25) 
             ]
             if delivery_dt_aware.date() in feriados:
-                raise forms.ValidationError(f"Não realizamos entregas no dia {delivery_dt_aware.strftime('%d/%m/%Y')}.")
+                raise forms.ValidationError(f"We do not deliver on {delivery_dt_aware.strftime('%m/%d/%Y')}.")
             
             return delivery_dt_aware 
         return delivery_dt 

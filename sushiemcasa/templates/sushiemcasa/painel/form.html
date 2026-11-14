@@ -1,0 +1,67 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+{% comment %}
+Formulário comum do painel (produtos, categorias, promoções).
+Recebe: form, titulo, voltar_url, voltar_rotulo e, ao editar, object.
+{% endcomment %}
+
+{% block title %}Dashboard · {{ titulo }} · Sushi em Casa{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <p><a href="{{ voltar_url }}"><i class="fas fa-arrow-left" aria-hidden="true"></i> {{ voltar_rotulo }}</a></p>
+            <h1>{{ titulo }}</h1>
+            {% if object %}<p>{{ object }}</p>{% endif %}
+        </div>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
+
+    <div class="card card--form">
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            {% for erro in form.non_field_errors %}<div class="alerta alerta--erro" role="alert">{{ erro }}</div>{% endfor %}
+
+            {% for field in form %}
+                {% if field.widget_type == 'checkbox' %}
+                    <div class="campo campo--check {% if field.errors %}tem-erro{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field }} {{ field.label }}</label>
+                        {% if field.help_text %}<p class="campo__ajuda">{{ field.help_text }}</p>{% endif %}
+                        {% for erro in field.errors %}<p class="campo__erro" role="alert">{{ erro }}</p>{% endfor %}
+                    </div>
+                {% elif field.widget_type == 'clearablefile' %}
+                    <div class="campo {% if field.errors %}tem-erro{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {% if field.value and field.value.url %}
+                            <img class="previa-imagem" src="{{ field.value.url }}" alt="Current image" width="160" height="160">
+                        {% endif %}
+                        <input type="file" name="{{ field.html_name }}" id="{{ field.id_for_label }}" accept="image/*"
+                               {% if field.field.required and not field.value %}required{% endif %}>
+                        {% if field.value %}<p class="campo__ajuda">Leave empty to keep the current image.</p>{% endif %}
+                        {% if field.help_text %}<p class="campo__ajuda">{{ field.help_text }}</p>{% endif %}
+                        {% for erro in field.errors %}<p class="campo__erro" role="alert">{{ erro }}</p>{% endfor %}
+                    </div>
+                {% else %}
+                    <div class="campo {% if field.errors %}tem-erro{% endif %}">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}{% if not field.field.required %} <span class="texto-suave">(optional)</span>{% endif %}</label>
+                        {{ field }}
+                        {% if field.help_text %}<p class="campo__ajuda">{{ field.help_text }}</p>{% endif %}
+                        {% for erro in field.errors %}<p class="campo__erro" role="alert">{{ erro }}</p>{% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="rodape-form">
+                <button type="submit" class="btn btn--primario">{% if object %}Save changes{% else %}Create{% endif %}</button>
+                <a href="{{ voltar_url }}" class="btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

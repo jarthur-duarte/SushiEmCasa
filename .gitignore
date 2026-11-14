@@ -177,3 +177,6 @@ cython_debug/
 #add
 media/
 node_modules/
+# Vercel
+.vercel
+.env*.local

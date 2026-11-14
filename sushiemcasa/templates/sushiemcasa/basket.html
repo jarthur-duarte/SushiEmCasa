@@ -1,261 +1,110 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
-{% load i18n %} 
 
-{% block title %}Your basket - Sushi em Casa{% endblock %}
+{% block title %}Cart · Sushi em Casa{% endblock %}
+
+{% block body_class %}{% if cart_items %}tem-barra-acao{% endif %}{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'sushiemcasa/css/basket_style.css' %}">
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/carrinho.css' %}">
 {% endblock %}
 
 {% block content %}
-<style>
-    /* --- ESTILOS GERAIS --- */
-    .container-carrinho {
-        max-width: 1000px;
-        margin: 20px auto;
-        padding: 0 15px;
-    }
-
-    /* Estilos para os botões no resumo do carrinho */
-    .resumo-carrinho {
-        margin-top: 30px;
-        text-align: right;
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-    }
-
-    .resumo-carrinho .btn-checkout {
-        display: inline-block;
-        background-color: #28a745;
-        color: white;
-        padding: 10px 30px;
-        text-decoration: none;
-        border-radius: 5px;
-        font-weight: bold;
-        transition: 0.2s;
-        margin-top: 10px;
-    }
-    
-    .resumo-carrinho .btn-checkout:hover { background-color: #218838; }
-
-    /* Remove as setinhas do input number */
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-        -webkit-appearance: none; margin: 0; 
-    }
-
-    /* Tabela Desktop Padrão */
-    .tabela-carrinho {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    .tabela-carrinho th { background-color: #eee; padding: 10px; text-align: left; }
-    .tabela-carrinho td { padding: 10px; border-bottom: 1px solid #ddd; vertical-align: middle; }
-
-    .btn-remover {
-        background-color: #dc3545; color: white; border: none;
-        padding: 5px 10px; border-radius: 4px; cursor: pointer;
-    }
-
-    /* =========================================
-       VISÃO MOBILE (TRANSFORMA TABELA EM CARDS)
-       ========================================= */
-    @media (max-width: 768px) {
-        
-        /* 1. Esconde o cabeçalho da tabela */
-        .tabela-carrinho thead { display: none; }
-        
-        /* 2. Transforma a tabela em blocos */
-        .tabela-carrinho, .tabela-carrinho tbody, .tabela-carrinho tr, .tabela-carrinho td {
-            display: block;
-            width: 100%;
-        }
-
-        /* 3. Estilo do "Cartão" (Linha da tabela) */
-        .tabela-carrinho tr {
-            margin-bottom: 20px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            padding: 15px;
-            position: relative; /* Para posicionar elementos se precisar */
-        }
-
-        /* 4. Estilo das células */
-        .tabela-carrinho td {
-            text-align: right; /* Conteúdo alinhado à direita */
-            padding: 10px 0;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .tabela-carrinho td:last-child { border-bottom: none; }
-
-        /* 5. Labels (Títulos) à esquerda */
-        .tabela-carrinho td::before {
-            content: attr(data-label); /* Pega o nome do atributo data-label */
-            font-weight: bold;
-            color: #555;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-
-        /* Ajuste especial para a Imagem */
-        .tabela-carrinho td.imagem-item {
-            justify-content: center; /* Centraliza a imagem */
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .tabela-carrinho td.imagem-item::before { display: none; } /* Sem texto "Image" */
-
-        /* Botão Finalizar ocupa largura total no mobile */
-        .resumo-carrinho .btn-checkout {
-            display: block;
-            width: 100%;
-            text-align: center;
-        }
-    }
-</style>
-
-<main class="container-carrinho">
-    <h1>Your basket</h1>
-    <hr>
-
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" style="padding: 10px; background: #e9ecef; margin-bottom: 10px; border-radius: 4px;">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
+<div class="container">
+    <div class="pagina-titulo">
+        <h1>Your cart</h1>
+        {% if cart_items %}
+        <ol class="etapas" aria-label="Order steps">
+            <li aria-current="step"><span class="etapas__num">1</span> Cart</li>
+            <li><span class="etapas__num">2</span> Delivery</li>
+            <li><span class="etapas__num">3</span> WhatsApp</li>
+        </ol>
+        {% endif %}
+    </div>
 
     {% if cart_items %}
-        {% csrf_token %}
-        
-        <table class="tabela-carrinho">
-            <thead>
-                <tr>
-                    <th colspan="2">Product</th>
-                    <th>Unit Price</th>
-                    <th>Amount</th>
-                    <th>Subtotal</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in cart_items %}
-                <tr class="item-carrinho">
-                    <td class="imagem-item" data-label="Image">
-                        {% if item.image_url %}
-                            <img src="{{ item.image_url }}" alt="{{ item.name }}" width="80" style="border-radius: 5px;">
-                        {% else %}
-                            <img src="{% static 'sushiemcasa/images/placeholder.png' %}" alt="Sem imagem" width="80">
-                        {% endif %}
-                    </td>
-                    
-                    <td data-label="Product"><strong>{{ item.name }}</strong></td>
-                    
-                    <td data-label="Unit Price">$ {{ item.price|stringformat:".2f" }}</td> 
-                    
-                    <td data-label="Amount">
-                        <div class="form-atualizar-quantidade">
-                            <input type="number" 
-                                   value="{{ item.quantity }}" 
-                                   min="1" 
-                                   class="quantidade-automatico"
-                                   data-product-id="{{ item.product_id }}"
-                                   data-url="{% url 'sushiemcasa:update_cart' item.product_id %}"
-                                   style="width: 60px; text-align: center; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem;">
-                        </div>
-                    </td>
-                    
-                    <td id="subtotal-{{ item.product_id }}" data-label="Subtotal" style="font-weight: bold; color: #28a745; font-size: 1.1rem;">
-                        $ {{ item.total|stringformat:".2f" }}
-                    </td> 
-                    
-                    <td data-label="Action">
-                        <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-remover"><i class="fas fa-trash-alt"></i> Remove</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <div class="resumo-carrinho">
-            <h3 style="margin-bottom: 10px;">Total: <span id="total-geral" style="color: #28a745;">$ {{ cart_total|stringformat:".2f" }}</span></h3> 
-            
-            <a href="{% url 'sushiemcasa:checkout' %}" class="btn-checkout">Finalize Order <i class="fas fa-arrow-right"></i></a>
+    <div class="pedido-layout">
+        <div>
+            <table class="tabela-carrinho">
+                <caption class="sr-only">Items in your cart</caption>
+                <thead>
+                    <tr>
+                        <th scope="col" colspan="2">Product</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Subtotal</th>
+                        <th scope="col"><span class="sr-only">Remove</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr class="item-carrinho">
+                        <td class="imagem-item">
+                            {% if item.image_url %}
+                                <img src="{{ item.image_url }}" alt="" width="64" height="64">
+                            {% else %}
+                                <span class="sem-foto" aria-hidden="true"><i class="fas fa-fish"></i></span>
+                            {% endif %}
+                        </td>
+                        <td class="item-nome">{{ item.name }}</td>
+                        <td>$ {{ item.price|stringformat:".2f" }}</td>
+                        <td>
+                            <form class="form-atualizar-quantidade" method="post"
+                                  action="{% url 'sushiemcasa:update_cart' item.product_id %}"
+                                  data-product-id="{{ item.product_id }}">
+                                {% csrf_token %}
+                                <label class="sr-only" for="qtd-{{ item.product_id }}">Quantity of {{ item.name }}</label>
+                                <input type="number" name="quantity" id="qtd-{{ item.product_id }}"
+                                       value="{{ item.quantity }}" min="1" inputmode="numeric"
+                                       class="quantidade-automatico">
+                                <button type="submit" class="btn btn--sm btn-atualizar" aria-label="Update quantity of {{ item.name }}">
+                                    <i class="fas fa-rotate" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </td>
+                        <td id="subtotal-{{ item.product_id }}" class="item-subtotal">$ {{ item.total|stringformat:".2f" }}</td>
+                        <td>
+                            <form action="{% url 'sushiemcasa:remove_from_cart' item.product_id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn--sm btn--fantasma btn-remover" aria-label="Remove {{ item.name }} from cart">
+                                    <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p id="aviso-carrinho" class="sr-only" role="status" aria-live="polite"></p>
         </div>
+
+        <aside class="card resumo" aria-labelledby="titulo-resumo">
+            <h2 id="titulo-resumo" class="card__titulo">Summary</h2>
+            <p class="resumo__aviso">
+                <i class="fas fa-clock" aria-hidden="true"></i>
+                <span>Deliveries are scheduled <strong>at least 24 hours in advance</strong>. You'll pick the time in the next step.</span>
+            </p>
+            <div class="barra-acao">
+                <p class="barra-acao__total">Total <strong id="total-geral">$ {{ cart_total|stringformat:".2f" }}</strong></p>
+                <a href="{% url 'sushiemcasa:checkout' %}" class="btn btn--primario btn-checkout">
+                    Choose delivery <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </a>
+            </div>
+            <a href="{% url 'sushiemcasa:cardapio' %}" class="resumo__continuar">Keep shopping</a>
+        </aside>
+    </div>
 
     {% else %}
-        <div style="text-align: center; padding: 40px; color: #777;">
-            <i class="fas fa-shopping-basket" style="font-size: 3rem; margin-bottom: 20px; color: #ddd;"></i>
-            <p style="font-size: 1.2rem;">Your basket is empty.</p>
-            <p><a href="{% url 'sushiemcasa:cardapio' %}" class="btn-checkout" style="background-color: #007bff;">Back to Menu</a></p>
+        <div class="vazio card">
+            <div class="vazio__icone"><i class="fas fa-shopping-bag" aria-hidden="true"></i></div>
+            <h2>Empty cart</h2>
+            <p>Your cart is empty. How about picking some sushi?</p>
+            <a href="{% url 'sushiemcasa:cardapio' %}" class="btn btn--primario">See the menu</a>
         </div>
     {% endif %}
-</main>
+</div>
+{% endblock %}
 
-<script>
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const inputs = document.querySelectorAll('.quantidade-automatico');
-        const csrfToken = getCookie('csrftoken');
-
-        inputs.forEach(input => {
-            input.addEventListener('change', function() {
-                const url = this.dataset.url;
-                const productId = this.dataset.productId;
-                const newQuantity = this.value;
-
-                if (newQuantity < 1) return;
-
-                fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrfToken 
-                    },
-                    body: JSON.stringify({ 'quantity': newQuantity })
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error('Erro na rede');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        const subtotalEl = document.getElementById(`subtotal-${productId}`);
-                        if (subtotalEl) subtotalEl.innerText = '$ ' + parseFloat(data.item_total).toFixed(2);
-
-                        const totalGeralEl = document.getElementById('total-geral');
-                        if (totalGeralEl) totalGeralEl.innerText = '$ ' + parseFloat(data.cart_total).toFixed(2);
-                    }
-                })
-                .catch(error => console.error('Erro:', error));
-            });
-        });
-    });
-</script>
+{% block extra_js %}
+    {% if cart_items %}<script src="{% static 'sushiemcasa/js/carrinho.js' %}" defer></script>{% endif %}
 {% endblock %}

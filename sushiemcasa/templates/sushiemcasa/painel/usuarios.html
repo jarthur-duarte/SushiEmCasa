@@ -1,0 +1,90 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard · Users · Sushi em Casa{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <h1>Users</h1>
+            <p>{% if user.is_superuser %}Give or remove dashboard access and disable accounts.{% else %}Only administrators can change access.{% endif %}</p>
+        </div>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
+
+    <div class="painel-filtros">
+        <label class="sr-only" for="filtro-busca">Search users</label>
+        <input type="search" id="filtro-busca" class="controle" placeholder="Search username or email">
+        <span id="contagem-filtro" class="contagem-filtro" role="status" aria-live="polite"></span>
+    </div>
+
+    <div class="tabela-rolagem">
+        <table class="tabela tabela--cartoes" data-filtravel>
+            <caption class="sr-only">Users, newest first</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Joined</th>
+                    <th scope="col">Orders</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Account</th>
+                    {% if user.is_superuser %}<th scope="col"><span class="sr-only">Actions</span></th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usuarios %}
+                <tr data-busca="{{ u.username }} {{ u.email }}">
+                    <td data-label="Username"><strong>{{ u.username }}</strong>{% if u.pk == user.pk %} <span class="texto-suave">(you)</span>{% endif %}</td>
+                    <td data-label="Email">{{ u.email|default:"—" }}</td>
+                    <td data-label="Joined" class="num">{{ u.date_joined|date:"M j, Y" }}</td>
+                    <td data-label="Orders" class="num">{{ u.total_pedidos }}</td>
+                    <td data-label="Role">
+                        {% if u.is_superuser %}<span class="status status--saiu">Administrator</span>
+                        {% elif u.is_staff %}<span class="status status--preparando">Staff</span>
+                        {% else %}<span class="status status--outro">Customer</span>{% endif %}
+                    </td>
+                    <td data-label="Account">
+                        {% if u.is_active %}<span class="status status--entregue">Active</span>{% else %}<span class="status status--cancelado">Disabled</span>{% endif %}
+                    </td>
+                    {% if user.is_superuser %}
+                    <td>
+                        {% if u.pk != user.pk %}
+                        <div class="acoes-linha">
+                            {% if not u.is_superuser %}
+                            <form action="{% url 'sushiemcasa:alterar_usuario' u.pk %}" method="post"
+                                  data-confirmar="{% if u.is_staff %}Remove dashboard access from {{ u.username }}?{% else %}Give {{ u.username }} access to the store dashboard?{% endif %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="campo" value="is_staff">
+                                <button type="submit" class="btn btn--sm">{% if u.is_staff %}Remove staff{% else %}Make staff{% endif %}</button>
+                            </form>
+                            {% endif %}
+                            <form action="{% url 'sushiemcasa:alterar_usuario' u.pk %}" method="post"
+                                  data-confirmar="{% if u.is_active %}Disable {{ u.username }}'s account? They won't be able to log in.{% else %}Enable {{ u.username }}'s account?{% endif %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="campo" value="is_active">
+                                <button type="submit" class="btn btn--sm {% if u.is_active %}btn--perigo{% endif %}">{% if u.is_active %}Disable{% else %}Enable{% endif %}</button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr class="linha-vazia"><td colspan="7">No users yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'sushiemcasa/js/painel.js' %}" defer></script>
+{% endblock %}
