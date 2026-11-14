@@ -40,8 +40,10 @@
 
             <ul class="regras-entrega">
                 <li><i class="fas fa-clock" aria-hidden="true"></i> <span>At least <strong>24 hours in advance</strong> (sushi is made to order).</span></li>
-                <li><i class="fas fa-calendar-day" aria-hidden="true"></i> <span>Monday to Saturday, 10:00 AM to 8:00 PM.</span></li>
-                <li><i class="fas fa-ban" aria-hidden="true"></i> <span>No deliveries on Sundays.</span></li>
+                {% if horarios_semana %}
+                    <li><i class="fas fa-calendar-day" aria-hidden="true"></i>
+                        <span>Delivery hours: {% for linha in horarios_semana %}{{ linha }}{% if not forloop.last %} · {% endif %}{% endfor %}.</span></li>
+                {% endif %}
             </ul>
 
             {% if form.non_field_errors %}
@@ -50,12 +52,47 @@
                 </div>
             {% endif %}
 
-            <div class="campo {% if form.delivery_datetime.errors %}tem-erro{% endif %}">
-                <label for="id_delivery_datetime">Delivery date and time</label>
-                <input type="datetime-local" name="delivery_datetime" id="id_delivery_datetime"
-                       value="{{ form.delivery_datetime.value|default_if_none:'' }}"
-                       required aria-describedby="feedback-data{% if form.delivery_datetime.errors %} erro-data{% endif %}"
-                       {% if form.delivery_datetime.errors %}aria-invalid="true"{% endif %}>
+            <div class="campo agenda {% if form.delivery_datetime.errors %}tem-erro{% endif %}" id="agenda">
+                {% if dias_disponiveis %}
+                    <fieldset class="agenda__grupo">
+                        <legend>1. Pick a day</legend>
+                        <div class="agenda__dias">
+                            {% for dia in dias_disponiveis %}
+                                <label class="dia-chip">
+                                    <input type="radio" name="dia" value="{{ dia.valor }}" {% if dia.valor == dia_escolhido %}checked{% endif %}>
+                                    <span class="dia-chip__semana">{{ dia.semana }}</span>
+                                    <strong class="dia-chip__num">{{ dia.dia }}</strong>
+                                    <span class="dia-chip__mes">{{ dia.mes }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="agenda__grupo" aria-describedby="feedback-data{% if form.delivery_datetime.errors %} erro-data{% endif %}">
+                        <legend>2. Pick a time</legend>
+                        {% for dia in dias_disponiveis %}
+                            <div class="agenda__horarios" data-dia="{{ dia.valor }}">
+                                <p class="agenda__dia-nome">{{ dia.extenso }}</p>
+                                <div class="agenda__lista">
+                                    {% for h in dia.horarios %}
+                                        <label class="hora-chip">
+                                            <input type="radio" name="delivery_datetime" value="{{ h.valor }}"
+                                                   data-extenso="{{ dia.extenso }} at {{ h.rotulo }}"
+                                                   {% if h.valor == horario_escolhido %}checked{% endif %}>
+                                            <span>{{ h.rotulo }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </fieldset>
+                {% else %}
+                    <div class="alerta alerta--aviso" role="note">
+                        <i class="fas fa-calendar-xmark" aria-hidden="true"></i>
+                        <span><strong>No delivery times available right now.</strong>
+                            Please <a href="{% url 'sushiemcasa:contato' %}">contact us</a> to arrange your order.</span>
+                    </div>
+                {% endif %}
                 {% if form.delivery_datetime.errors %}
                     <div id="erro-data" class="campo__erro" role="alert">
                         <i class="fas fa-circle-exclamation" aria-hidden="true"></i>

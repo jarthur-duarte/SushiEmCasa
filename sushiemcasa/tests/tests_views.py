@@ -39,6 +39,18 @@ def _horario_para_todos_os_dias(is_open, open_time=None, close_time=None):
         )
 
 
+def _horario_padrao():
+    """Segunda a sábado, 10h às 20h; domingo fechado (como o painel costuma ficar)."""
+    HorarioDeFuncionamento.objects.all().delete()
+    for day in range(7):
+        HorarioDeFuncionamento.objects.create(
+            day_of_week=day,
+            is_open=day != 6,
+            open_time=datetime.time(10) if day != 6 else None,
+            close_time=datetime.time(20) if day != 6 else None,
+        )
+
+
 # =========================================================================
 # MODELOS
 # =========================================================================
@@ -155,6 +167,9 @@ class MensagemFeedbackModelTests(TestCase):
 # FORMULÁRIO DE PEDIDO
 # =========================================================================
 class OrderFormTests(TestCase):
+    def setUp(self):
+        _horario_padrao()
+
     def _proxima_data_valida(self):
         """Retorna um datetime > 24h no futuro, dia útil, dentro de 10h-20h."""
         dt = timezone.localtime(timezone.now()) + datetime.timedelta(days=2)
@@ -552,6 +567,7 @@ class PedidosComDoisClientesTests(TestCase):
         self.ana = User.objects.create_user('ana', password=self.SENHA)
         self.beto = User.objects.create_user('beto', password=self.SENHA)
         self.equipe = User.objects.create_user('equipe', password=self.SENHA, is_staff=True)
+        _horario_padrao()
 
     def _data_entrega(self):
         dt = timezone.localtime(timezone.now()) + datetime.timedelta(days=2)
@@ -596,3 +612,56 @@ class PedidosComDoisClientesTests(TestCase):
         self.client.get(reverse('sushiemcasa:logout'))
         self.client.login(username='beto', password=self.SENHA)
         self.assertEqual(self.client.session.get('cart', {}), {})
+
+
+class HorariosDoPainelNoCheckoutTests(TestCase):
+    """O checkout só oferece (e só aceita) horários dentro do expediente definido no painel."""
+    def setUp(self):
+        HorarioDeFuncionamento.objects.all().delete()
+        for day in range(7):  # só sexta aberta, das 09:56 às 12:00
+            aberto = day == 4
+            HorarioDeFuncionamento.objects.create(
+                day_of_week=day, is_open=aberto,
+                open_time=datetime.time(9, 56) if aberto else None,
+                close_time=datetime.time(12) if aberto else None,
+            )
+        cat = Categoria.objects.create(nome='Uramaki', slug='uramaki')
+        produto = Produto.objects.create(nome='Uramaki', descricao='x', preco=Decimal('10'), categoria=cat)
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[produto.id]), {'quantity': 1})
+
+    def test_lista_so_sextas_em_meia_hora_dentro_do_expediente(self):
+        from sushiemcasa.horarios import dias_disponiveis
+        dias = dias_disponiveis()
+        self.assertTrue(dias)
+        for dia in dias:
+            self.assertEqual(datetime.date.fromisoformat(dia['valor']).weekday(), 4)
+            horas = [h['valor'][-5:] for h in dia['horarios']]
+            self.assertTrue(set(horas) <= {'10:00', '10:30', '11:00', '11:30'}, horas)
+        # Uma sexta distante tem a grade completa: começa na meia hora seguinte à abertura
+        # (09:56 -> 10:00) e o último horário começa antes do fechamento.
+        self.assertEqual([h['rotulo'] for h in dias[-1]['horarios']], ['10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM'])
+        response = self.client.get(reverse('sushiemcasa:checkout'))
+        self.assertContains(response, 'Friday: 9:56 AM – 12:00 PM')
+        self.assertContains(response, 'name="delivery_datetime" value="%s"' % dias[-1]['horarios'][0]['valor'])
+
+    def test_aceita_horario_listado_e_recusa_dia_fechado(self):
+        from sushiemcasa.horarios import dias_disponiveis
+        valor = dias_disponiveis()[-1]['horarios'][0]['valor']
+        sabado = datetime.date.fromisoformat(valor[:10]) + datetime.timedelta(days=1)
+
+        response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': f'{sabado} 10:00'})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "we don&#x27;t deliver on Saturdays")
+
+        response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': f'{valor[:10]} 12:00'})
+        self.assertContains(response, 'On Fridays we deliver between 9:56 AM and 12:00 PM.')
+
+        response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': valor})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Order.objects.count(), 1)
+
+    def test_sem_dias_abertos_avisa_e_nao_lista_horarios(self):
+        HorarioDeFuncionamento.objects.update(is_open=False, open_time=None, close_time=None)
+        response = self.client.get(reverse('sushiemcasa:checkout'))
+        self.assertContains(response, 'No delivery times available right now.')
+        self.assertNotContains(response, 'name="delivery_datetime"')

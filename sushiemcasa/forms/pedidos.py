@@ -4,13 +4,15 @@ import datetime
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 
+from sushiemcasa.horarios import motivo_recusa
+
 class OrderForm(forms.ModelForm):
     delivery_datetime = forms.DateTimeField(
         label="Delivery Date and Time",
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         required=True,
         error_messages={'required': 'Choose a delivery date and time.'},
-        help_text="Select the desired date and time for delivery (minimum 24 hours in advance)."
+        help_text="Pick one of the available delivery times (minimum 24 hours in advance)."
     )
 
     class Meta:
@@ -27,19 +29,12 @@ class OrderForm(forms.ModelForm):
              
                 delivery_dt_aware = timezone.make_aware(delivery_dt, timezone.get_current_timezone())
            
-            now_plus_24h = timezone.now() + datetime.timedelta(hours=24)
-            
-           
-            if delivery_dt_aware < now_plus_24h:
-                raise forms.ValidationError("Delivery date must be at least 24 hours in advance.")
-            
-            if delivery_dt_aware.weekday() == 6: 
-                raise forms.ValidationError("Sorry, we do not deliver on Sundays.")
-            
-            hora = delivery_dt_aware.time()
-            if hora < datetime.time(10, 0) or hora >= datetime.time(20, 0):
-                raise forms.ValidationError("Our delivery hours are between 10:00 AM and 8:00 PM.")
-            
+            # Mesma regra que monta a lista de horários do checkout (sushiemcasa/horarios.py),
+            # baseada no horário de funcionamento definido no painel.
+            motivo = motivo_recusa(delivery_dt_aware)
+            if motivo:
+                raise forms.ValidationError(motivo)
+
             feriados = [
                 datetime.date(2024, 12, 25),
                 datetime.date(2025, 1, 1),

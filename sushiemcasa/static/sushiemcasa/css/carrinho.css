@@ -133,6 +133,62 @@
 .feedback-data.erro { color: var(--cor-erro); }
 .como-funciona { font-size: var(--fs-sm); color: var(--cor-texto-suave); }
 
+/* ---------- Agenda de entrega (dias e horários do painel) ---------- */
+.agenda__grupo { border: 0; padding: 0; margin: 0 0 var(--e-4); min-width: 0; }
+.agenda__grupo legend { font-weight: 600; margin-bottom: var(--e-2); }
+.agenda__dias {
+  display: flex;
+  gap: var(--e-2);
+  overflow-x: auto;
+  padding-bottom: var(--e-1);
+  scroll-snap-type: x mandatory;
+}
+.dia-chip, .hora-chip { position: relative; cursor: pointer; }
+.dia-chip input, .hora-chip input {
+  position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer;
+}
+.dia-chip {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: grid;
+  justify-items: center;
+  min-width: 64px;
+  padding: var(--e-2) var(--e-3);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio);
+  background: var(--cor-superficie-2);
+  transition: border-color .15s, background-color .15s, transform .15s;
+}
+.dia-chip__semana, .dia-chip__mes { font-size: var(--fs-sm); color: var(--cor-texto-suave); }
+.dia-chip__num { font-size: 1.35rem; line-height: 1.2; }
+.agenda__lista { display: flex; flex-wrap: wrap; gap: var(--e-2); }
+.hora-chip span {
+  display: inline-block;
+  min-width: 92px;
+  text-align: center;
+  padding: var(--e-2) var(--e-3);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-pill);
+  background: var(--cor-superficie-2);
+  font-weight: 500;
+  transition: border-color .15s, background-color .15s;
+}
+.dia-chip:hover, .hora-chip:hover span { border-color: var(--cor-marca-escura); }
+.dia-chip:has(input:checked) { background: var(--cor-marca); border-color: var(--cor-marca); color: #fff; transform: translateY(-2px); }
+.dia-chip:has(input:checked) .dia-chip__semana,
+.dia-chip:has(input:checked) .dia-chip__mes { color: #fff; }
+.hora-chip input:checked + span { background: var(--cor-marca); border-color: var(--cor-marca); color: #fff; }
+.dia-chip:has(input:focus-visible), .hora-chip input:focus-visible + span {
+  outline: 3px solid var(--cor-marca-escura); outline-offset: 2px;
+}
+.agenda__horarios { margin-bottom: var(--e-3); }
+.agenda__dia-nome { font-size: var(--fs-sm); color: var(--cor-texto-suave); margin-bottom: var(--e-2); }
+.agenda--js .agenda__dia-nome { display: none; } /* com JS só um dia aparece por vez */
+@media (prefers-reduced-motion: reduce) {
+  .dia-chip, .hora-chip span { transition: none; }
+  .dia-chip:has(input:checked) { transform: none; }
+}
+
 /* ---------- Celular ---------- */
 @media (max-width: 900px) {
   .pedido-layout { grid-template-columns: 1fr; }

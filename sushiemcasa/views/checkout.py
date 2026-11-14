@@ -9,6 +9,7 @@ from decimal import Decimal
 from urllib.parse import quote_plus
 
 from sushiemcasa.forms.pedidos import OrderForm
+from sushiemcasa.horarios import dias_disponiveis, resumo_da_semana
 from sushiemcasa.models import Order, OrderItem, Produto
 
 
@@ -116,10 +117,21 @@ def pagina_checkout(request):
     else:
         form = OrderForm()
 
+    dias = dias_disponiveis()
+    horario_escolhido = form.data.get('delivery_datetime', '')
+    dia_escolhido = horario_escolhido[:10]
+    if dias and dia_escolhido not in {d['valor'] for d in dias}:
+        dia_escolhido = dias[0]['valor']
+
     context = {
         'form': form,
         'cart_items': cart_items,
         'cart_total': cart_total,
+        # Horários livres montados a partir do painel (Hours).
+        'dias_disponiveis': dias,
+        'horarios_semana': resumo_da_semana(),
+        'horario_escolhido': horario_escolhido,
+        'dia_escolhido': dia_escolhido,
     }
 
     return render(request, 'sushiemcasa/checkout.html', context)
