@@ -33,9 +33,17 @@ def exibir_cardapio(request, categoria_slug=None):
     except HorarioDeFuncionamento.DoesNotExist:
         is_open = False 
 
-  
+    # Topo do cardápio: o 1º produto com foto vira o cartão em destaque e a foto
+    # grande é a de outro banner (o carrossel começa pelo 1º) ou a do próprio produto.
+    lista_banners = list(banners)
+    destaque = next((p for p in produtos if p.imagem), None)
+    foto_banner = next((b.imagem for b in lista_banners[1:] + lista_banners[:1] if b.imagem), None)
+    foto_topo = foto_banner or (destaque.imagem if destaque else None)
+
     context = {
-        'banners': banners, 
+        'banners': lista_banners,
+        'destaque': destaque,
+        'foto_topo': foto_topo,
         'produtos': produtos,
         'categorias': categorias, 
         'categoria_selecionada': categoria_selecionada,

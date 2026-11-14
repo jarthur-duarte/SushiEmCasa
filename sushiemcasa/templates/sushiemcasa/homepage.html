@@ -24,11 +24,10 @@
                 <a href="{% url 'sushiemcasa:contato' %}" class="btn btn--grande">Contact us</a>
             </div>
         </div>
-        {# foto do topo: o último banner (o carrossel começa pelo primeiro), senão o 1º produto #}
-        {% with ultimo_banner=banners|last %}{% with foto=ultimo_banner.imagem|default:produtos.0.imagem destaque=produtos.0 %}
-        {% if foto %}
+        {# foto_topo e destaque vêm da view (exibir_cardapio) #}
+        {% if foto_topo %}
         <div class="hero__foto">
-            <img src="{{ foto.url }}" alt="" width="640" height="480" fetchpriority="high">
+            <img src="{{ foto_topo.url }}" alt="" width="640" height="480" fetchpriority="high">
             {% if destaque %}
             <a class="hero__cartao" href="#menu-principal">
                 {% if destaque.imagem %}<img src="{{ destaque.imagem.url }}" alt="" width="64" height="64">{% endif %}
@@ -41,7 +40,6 @@
             {% endif %}
         </div>
         {% endif %}
-        {% endwith %}{% endwith %}
     </section>
 
     {% if not is_open %}

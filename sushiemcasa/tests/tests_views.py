@@ -473,3 +473,26 @@ class DetalheDoPedidoAcessoTests(TestCase):
     def test_equipe_ve(self):
         self.client.force_login(self.equipe)
         self.assertEqual(self.client.get(self.url).status_code, 200)
+
+
+@override_settings(STORAGES={
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+})
+class TopoDoCardapioTests(TestCase):
+    """O topo do cardápio quebrou em produção com banners cadastrados (QuerySet + |last)."""
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Temaki', slug='temaki')
+        Produto.objects.create(nome='Temaki', descricao='x', preco=Decimal('10'), categoria=cat, imagem='produtos/t.jpg')
+
+    def test_sem_banners_usa_foto_do_produto(self):
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'produtos/t.jpg')
+
+    def test_com_dois_banners_usa_o_segundo(self):
+        BannerPromocional.objects.create(titulo='A', descricao='a', imagem='banners/a.jpg', preco_promocional=1, ordem=1)
+        BannerPromocional.objects.create(titulo='B', descricao='b', imagem='banners/b.jpg', preco_promocional=1, ordem=2)
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['foto_topo'].name, 'banners/b.jpg')
