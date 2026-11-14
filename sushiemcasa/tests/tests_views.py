@@ -490,9 +490,10 @@ class TopoDoCardapioTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'produtos/t.jpg')
 
-    def test_com_dois_banners_usa_o_segundo(self):
+    def test_com_banners_a_foto_e_do_produto_em_destaque(self):
+        # A foto grande precisa ser do mesmo produto descrito no cartão flutuante.
         BannerPromocional.objects.create(titulo='A', descricao='a', imagem='banners/a.jpg', preco_promocional=1, ordem=1)
         BannerPromocional.objects.create(titulo='B', descricao='b', imagem='banners/b.jpg', preco_promocional=1, ordem=2)
         response = self.client.get(reverse('sushiemcasa:cardapio'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context['foto_topo'].name, 'banners/b.jpg')
+        self.assertEqual(response.context['foto_topo'].name, response.context['destaque'].imagem.name)

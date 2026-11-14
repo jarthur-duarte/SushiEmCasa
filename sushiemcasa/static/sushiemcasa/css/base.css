@@ -382,10 +382,12 @@ body.gaveta-aberta { overflow: hidden; }
   font-weight: 600;
   text-decoration: none;
   line-height: 1.2;
-  transition: background var(--transicao), border-color var(--transicao), transform var(--transicao);
+  transition: background var(--transicao), border-color var(--transicao), transform var(--transicao), box-shadow var(--transicao);
 }
-.btn:hover { background: var(--cor-superficie-2); }
-.btn:active { transform: translateY(1px); }
+.btn:hover { background: var(--cor-superficie-2); transform: translateY(-2px); box-shadow: var(--sombra-2); }
+.btn:active { transform: translateY(0) scale(0.97); box-shadow: none; }
+.btn--primario:hover { box-shadow: 0 8px 22px rgb(212 43 27 / 0.45); }
+.btn--fantasma:hover { box-shadow: none; }
 .btn--primario {
   --btn-fundo: var(--cor-marca);
   --btn-cor: #fff;
@@ -619,7 +621,30 @@ body.gaveta-aberta { overflow: hidden; }
 .tabela thead th { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--cor-texto-suave); background: var(--cor-superficie-2); }
 .tabela tbody tr:last-child td { border-bottom: 0; }
 
-/* ---------- 16. Utilitários ---------- */
+/* ---------- 16. Animações ----------
+   Todas somem com prefers-reduced-motion (regra no reset, seção 2).
+   .revelar só é posto pelo site.js, então sem JS nada fica escondido. */
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pulo {
+  0%, 100% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+}
+.revelar { opacity: 0; transform: translateY(18px); }
+.revelar.visivel {
+  animation: surgir 520ms cubic-bezier(.2, .7, .2, 1) both;
+  animation-delay: var(--atraso, 0ms);
+}
+.contador { animation: pulo 600ms ease 300ms 1; }
+.nav-principal a, .filtros a, .chip { transition: background var(--transicao), color var(--transicao), border-color var(--transicao), transform var(--transicao); }
+.filtros a:hover, .chip:hover { transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) {
+  .revelar { opacity: 1; transform: none; }
+}
+
+/* ---------- 17. Utilitários ---------- */
 .texto-suave { color: var(--cor-texto-suave); }
 .preco { font-weight: 700; color: var(--cor-tinta); font-variant-numeric: tabular-nums; }
 .preco--destaque { font-family: var(--fonte-titulo); font-weight: 800; }

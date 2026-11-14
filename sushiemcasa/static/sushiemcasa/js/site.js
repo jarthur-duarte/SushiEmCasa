@@ -72,4 +72,31 @@
     var msg = form.getAttribute && form.getAttribute('data-confirmar');
     if (msg && !window.confirm(msg)) e.preventDefault();
   });
+
+  // ---- Cartões surgem ao rolar a página ----
+  // Só esconde o que vai animar quando o navegador suporta IntersectionObserver
+  // e a pessoa não pediu menos movimento; sem isso, tudo aparece normalmente.
+  var calmo = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!calmo && 'IntersectionObserver' in window) {
+    var alvos = document.querySelectorAll('.produto-card, .pedido-card, .canal');
+    var observador = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (entrada) {
+        if (entrada.isIntersecting) {
+          entrada.target.classList.add('visivel');
+          observador.unobserve(entrada.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -40px 0px' });
+    Array.prototype.forEach.call(alvos, function (el, i) {
+      el.style.setProperty('--atraso', (i % 4) * 70 + 'ms');
+      el.classList.add('revelar');
+      // terminada a entrada, tira as classes para o efeito de hover voltar a valer
+      el.addEventListener('animationend', function fim(e) {
+        if (e.target !== el) return;
+        el.classList.remove('revelar', 'visivel');
+        el.removeEventListener('animationend', fim);
+      });
+      observador.observe(el);
+    });
+  }
 })();

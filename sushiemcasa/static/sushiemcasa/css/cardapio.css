@@ -40,7 +40,19 @@
   box-shadow: var(--sombra-3);
   text-decoration: none;
 }
-.hero__cartao img { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; flex-shrink: 0; }
+.hero__cartao > span { flex: 1; }
+.hero__cartao { animation: flutuar 6s ease-in-out 1.2s infinite; }
+@keyframes flutuar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.hero__texto > * { animation: surgir 640ms cubic-bezier(.2, .7, .2, 1) both; }
+.hero__texto > :nth-child(2) { animation-delay: 80ms; }
+.hero__texto > :nth-child(3) { animation-delay: 160ms; }
+.hero__texto > :nth-child(4) { animation-delay: 240ms; }
+.hero__foto { animation: surgir 800ms cubic-bezier(.2, .7, .2, 1) 120ms both; }
+.hero__foto > img { transition: transform 700ms cubic-bezier(.2, .7, .2, 1); }
+.hero__foto:hover > img { transform: scale(1.02); }
 .hero__cartao small { display: block; color: #a8231a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: var(--fs-xs); }
 .hero__cartao strong { display: block; color: var(--cor-sobre-claro); }
 .loja-fechada {
@@ -228,9 +240,21 @@
   border: 1px solid var(--cor-borda);
   border-radius: var(--raio-lg);
   overflow: hidden;
-  transition: box-shadow var(--transicao), transform var(--transicao);
+  transition: box-shadow 260ms ease, transform 260ms cubic-bezier(.2, .7, .2, 1), border-color 260ms ease;
 }
-.produto-card:hover { box-shadow: var(--sombra-2); transform: translateY(-2px); }
+.produto-card:hover {
+  box-shadow: var(--sombra-3);
+  transform: translateY(-6px);
+  border-color: rgb(212 43 27 / 0.55);
+}
+.produto-card__foto img { transition: transform 600ms cubic-bezier(.2, .7, .2, 1); }
+.produto-card:hover .produto-card__foto img { transform: scale(1.07); }
+.btn-redondo { transition: transform 220ms cubic-bezier(.3, 1.6, .5, 1), background var(--transicao), box-shadow var(--transicao); }
+.btn-redondo:hover { transform: rotate(90deg) scale(1.1); }
+.btn-redondo:active { transform: rotate(90deg) scale(0.92); }
+.promo { transition: border-color 260ms ease; }
+.promo__foto img { transition: transform 700ms cubic-bezier(.2, .7, .2, 1); }
+.promo:hover .promo__foto img { transform: scale(1.04); }
 .produto-card__foto {
   aspect-ratio: 1 / 1;
   background: var(--cor-superficie-2);

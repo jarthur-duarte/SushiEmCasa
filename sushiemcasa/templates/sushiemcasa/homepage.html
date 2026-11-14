@@ -27,17 +27,22 @@
         {# foto_topo e destaque vêm da view (exibir_cardapio) #}
         {% if foto_topo %}
         <div class="hero__foto">
-            <img src="{{ foto_topo.url }}" alt="" width="640" height="480" fetchpriority="high">
-            {% if destaque %}
-            <a class="hero__cartao" href="#menu-principal">
-                {% if destaque.imagem %}<img src="{{ destaque.imagem.url }}" alt="" width="64" height="64">{% endif %}
+            {# a foto grande é a do produto em destaque; o cartão descreve essa mesma foto #}
+            <img src="{{ foto_topo.url }}" alt="{{ destaque.nome }}" width="640" height="480" fetchpriority="high">
+            <div class="hero__cartao">
                 <span>
                     <small>{{ destaque.categoria.nome }}</small>
                     <strong>{{ destaque.nome }}</strong>
                     $ {{ destaque.preco|floatformat:2 }}
                 </span>
-            </a>
-            {% endif %}
+                <form action="{% url 'sushiemcasa:add_to_cart' product_id=destaque.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn--primario btn-redondo btn-add-destaque" aria-label="Add {{ destaque.nome }} to cart">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
         </div>
         {% endif %}
     </section>
