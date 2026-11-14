@@ -665,3 +665,48 @@ class HorariosDoPainelNoCheckoutTests(TestCase):
         response = self.client.get(reverse('sushiemcasa:checkout'))
         self.assertContains(response, 'No delivery times available right now.')
         self.assertNotContains(response, 'name="delivery_datetime"')
+
+
+class PopupDeLoginNoCarrinhoTests(TestCase):
+    """Visitante vê o pop-up antes do checkout; entrar ou criar conta volta ao checkout com o carrinho."""
+    SENHA = 'senha-de-teste-123'
+
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Uramaki', slug='uramaki')
+        self.produto = Produto.objects.create(nome='Uramaki', descricao='x', preco=Decimal('10'), categoria=cat)
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto.id]), {'quantity': 2})
+        self.checkout = reverse('sushiemcasa:checkout')
+
+    def test_visitante_ve_o_popup_com_as_tres_opcoes(self):
+        response = self.client.get(reverse('sushiemcasa:basket'))
+        self.assertContains(response, 'data-abrir-dialogo="dialogo-login"')
+        self.assertContains(response, 'Track your order in real time?')
+        self.assertContains(response, f'{reverse("sushiemcasa:login")}?next=/checkout/')
+        self.assertContains(response, f'{reverse("sushiemcasa:register")}?next=/checkout/')
+        self.assertContains(response, 'Continue without login')
+
+    def test_cliente_logado_nao_ve_o_popup(self):
+        self.client.force_login(User.objects.create_user('ana', password=self.SENHA))
+        self.client.post(reverse('sushiemcasa:add_to_cart', args=[self.produto.id]), {'quantity': 1})
+        response = self.client.get(reverse('sushiemcasa:basket'))
+        self.assertNotContains(response, 'dialogo-login')
+
+    def test_login_pelo_popup_volta_ao_checkout_com_o_carrinho(self):
+        User.objects.create_user('ana', password=self.SENHA)
+        response = self.client.post(reverse('sushiemcasa:login'),
+                                    {'username': 'ana', 'password': self.SENHA, 'next': self.checkout})
+        self.assertRedirects(response, self.checkout, fetch_redirect_response=False)
+        self.assertEqual(self.client.session['cart'], {str(self.produto.id): {'quantity': 2}})
+
+    def test_cadastro_pelo_popup_volta_ao_checkout_com_o_carrinho(self):
+        dados = {'username': 'novo', 'email': 'novo@example.com',
+                 'password1': 'Uma-senha-forte-91', 'password2': 'Uma-senha-forte-91', 'next': self.checkout}
+        response = self.client.post(reverse('sushiemcasa:register'), dados)
+        self.assertRedirects(response, self.checkout, fetch_redirect_response=False)
+        self.assertEqual(self.client.session['cart'], {str(self.produto.id): {'quantity': 2}})
+
+    def test_cadastro_ignora_next_de_outro_site(self):
+        dados = {'username': 'novo', 'email': 'novo@example.com',
+                 'password1': 'Uma-senha-forte-91', 'password2': 'Uma-senha-forte-91', 'next': 'https://exemplo.com/'}
+        response = self.client.post(reverse('sushiemcasa:register'), dados)
+        self.assertRedirects(response, reverse('sushiemcasa:cardapio'), fetch_redirect_response=False)

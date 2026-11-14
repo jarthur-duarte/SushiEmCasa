@@ -13,6 +13,7 @@
     <div class="card">
         <form method="post" action="{% url 'sushiemcasa:register' %}" novalidate>
             {% csrf_token %}
+            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
             {% if form.non_field_errors %}
                 <div class="alerta alerta--erro" role="alert">
@@ -58,6 +59,6 @@
         </form>
     </div>
 
-    <p class="link-alternativo">Already have an account? <a href="{% url 'sushiemcasa:login' %}">Log in</a></p>
+    <p class="link-alternativo">Already have an account? <a href="{% url 'sushiemcasa:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Log in</a></p>
 </div>
 {% endblock %}

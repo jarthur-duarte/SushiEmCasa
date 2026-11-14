@@ -86,13 +86,43 @@
             </p>
             <div class="barra-acao">
                 <p class="barra-acao__total">Total <strong id="total-geral">$ {{ cart_total|stringformat:".2f" }}</strong></p>
-                <a href="{% url 'sushiemcasa:checkout' %}" class="btn btn--primario btn-checkout">
+                <a href="{% url 'sushiemcasa:checkout' %}" class="btn btn--primario btn-checkout"
+                   {% if not user.is_authenticated %}data-abrir-dialogo="dialogo-login"{% endif %}>
                     Choose delivery <i class="fas fa-arrow-right" aria-hidden="true"></i>
                 </a>
             </div>
             <a href="{% url 'sushiemcasa:cardapio' %}" class="resumo__continuar">Keep shopping</a>
         </aside>
     </div>
+
+    {% if not user.is_authenticated %}
+        {# Visitante: antes do checkout, oferece entrar para acompanhar o pedido no site. #}
+        {% url 'sushiemcasa:checkout' as url_checkout %}
+        <dialog id="dialogo-login" class="dialogo" aria-labelledby="dialogo-login-titulo" aria-describedby="dialogo-login-texto">
+            <form method="dialog" class="dialogo__fechar-form">
+                <button type="submit" class="botao-icone dialogo__fechar" aria-label="Close">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
+            </form>
+            <div class="dialogo__icone" aria-hidden="true"><i class="fas fa-location-dot"></i></div>
+            <h2 id="dialogo-login-titulo">Track your order in real time?</h2>
+            <p id="dialogo-login-texto">
+                Log in and your order shows up in <strong>My orders</strong>, where you can follow every status update,
+                from <em>Preparing</em> to <em>Out for delivery</em>. Your cart stays just as it is.
+            </p>
+            <div class="dialogo__acoes">
+                <a href="{% url 'sushiemcasa:login' %}?next={{ url_checkout|urlencode }}" class="btn btn--primario btn--bloco">
+                    <i class="fas fa-right-to-bracket" aria-hidden="true"></i> Log in
+                </a>
+                <a href="{% url 'sushiemcasa:register' %}?next={{ url_checkout|urlencode }}" class="btn btn--bloco">
+                    Create an account
+                </a>
+                <a href="{{ url_checkout }}" class="btn btn--fantasma btn--bloco dialogo__sem-login">
+                    Continue without login
+                </a>
+            </div>
+        </dialog>
+    {% endif %}
 
     {% else %}
         <div class="vazio card">

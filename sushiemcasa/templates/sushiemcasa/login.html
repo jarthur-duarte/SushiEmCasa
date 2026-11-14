@@ -36,6 +36,6 @@
         </form>
     </div>
 
-    <p class="link-alternativo">Don't have an account? <a href="{% url 'sushiemcasa:register' %}">Sign up</a></p>
+    <p class="link-alternativo">Don't have an account? <a href="{% url 'sushiemcasa:register' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Sign up</a></p>
 </div>
 {% endblock %}

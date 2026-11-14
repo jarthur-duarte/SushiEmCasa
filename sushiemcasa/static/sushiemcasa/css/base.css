@@ -644,6 +644,36 @@ body.gaveta-aberta { overflow: hidden; }
   .revelar { opacity: 1; transform: none; }
 }
 
+/* ---------- 16b. Pop-up (<dialog class="dialogo">) ---------- */
+.dialogo {
+  width: min(420px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto; /* o reset zera a margem; sem isso o pop-up cola no canto */
+  padding: var(--e-6, 2rem) var(--e-5, 1.5rem) var(--e-5, 1.5rem);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-lg);
+  background: var(--cor-superficie);
+  color: var(--cor-tinta);
+  box-shadow: var(--sombra-3);
+  text-align: center;
+}
+.dialogo::backdrop { background: rgb(10 6 5 / 0.7); backdrop-filter: blur(3px); }
+.dialogo[open] { animation: surgir .25s ease-out both; }
+.dialogo h2 { margin-bottom: var(--e-2); }
+.dialogo p { color: var(--cor-texto-suave); margin-bottom: var(--e-5, 1.5rem); }
+.dialogo p strong, .dialogo p em { color: var(--cor-tinta); font-style: normal; }
+.dialogo__icone {
+  display: grid; place-items: center;
+  width: 56px; height: 56px; margin: 0 auto var(--e-3);
+  border-radius: 50%;
+  background: var(--cor-marca-clara); color: var(--cor-marca-escura);
+  font-size: 1.4rem;
+}
+.dialogo__fechar-form { position: absolute; top: var(--e-2); right: var(--e-2); }
+.dialogo__acoes { display: grid; gap: var(--e-2); }
+.dialogo__sem-login { color: var(--cor-texto-suave); text-decoration: underline; text-underline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .dialogo[open] { animation: none; } }
+
 /* ---------- 17. Utilitários ---------- */
 .texto-suave { color: var(--cor-texto-suave); }
 .preco { font-weight: 700; color: var(--cor-tinta); font-variant-numeric: tabular-nums; }

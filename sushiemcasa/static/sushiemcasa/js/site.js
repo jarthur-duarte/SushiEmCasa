@@ -66,6 +66,26 @@
     });
   }
 
+  // ---- Pop-up: <a data-abrir-dialogo="id-do-dialog"> ----
+  // Abre o <dialog> em vez de seguir o link. Sem suporte a <dialog> (ou sem JS),
+  // o link funciona normalmente.
+  document.addEventListener('click', function (e) {
+    var gatilho = e.target.closest && e.target.closest('[data-abrir-dialogo]');
+    if (!gatilho) return;
+    var dialogo = document.getElementById(gatilho.getAttribute('data-abrir-dialogo'));
+    if (!dialogo || typeof dialogo.showModal !== 'function') return;
+    e.preventDefault();
+    dialogo.showModal();
+  });
+  // Clicar fora da caixa (no fundo escurecido) fecha o pop-up.
+  document.addEventListener('click', function (e) {
+    if (e.target.tagName === 'DIALOG' && e.target.classList.contains('dialogo')) {
+      var r = e.target.getBoundingClientRect();
+      var fora = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      if (fora) e.target.close();
+    }
+  });
+
   // ---- Confirmação: <form data-confirmar="Mensagem"> ----
   document.addEventListener('submit', function (e) {
     var form = e.target;
