@@ -16,6 +16,8 @@ class Categoria(models.Model):
 class Produto(models.Model):
     """ Define a estrutura de um produto de sushi no cardápio. """
     disponivel = models.BooleanField(default=True)
+    # Produto mostrado no topo do cardápio (foto grande + cartão). Só um por vez.
+    destaque = models.BooleanField("Featured at the top of the menu", default=False)
     categoria = models.ForeignKey(
         Categoria, 
         on_delete=models.CASCADE, 
@@ -28,7 +30,13 @@ class Produto(models.Model):
     imagem = models.ImageField(upload_to='produtos/') 
 
     def __str__(self):
-        return f"{self.nome} ({self.categoria.nome})" 
+        return f"{self.nome} ({self.categoria.nome})"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Marcar um produto como destaque desmarca os outros.
+        if self.destaque:
+            Produto.objects.filter(destaque=True).exclude(pk=self.pk).update(destaque=False)
     
     class Meta:
         verbose_name_plural = "Products"

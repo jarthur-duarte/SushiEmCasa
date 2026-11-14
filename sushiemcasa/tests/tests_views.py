@@ -497,3 +497,45 @@ class TopoDoCardapioTests(TestCase):
         response = self.client.get(reverse('sushiemcasa:cardapio'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['foto_topo'].name, response.context['destaque'].imagem.name)
+
+
+@override_settings(STORAGES={
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+})
+class ProdutoEmDestaqueTests(TestCase):
+    def setUp(self):
+        cat = Categoria.objects.create(nome='Temaki', slug='temaki')
+        self.a = Produto.objects.create(nome='A', descricao='x', preco=Decimal('1'), categoria=cat, imagem='produtos/a.jpg')
+        self.b = Produto.objects.create(nome='B', descricao='x', preco=Decimal('2'), categoria=cat, imagem='produtos/b.jpg')
+        self.equipe = User.objects.create_user('equipe', password='senha-de-teste-123', is_staff=True)
+
+    def test_sem_destaque_usa_o_primeiro_com_foto(self):
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.context['destaque'], self.a)
+
+    def test_produto_marcado_aparece_no_topo(self):
+        self.b.destaque = True
+        self.b.save()
+        response = self.client.get(reverse('sushiemcasa:cardapio'))
+        self.assertEqual(response.context['destaque'], self.b)
+        self.assertEqual(response.context['foto_topo'].name, 'produtos/b.jpg')
+
+    def test_marcar_outro_desmarca_o_anterior(self):
+        self.a.destaque = True
+        self.a.save()
+        self.b.destaque = True
+        self.b.save()
+        self.a.refresh_from_db()
+        self.assertFalse(self.a.destaque)
+        self.assertEqual(Produto.objects.filter(destaque=True).count(), 1)
+
+    def test_painel_marca_destaque_e_exige_produto_visivel(self):
+        self.client.force_login(self.equipe)
+        url = reverse('sushiemcasa:editar_produto', args=[self.b.pk])
+        base = {'nome': 'B', 'categoria': self.b.categoria_id, 'descricao': 'x', 'preco': '2'}
+        self.client.post(url, {**base, 'disponivel': 'on', 'destaque': 'on'})
+        self.b.refresh_from_db()
+        self.assertTrue(self.b.destaque)
+        response = self.client.post(url, {**base, 'destaque': 'on'})  # escondido + destaque
+        self.assertContains(response, 'A featured product must also be shown on the menu.')

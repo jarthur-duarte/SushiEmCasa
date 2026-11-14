@@ -55,6 +55,9 @@
                         {% else %}
                             <span class="status status--cancelado">Unavailable</span>
                         {% endif %}
+                        {% if produto.destaque %}
+                            <span class="status status--saiu" title="Shown at the top of the menu">Featured</span>
+                        {% endif %}
                     </td>
                     <td>
                         <div class="acoes-linha">

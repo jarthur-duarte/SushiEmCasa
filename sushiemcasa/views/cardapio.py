@@ -33,10 +33,13 @@ def exibir_cardapio(request, categoria_slug=None):
     except HorarioDeFuncionamento.DoesNotExist:
         is_open = False 
 
-    # Topo do cardápio: o 1º produto com foto vira o destaque, e a foto grande é
-    # a dele mesmo, para o cartão flutuante descrever o que aparece na imagem.
+    # Topo do cardápio: o produto marcado como destaque no painel (Products → Edit);
+    # sem nenhum marcado, o 1º produto com foto. A foto grande é a do próprio
+    # destaque, para o cartão flutuante descrever o que aparece na imagem.
+    # Não depende do filtro de categoria: o topo é o mesmo em todas as páginas.
     lista_banners = list(banners)
-    destaque = next((p for p in produtos if p.imagem), None)
+    com_foto = Produto.objects.filter(disponivel=True).exclude(imagem='').select_related('categoria')
+    destaque = com_foto.filter(destaque=True).first() or com_foto.order_by('id').first()
     foto_topo = destaque.imagem if destaque else None
 
     context = {
