@@ -24,15 +24,15 @@ class ProdutoForm(forms.ModelForm):
             'destaque': 'Shows this product\'s photo and price in the big banner at the top of the menu. '
                         'Only one product can be featured: checking this one unchecks the previous.',
         }
+        widgets = {
+            'imagem': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
+        }
 
     def clean(self):
         dados = super().clean()
         if dados.get('destaque') and not dados.get('disponivel'):
             self.add_error('destaque', 'A featured product must also be shown on the menu.')
         return dados
-        widgets = {
-            'imagem': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
-        }
 
 
 class CategoriaForm(forms.ModelForm):
