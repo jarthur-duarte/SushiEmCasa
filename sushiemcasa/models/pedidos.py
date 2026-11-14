@@ -8,8 +8,8 @@ class Order(models.Model):
     STATUS_CHOICES = (
         ('pendente', 'Pending'),      
         ('preparando', 'Preparing'),  
-        ('saiu_entrega', 'Out for Delivery'), 
-        ('entregue', 'Delivered'),    
+        ('saiu_entrega', 'Ready for pickup'), 
+        ('entregue', 'Picked up'),    
         ('cancelado', 'Canceled'),    
     )
 
@@ -20,7 +20,7 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
     
     delivery_datetime = models.DateTimeField(
-        verbose_name="Delivery Date and Time",
+        verbose_name="Pickup date and time",
         null=True,
         blank=True
     )
@@ -41,7 +41,7 @@ class Order(models.Model):
             else:
                 delivery_dt_aware = self.delivery_datetime
             if delivery_dt_aware < now_plus_24h:
-                raise ValidationError({'delivery_datetime': 'Delivery date and time must be at least 24 hours in advance.'})
+                raise ValidationError({'delivery_datetime': 'Pickup date and time must be at least 24 hours in advance.'})
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)

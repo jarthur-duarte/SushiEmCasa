@@ -1,7 +1,7 @@
 {% extends 'sushiemcasa/base.html' %}
 {% load static %}
 
-{% block title %}Schedule delivery · Sushi em Casa{% endblock %}
+{% block title %}Schedule pickup · Sushi em Casa{% endblock %}
 
 {% block body_class %}tem-barra-acao{% endblock %}
 
@@ -12,10 +12,10 @@
 {% block content %}
 <div class="container">
     <div class="pagina-titulo">
-        <h1>Schedule delivery</h1>
+        <h1>Schedule pickup</h1>
         <ol class="etapas" aria-label="Order steps">
             <li class="feita"><span class="etapas__num"><i class="fas fa-check" aria-hidden="true"></i><span class="sr-only">Done:</span></span> Cart</li>
-            <li aria-current="step"><span class="etapas__num">2</span> Delivery</li>
+            <li aria-current="step"><span class="etapas__num">2</span> Pickup</li>
             <li><span class="etapas__num">3</span> WhatsApp</li>
         </ol>
     </div>
@@ -36,13 +36,14 @@
         {% csrf_token %}
 
         <section class="card" aria-labelledby="titulo-entrega">
-            <h2 id="titulo-entrega" class="card__titulo">When would you like it delivered?</h2>
+            <h2 id="titulo-entrega" class="card__titulo">When would you like to pick it up?</h2>
 
             <ul class="regras-entrega">
                 <li><i class="fas fa-clock" aria-hidden="true"></i> <span>At least <strong>24 hours in advance</strong> (sushi is made to order).</span></li>
+                <li><i class="fas fa-store" aria-hidden="true"></i> <span>Pickup only, at <strong>770 E Ashland St, Brockton, MA 02302</strong>. No delivery.</span></li>
                 {% if horarios_semana %}
                     <li><i class="fas fa-calendar-day" aria-hidden="true"></i>
-                        <span>Delivery hours: {% for linha in horarios_semana %}{{ linha }}{% if not forloop.last %} · {% endif %}{% endfor %}.</span></li>
+                        <span>Pickup hours: {% for linha in horarios_semana %}{{ linha }}{% if not forloop.last %} · {% endif %}{% endfor %}.</span></li>
                 {% endif %}
             </ul>
 
@@ -89,7 +90,7 @@
                 {% else %}
                     <div class="alerta alerta--aviso" role="note">
                         <i class="fas fa-calendar-xmark" aria-hidden="true"></i>
-                        <span><strong>No delivery times available right now.</strong>
+                        <span><strong>No pickup times available right now.</strong>
                             Please <a href="{% url 'sushiemcasa:contato' %}">contact us</a> to arrange your order.</span>
                     </div>
                 {% endif %}
@@ -104,7 +105,7 @@
 
             <p class="como-funciona">
                 <i class="fab fa-whatsapp" aria-hidden="true"></i>
-                When you submit, we'll open WhatsApp with your order summary. There you can confirm the address and payment method.
+                When you submit, we'll open WhatsApp with your order summary. There you can confirm the payment method. We'll let you know when it's ready for pickup.
             </p>
         </section>
 

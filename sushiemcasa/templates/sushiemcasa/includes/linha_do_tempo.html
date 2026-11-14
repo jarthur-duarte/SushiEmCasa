@@ -16,20 +16,20 @@ cancelado) e os valores antigos em inglês que existem no banco.
             <span class="linha-tempo__icone"><i class="fas fa-receipt" aria-hidden="true"></i></span>
             <span>Received</span>
         </li>
-        <li class="linha-tempo__etapa {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' or s == 'Ready to Pickup' or s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'entregue' or s == 'Delivered' %}feita{% endif %} {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' or s == 'Ready to Pickup' %}atual{% endif %}"
-            {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' or s == 'Ready to Pickup' %}aria-current="step"{% endif %}>
+        <li class="linha-tempo__etapa {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' or s == 'Ready to Pickup' or s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'entregue' or s == 'Delivered' %}feita{% endif %} {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' %}atual{% endif %}"
+            {% if s == 'preparando' or s == 'Preparing' or s == 'In Preparation' %}aria-current="step"{% endif %}>
             <span class="linha-tempo__icone"><i class="fas fa-fire-burner" aria-hidden="true"></i></span>
             <span>Preparing</span>
         </li>
-        <li class="linha-tempo__etapa {% if s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'entregue' or s == 'Delivered' %}feita{% endif %} {% if s == 'saiu_entrega' or s == 'Out for Delivery' %}atual{% endif %}"
-            {% if s == 'saiu_entrega' or s == 'Out for Delivery' %}aria-current="step"{% endif %}>
-            <span class="linha-tempo__icone"><i class="fas fa-motorcycle" aria-hidden="true"></i></span>
-            <span>Out for delivery</span>
+        <li class="linha-tempo__etapa {% if s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'Ready to Pickup' or s == 'entregue' or s == 'Delivered' %}feita{% endif %} {% if s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'Ready to Pickup' %}atual{% endif %}"
+            {% if s == 'saiu_entrega' or s == 'Out for Delivery' or s == 'Ready to Pickup' %}aria-current="step"{% endif %}>
+            <span class="linha-tempo__icone"><i class="fas fa-bag-shopping" aria-hidden="true"></i></span>
+            <span>Ready for pickup</span>
         </li>
         <li class="linha-tempo__etapa {% if s == 'entregue' or s == 'Delivered' %}feita atual{% endif %}"
             {% if s == 'entregue' or s == 'Delivered' %}aria-current="step"{% endif %}>
-            <span class="linha-tempo__icone"><i class="fas fa-house" aria-hidden="true"></i></span>
-            <span>Delivered</span>
+            <span class="linha-tempo__icone"><i class="fas fa-circle-check" aria-hidden="true"></i></span>
+            <span>Picked up</span>
         </li>
     </ol>
 {% endif %}

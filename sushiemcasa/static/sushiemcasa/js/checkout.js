@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
   function atualizarBotao() {
     var marcado = horarioMarcado();
     botao.disabled = !marcado;
-    if (marcado) mensagem('Delivery scheduled for ' + marcado.dataset.extenso + '.', 'ok');
-    else mensagem('Choose a delivery time to continue.');
+    if (marcado) mensagem('Pickup scheduled for ' + marcado.dataset.extenso + '.', 'ok');
+    else mensagem('Choose a pickup time to continue.');
   }
 
   function mostrarDia(valor) {

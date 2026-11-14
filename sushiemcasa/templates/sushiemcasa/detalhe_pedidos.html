@@ -32,7 +32,7 @@
                 <dd>{{ order.created_at|date:"M j, Y g:i A" }}</dd>
             </div>
             <div>
-                <dt>Scheduled delivery</dt>
+                <dt>Scheduled pickup</dt>
                 <dd>{% if order.delivery_datetime %}{{ order.delivery_datetime|date:"M j, Y g:i A" }}{% else %}To be arranged{% endif %}</dd>
             </div>
         </dl>

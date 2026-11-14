@@ -133,7 +133,7 @@
 .feedback-data.erro { color: var(--cor-erro); }
 .como-funciona { font-size: var(--fs-sm); color: var(--cor-texto-suave); }
 
-/* ---------- Agenda de entrega (dias e horários do painel) ---------- */
+/* ---------- Agenda de retirada (dias e horários do painel) ---------- */
 .agenda__grupo { border: 0; padding: 0; margin: 0 0 var(--e-4); min-width: 0; }
 .agenda__grupo legend { font-weight: 600; margin-bottom: var(--e-2); }
 .agenda__dias {

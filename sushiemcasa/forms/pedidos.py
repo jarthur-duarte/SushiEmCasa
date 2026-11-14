@@ -8,11 +8,11 @@ from sushiemcasa.horarios import motivo_recusa
 
 class OrderForm(forms.ModelForm):
     delivery_datetime = forms.DateTimeField(
-        label="Delivery Date and Time",
+        label="Pickup date and time",
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         required=True,
-        error_messages={'required': 'Choose a delivery date and time.'},
-        help_text="Pick one of the available delivery times (minimum 24 hours in advance)."
+        error_messages={'required': 'Choose a pickup date and time.'},
+        help_text="Pick one of the available pickup times (minimum 24 hours in advance)."
     )
 
     class Meta:
@@ -41,7 +41,7 @@ class OrderForm(forms.ModelForm):
                 datetime.date(2025, 12, 25) 
             ]
             if delivery_dt_aware.date() in feriados:
-                raise forms.ValidationError(f"We do not deliver on {delivery_dt_aware.strftime('%m/%d/%Y')}.")
+                raise forms.ValidationError(f"Pickup is not available on {delivery_dt_aware.strftime('%m/%d/%Y')}.")
             
             return delivery_dt_aware 
         return delivery_dt 

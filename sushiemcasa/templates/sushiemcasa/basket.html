@@ -16,7 +16,7 @@
         {% if cart_items %}
         <ol class="etapas" aria-label="Order steps">
             <li aria-current="step"><span class="etapas__num">1</span> Cart</li>
-            <li><span class="etapas__num">2</span> Delivery</li>
+            <li><span class="etapas__num">2</span> Pickup</li>
             <li><span class="etapas__num">3</span> WhatsApp</li>
         </ol>
         {% endif %}
@@ -82,13 +82,13 @@
             <h2 id="titulo-resumo" class="card__titulo">Summary</h2>
             <p class="resumo__aviso">
                 <i class="fas fa-clock" aria-hidden="true"></i>
-                <span>Deliveries are scheduled <strong>at least 24 hours in advance</strong>. You'll pick the time in the next step.</span>
+                <span>Pickups are scheduled <strong>at least 24 hours in advance</strong>. You'll pick the time in the next step.</span>
             </p>
             <div class="barra-acao">
                 <p class="barra-acao__total">Total <strong id="total-geral">$ {{ cart_total|stringformat:".2f" }}</strong></p>
                 <a href="{% url 'sushiemcasa:checkout' %}" class="btn btn--primario btn-checkout"
                    {% if not user.is_authenticated %}data-abrir-dialogo="dialogo-login"{% endif %}>
-                    Choose delivery <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    Choose pickup time <i class="fas fa-arrow-right" aria-hidden="true"></i>
                 </a>
             </div>
             <a href="{% url 'sushiemcasa:cardapio' %}" class="resumo__continuar">Keep shopping</a>
@@ -108,7 +108,7 @@
             <h2 id="dialogo-login-titulo">Track your order in real time?</h2>
             <p id="dialogo-login-texto">
                 Log in and your order shows up in <strong>My orders</strong>, where you can follow every status update,
-                from <em>Preparing</em> to <em>Out for delivery</em>. Your cart stays just as it is.
+                from <em>Preparing</em> to <em>Ready for pickup</em>. Your cart stays just as it is.
             </p>
             <div class="dialogo__acoes">
                 <a href="{% url 'sushiemcasa:login' %}?next={{ url_checkout|urlencode }}" class="btn btn--primario btn--bloco">

@@ -459,7 +459,7 @@ class CheckoutSemDataTests(TestCase):
     def test_sem_data_nao_quebra_nem_cria_pedido(self):
         response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': ''})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Choose a delivery date and time.')
+        self.assertContains(response, 'Choose a pickup date and time.')
         self.assertEqual(Order.objects.count(), 0)
         self.assertTrue(self.client.session.get('cart'))  # carrinho preservado
 
@@ -651,10 +651,10 @@ class HorariosDoPainelNoCheckoutTests(TestCase):
 
         response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': f'{sabado} 10:00'})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "we don&#x27;t deliver on Saturdays")
+        self.assertContains(response, 'pickup is not available on Saturdays')
 
         response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': f'{valor[:10]} 12:00'})
-        self.assertContains(response, 'On Fridays we deliver between 9:56 AM and 12:00 PM.')
+        self.assertContains(response, 'On Fridays pickup is available between 9:56 AM and 12:00 PM.')
 
         response = self.client.post(reverse('sushiemcasa:checkout'), {'delivery_datetime': valor})
         self.assertEqual(response.status_code, 302)
@@ -663,7 +663,7 @@ class HorariosDoPainelNoCheckoutTests(TestCase):
     def test_sem_dias_abertos_avisa_e_nao_lista_horarios(self):
         HorarioDeFuncionamento.objects.update(is_open=False, open_time=None, close_time=None)
         response = self.client.get(reverse('sushiemcasa:checkout'))
-        self.assertContains(response, 'No delivery times available right now.')
+        self.assertContains(response, 'No pickup times available right now.')
         self.assertNotContains(response, 'name="delivery_datetime"')
 
 
@@ -710,3 +710,25 @@ class PopupDeLoginNoCarrinhoTests(TestCase):
                  'password1': 'Uma-senha-forte-91', 'password2': 'Uma-senha-forte-91', 'next': 'https://exemplo.com/'}
         response = self.client.post(reverse('sushiemcasa:register'), dados)
         self.assertRedirects(response, reverse('sushiemcasa:cardapio'), fetch_redirect_response=False)
+
+
+class StatusDeRetiradaTests(TestCase):
+    """A loja não entrega: o pedido fica 'Ready for pickup' e depois 'Picked up'."""
+    def setUp(self):
+        self.dono = User.objects.create_user('dono', password='senha-de-teste-123')
+        self.client.force_login(self.dono)
+
+    def test_pedido_pronto_aparece_como_ready_for_pickup(self):
+        pedido = Order.objects.create(user=self.dono, total_price=Decimal('10'), status='saiu_entrega')
+        self.assertEqual(pedido.get_status_display(), 'Ready for pickup')
+        response = self.client.get(reverse('sushiemcasa:order_detail', args=[pedido.id]))
+        self.assertContains(response, 'Ready for pickup')
+        self.assertContains(response, 'Scheduled pickup')
+        self.assertNotContains(response, 'Out for delivery')
+        self.assertNotContains(response, 'Delivered')
+
+    def test_pedido_retirado_aparece_como_picked_up(self):
+        pedido = Order.objects.create(user=self.dono, total_price=Decimal('10'), status='entregue')
+        response = self.client.get(reverse('sushiemcasa:orders'))
+        self.assertContains(response, 'Picked up')
+        self.assertNotContains(response, 'Delivered')

@@ -1,4 +1,4 @@
-"""Horários de entrega a partir do horário de funcionamento definido no painel (Hours).
+"""Horários de retirada a partir do horário de funcionamento definido no painel (Hours).
 
 O checkout lista os horários com `dias_disponiveis()` e o OrderForm confere a
 escolha com `motivo_recusa()`, para que as duas pontas usem a mesma regra.
@@ -84,13 +84,13 @@ def motivo_recusa(entrega, agora=None):
     """Mensagem de erro se `entrega` (datetime aware) não pode ser aceita; senão None."""
     agora = agora or timezone.now()
     if entrega < agora + ANTECEDENCIA:
-        return 'Delivery date must be at least 24 hours in advance.'
+        return 'Pickup must be scheduled at least 24 hours in advance.'
     local = timezone.localtime(entrega)
     semana = _horarios_da_semana()
     nome = dict(HorarioDeFuncionamento.DAY_CHOICES)[local.weekday()]
     if local.weekday() not in semana:
-        return f"Sorry, we don't deliver on {nome}s. Please pick one of the available days."
+        return f"Sorry, pickup is not available on {nome}s. Please pick one of the available days."
     abre, fecha = semana[local.weekday()]
     if not (abre <= local.time() < fecha):
-        return f'On {nome}s we deliver between {_rotulo_hora(abre)} and {_rotulo_hora(fecha)}.'
+        return f'On {nome}s pickup is available between {_rotulo_hora(abre)} and {_rotulo_hora(fecha)}.'
     return None

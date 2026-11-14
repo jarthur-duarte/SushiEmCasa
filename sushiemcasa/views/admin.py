@@ -270,7 +270,7 @@ def deletar_pedido(request, pk):
             pedido.delete()
             messages.success(request, f"Order #{pedido_id} was permanently deleted.")
         else:
-            messages.error(request, "You can only delete orders that are Delivered or Canceled.")
+            messages.error(request, "You can only delete orders that are Picked up or Canceled.")
         
     return redirect('sushiemcasa:painel_controle')
 

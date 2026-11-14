@@ -26,7 +26,7 @@
                 <div class="pedido-card__meta">
                     <span><i class="fas fa-calendar" aria-hidden="true"></i> Placed {{ pedido.created_at|date:"M j, Y g:i A" }}</span>
                     {% if pedido.delivery_datetime %}
-                        <span><i class="fas fa-clock" aria-hidden="true"></i> Delivery: {{ pedido.delivery_datetime|date:"M j, Y g:i A" }}</span>
+                        <span><i class="fas fa-clock" aria-hidden="true"></i> Pickup: {{ pedido.delivery_datetime|date:"M j, Y g:i A" }}</span>
                     {% endif %}
                     {% if user.is_staff %}
                         <span><i class="fas fa-user" aria-hidden="true"></i> {{ pedido.user.username|default:"Guest" }}</span>

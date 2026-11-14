@@ -18,7 +18,7 @@
                 <span class="loja-fechada">Closed now · schedule for later</span>
             {% endif %}
             <h1 id="titulo-hero">Fresh sushi,<br>made to order.</h1>
-            <p class="hero__lead">Pick your rolls, schedule delivery at least 24 hours ahead and confirm your order on WhatsApp.</p>
+            <p class="hero__lead">Pick your rolls, schedule your pickup at least 24 hours ahead and confirm your order on WhatsApp.</p>
             <div class="acoes">
                 <a href="#menu-principal" class="btn btn--primario btn--grande">See the menu</a>
                 <a href="{% url 'sushiemcasa:contato' %}" class="btn btn--grande">Contact us</a>
@@ -50,7 +50,7 @@
     {% if not is_open %}
         <ul class="messages">
             <li class="message warning">
-                <span><strong>The store is currently closed.</strong> You can still fill your cart and schedule delivery for another time.</span>
+                <span><strong>The store is currently closed.</strong> You can still fill your cart and schedule a pickup for another time.</span>
             </li>
         </ul>
     {% endif %}
