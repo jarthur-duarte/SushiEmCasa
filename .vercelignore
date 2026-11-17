@@ -1,0 +1,13 @@
+# Não enviar para a Vercel: segredos, banco local, uploads locais e ferramentas
+.env
+.env*
+db.sqlite3
+/media/
+venv/
+.venv/
+.vscode/
+.github/
+/static/
+apoio.txt
+**/__pycache__/
+**/tests/

@@ -1,30 +1,90 @@
-{% extends 'sushiemcasa/base.html' %} {% load static %} {% block content %}
-  <h2>Gerenciar Produtos</h2>
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
 
-  <table>
-    <thead>
-      <tr>
-        <th>Produto</th>
-        <th>Preço</th>
-        <th>Ação</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for produto in produtos %}
-        <tr>
-          <td>{{ produto.nome }}</td>
-          <td>R$ {{ produto.preco }}</td>
-          <td>
-            <a href="{% url 'sushiemcasa:editar_produto' produto.pk %}" class="btn">
-              Editar
-            </a>
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="3">Nenhum produto cadastrado.</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% block title %}Dashboard · Products · Sushi em Casa{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <h1>Products</h1>
+            <p>Add, edit, hide or delete menu items.</p>
+        </div>
+        <a href="{% url 'sushiemcasa:criar_produto' %}" class="btn btn--primario"><i class="fas fa-plus" aria-hidden="true"></i> New product</a>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
+
+    <div class="painel-filtros">
+        <label class="sr-only" for="filtro-busca">Search products</label>
+        <input type="search" id="filtro-busca" class="controle" placeholder="Search product or category">
+        <span id="contagem-filtro" class="contagem-filtro" role="status" aria-live="polite"></span>
+    </div>
+
+    <div class="tabela-rolagem">
+        <table class="tabela tabela--cartoes" data-filtravel>
+            <caption class="sr-only">Products</caption>
+            <thead>
+                <tr>
+                    <th scope="col"><span class="sr-only">Photo</span></th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">On the menu</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produto in produtos %}
+                <tr data-busca="{{ produto.nome }} {{ produto.categoria.nome }}">
+                    <td>
+                        {% if produto.imagem %}
+                            <img class="miniatura" src="{{ produto.imagem.url }}" alt="" width="48" height="48">
+                        {% endif %}
+                    </td>
+                    <td data-label="Product"><strong>{{ produto.nome }}</strong></td>
+                    <td data-label="Category">{{ produto.categoria.nome }}</td>
+                    <td data-label="Price" class="num">$ {{ produto.preco|floatformat:2 }}</td>
+                    <td data-label="On the menu">
+                        {% if produto.disponivel %}
+                            <span class="status status--entregue">Available</span>
+                        {% else %}
+                            <span class="status status--cancelado">Unavailable</span>
+                        {% endif %}
+                        {% if produto.destaque %}
+                            <span class="status status--saiu" title="Shown at the top of the menu">Featured</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="acoes-linha">
+                            <a href="{% url 'sushiemcasa:editar_produto' produto.pk %}" class="btn btn--sm" aria-label="Edit {{ produto.nome }}">
+                                <i class="fas fa-pen" aria-hidden="true"></i> Edit
+                            </a>
+                            <form action="{% url 'sushiemcasa:excluir_produto' produto.pk %}" method="post"
+                                  data-confirmar="Delete &quot;{{ produto.nome }}&quot;? It will disappear from the menu. Past orders keep their item names.">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn--sm btn--perigo" aria-label="Delete {{ produto.nome }}">
+                                    <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="linha-vazia">
+                    <td colspan="6">No products yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'sushiemcasa/js/painel.js' %}" defer></script>
 {% endblock %}

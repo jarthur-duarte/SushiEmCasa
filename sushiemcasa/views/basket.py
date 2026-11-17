@@ -160,7 +160,7 @@ def finalizar_pedido_whatsapp(request):
         f"{mensagem_itens}\n"
         f"*Order Total: $ {cart_total:.2f}*\n\n" 
         "-----------------\n"
-        "Please inform the delivery address and payment method."
+        "Please confirm the payment method. I will pick up the order when it is ready."
     )
     request.session['cart'] = {}
     request.session.modified = True

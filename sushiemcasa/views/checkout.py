@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.views import redirect_to_login
+from django.db import transaction
+from django.http import Http404
+from django.urls import reverse
+from django.utils import timezone
 from decimal import Decimal
 from urllib.parse import quote_plus
 
 from sushiemcasa.forms.pedidos import OrderForm
+from sushiemcasa.horarios import dias_disponiveis, resumo_da_semana
 from sushiemcasa.models import Order, OrderItem, Produto
 
 
@@ -36,7 +42,7 @@ def pagina_checkout(request):
                 cart_total += total_item_price
 
     if not cart_items:
-        messages.error(request, "Seu carrinho está vazio.")
+        messages.error(request, "Your cart is empty.")
         return redirect('sushiemcasa:basket')
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -45,46 +51,50 @@ def pagina_checkout(request):
             order = form.save(commit=False)
             order.user = request.user if request.user.is_authenticated else None
             order.total_price = cart_total
-            order.save()
             order_items = []
             itens_whatsapp = ""
             BULLET = "▪"
 
-            for item in cart_items:
-                order_items.append(
-                    OrderItem(
-                        order=order,
-                        produto=item['product'],
-                        item_name=item['name'],
-                        quantity=item['quantity'],
-                        price=item['price']
+            # Pedido e itens são gravados juntos: se algo falhar, nada fica salvo
+            # e o carrinho do cliente continua intacto.
+            with transaction.atomic():
+                order.save()
+                for item in cart_items:
+                    order_items.append(
+                        OrderItem(
+                            order=order,
+                            produto=item['product'],
+                            item_name=item['name'],
+                            quantity=item['quantity'],
+                            price=item['price']
+                        )
                     )
-                )
 
-                subtotal = item['quantity'] * item['price']
-                itens_whatsapp += (
-                    f"{BULLET} {item['quantity']}x {item['name']} "
-                    f"(R$ {subtotal:.2f})\n"
-                )
-            OrderItem.objects.bulk_create(order_items)
-            request.session['cart'] = {}
-            request.session.modified = True
+                    subtotal = item['quantity'] * item['price']
+                    itens_whatsapp += (
+                        f"{BULLET} {item['quantity']}x {item['name']} "
+                        f"($ {subtotal:.2f})\n"
+                    )
+                OrderItem.objects.bulk_create(order_items)
+
             nome_cliente = (
                 request.user.username
                 if request.user.is_authenticated
-                else "Cliente visitante"
+                else "Guest customer"
             )
 
-            data_agendada = order.delivery_datetime.strftime("%d/%m/%Y às %H:%M")
+            data_agendada = timezone.localtime(order.delivery_datetime).strftime("%m/%d/%Y at %I:%M %p")
+            request.session['cart'] = {}
+            request.session.modified = True
 
             mensagem = (
-                f"🍣 NOVO PEDIDO - SUSHI EM CASA\n\n"
-                f"📄 Pedido Nº: {order.id}\n"
-                f"👤 Cliente: {nome_cliente}\n"
-                f"📅 Agendado para: {data_agendada}\n\n"
-                f"🛒 ITENS DO PEDIDO\n"
+                f"🍣 NEW ORDER - SUSHI EM CASA\n\n"
+                f"📄 Order #: {order.id}\n"
+                f"👤 Customer: {nome_cliente}\n"
+                f"📅 Scheduled for: {data_agendada}\n\n"
+                f"🛒 ORDER ITEMS\n"
                 f"{itens_whatsapp}\n"
-                f"💰 TOTAL DO PEDIDO: R$ {order.total_price:.2f}*"
+                f"💰 ORDER TOTAL: $ {order.total_price:.2f}"
             )
             numero_whatsapp = "12397719811"
 
@@ -102,22 +112,38 @@ def pagina_checkout(request):
             return redirect(url_whatsapp)
 
         else:
-            messages.error(request, "Por favor, corrija os erros abaixo.")
+            messages.error(request, "Please correct the errors below.")
 
     else:
         form = OrderForm()
+
+    dias = dias_disponiveis()
+    horario_escolhido = form.data.get('delivery_datetime', '')
+    dia_escolhido = horario_escolhido[:10]
+    if dias and dia_escolhido not in {d['valor'] for d in dias}:
+        dia_escolhido = dias[0]['valor']
 
     context = {
         'form': form,
         'cart_items': cart_items,
         'cart_total': cart_total,
+        # Horários livres montados a partir do painel (Hours).
+        'dias_disponiveis': dias,
+        'horarios_semana': resumo_da_semana(),
+        'horario_escolhido': horario_escolhido,
+        'dia_escolhido': dia_escolhido,
     }
 
     return render(request, 'sushiemcasa/checkout.html', context)
 
 
 def order_detail(request, order_id):
+    # Só o dono do pedido e a equipe da loja podem ver os detalhes.
+    if not request.user.is_authenticated:
+        return redirect_to_login(request.get_full_path(), reverse('sushiemcasa:login'))
     order = get_object_or_404(Order, id=order_id)
+    if not request.user.is_staff and order.user_id != request.user.id:
+        raise Http404("Order not found.")
     return render(
         request,
         'sushiemcasa/detalhe_pedidos.html',

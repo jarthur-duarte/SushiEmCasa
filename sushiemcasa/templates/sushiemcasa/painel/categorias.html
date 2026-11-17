@@ -1,0 +1,62 @@
+{% extends 'sushiemcasa/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard · Categories · Sushi em Casa{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/painel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="painel-topo">
+        <div>
+            <h1>Categories</h1>
+            <p>The filter buttons at the top of the menu.</p>
+        </div>
+        <a href="{% url 'sushiemcasa:criar_categoria' %}" class="btn btn--primario"><i class="fas fa-plus" aria-hidden="true"></i> New category</a>
+    </div>
+
+    {% include 'sushiemcasa/painel/_nav.html' %}
+
+    <div class="tabela-rolagem">
+        <table class="tabela tabela--cartoes">
+            <caption class="sr-only">Categories</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Link</th>
+                    <th scope="col">Products</th>
+                    <th scope="col"><span class="sr-only">Actions</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for categoria in categorias %}
+                <tr>
+                    <td data-label="Name"><strong>{{ categoria.nome }}</strong></td>
+                    <td data-label="Link"><a href="{% url 'sushiemcasa:lista_por_categoria' categoria.slug %}">/categoria/{{ categoria.slug }}/</a></td>
+                    <td data-label="Products" class="num">{{ categoria.total_produtos }}</td>
+                    <td>
+                        <div class="acoes-linha">
+                            <a href="{% url 'sushiemcasa:editar_categoria' categoria.pk %}" class="btn btn--sm" aria-label="Edit {{ categoria.nome }}">
+                                <i class="fas fa-pen" aria-hidden="true"></i> Edit
+                            </a>
+                            <form action="{% url 'sushiemcasa:excluir_categoria' categoria.pk %}" method="post"
+                                  data-confirmar="Delete the category &quot;{{ categoria.nome }}&quot;?">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn--sm btn--perigo" aria-label="Delete {{ categoria.nome }}"
+                                        {% if categoria.total_produtos %}disabled title="Move or delete its products first"{% endif %}>
+                                    <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr class="linha-vazia"><td colspan="4">No categories yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
