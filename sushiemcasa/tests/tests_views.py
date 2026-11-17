@@ -732,3 +732,25 @@ class StatusDeRetiradaTests(TestCase):
         response = self.client.get(reverse('sushiemcasa:orders'))
         self.assertContains(response, 'Picked up')
         self.assertNotContains(response, 'Delivered')
+
+
+class PrecoDaPromocaoTests(TestCase):
+    """Uma oferta não pode custar mais (ou o mesmo) que o preço original riscado."""
+    def _form(self, promo, antigo):
+        from sushiemcasa.forms.painel import BannerForm
+        return BannerForm(data={'titulo': 'Combo', 'descricao': 'x', 'preco_promocional': promo,
+                                'preco_antigo': antigo, 'ordem': 0, 'ativo': True},
+                          files={'imagem': _imagem_png()})
+
+    def test_oferta_mais_cara_que_o_original_e_recusada(self):
+        form = self._form('20.00', '10.00')
+        self.assertFalse(form.is_valid())
+        self.assertIn('preco_promocional', form.errors)
+
+    def test_oferta_mais_barata_e_aceita(self):
+        form = self._form('8.00', '10.00')
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_sem_preco_original_e_aceita(self):
+        form = self._form('8.00', '')
+        self.assertTrue(form.is_valid(), form.errors)

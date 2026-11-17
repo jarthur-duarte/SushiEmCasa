@@ -77,9 +77,7 @@
 }
 .tabela-carrinho th {
   text-align: left;
-  font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: var(--fs-sm);
   color: var(--cor-texto-suave);
   background: var(--cor-superficie-2);
   padding: var(--e-3) var(--e-4);
@@ -127,6 +125,7 @@
   font-size: var(--fs-sm);
 }
 .regras-entrega li { display: flex; gap: var(--e-2); align-items: baseline; }
+.regras-entrega__horas { display: grid; color: var(--cor-tinta); }
 .regras-entrega i { color: var(--cor-marca); width: 16px; text-align: center; }
 .feedback-data { min-height: 1.5em; font-size: var(--fs-sm); font-weight: 500; }
 .feedback-data.ok { color: var(--cor-sucesso); }

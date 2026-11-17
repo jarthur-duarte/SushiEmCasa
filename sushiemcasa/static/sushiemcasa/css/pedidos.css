@@ -48,7 +48,7 @@
   gap: var(--e-3);
   margin-top: var(--e-4);
 }
-.detalhe-dados dt { font-size: var(--fs-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--cor-texto-suave); }
+.detalhe-dados dt { font-size: var(--fs-sm); color: var(--cor-texto-suave); }
 .detalhe-dados dd { font-weight: 600; color: var(--cor-tinta); }
 
 @media (max-width: 480px) {

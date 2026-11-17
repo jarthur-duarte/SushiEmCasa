@@ -43,7 +43,9 @@
                 <li><i class="fas fa-store" aria-hidden="true"></i> <span>Pickup only, at <strong>770 E Ashland St, Brockton, MA 02302</strong>. No delivery.</span></li>
                 {% if horarios_semana %}
                     <li><i class="fas fa-calendar-day" aria-hidden="true"></i>
-                        <span>Pickup hours: {% for linha in horarios_semana %}{{ linha }}{% if not forloop.last %} · {% endif %}{% endfor %}.</span></li>
+                        <span>Pickup hours:
+                            <span class="regras-entrega__horas">{% for linha in horarios_semana %}<span>{{ linha }}</span>{% endfor %}</span>
+                        </span></li>
                 {% endif %}
             </ul>
 

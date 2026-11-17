@@ -88,7 +88,7 @@
                 <p class="barra-acao__total">Total <strong id="total-geral">$ {{ cart_total|stringformat:".2f" }}</strong></p>
                 <a href="{% url 'sushiemcasa:checkout' %}" class="btn btn--primario btn-checkout"
                    {% if not user.is_authenticated %}data-abrir-dialogo="dialogo-login"{% endif %}>
-                    Choose pickup time <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                    Choose pickup time
                 </a>
             </div>
             <a href="{% url 'sushiemcasa:cardapio' %}" class="resumo__continuar">Keep shopping</a>

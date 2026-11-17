@@ -81,3 +81,11 @@ class BannerForm(forms.ModelForm):
             'imagem': forms.ClearableFileInput(attrs={'accept': 'image/*'}),
             'descricao': forms.Textarea(attrs={'rows': 3}),
         }
+
+    def clean(self):
+        dados = super().clean()
+        promo, antigo = dados.get('preco_promocional'), dados.get('preco_antigo')
+        # O preço "original" aparece riscado ao lado da oferta: precisa ser maior que ela.
+        if promo is not None and antigo is not None and promo >= antigo:
+            self.add_error('preco_promocional', 'The deal price must be lower than the original price.')
+        return dados
