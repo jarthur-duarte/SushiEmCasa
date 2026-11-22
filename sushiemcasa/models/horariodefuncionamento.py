@@ -4,44 +4,44 @@ from django.utils.translation import gettext_lazy as _
 
 class HorarioDeFuncionamento(models.Model):
     DAY_CHOICES = [
-        (0, _('Segunda-feira')),
-        (1, _('Terça-feira')),
-        (2, _('Quarta-feira')),
-        (3, _('Quinta-feira')),
-        (4, _('Sexta-feira')),
-        (5, _('Sábado')),
-        (6, _('Domingo')),
+        (0, _('Monday')),
+        (1, _('Tuesday')),
+        (2, _('Wednesday')),
+        (3, _('Thursday')),
+        (4, _('Friday')),
+        (5, _('Saturday')),
+        (6, _('Sunday')),
     ]
 
     day_of_week = models.IntegerField(
-        _("Dia da semana"),
+        _("Day of the week"),
         choices=DAY_CHOICES,
         unique=True
     )
     
     is_open = models.BooleanField(
-        _("Aberto?"),
+        _("Open?"),
         default=False,
-        help_text=_("Marque se a loja está aberta neste dia.")
+        help_text=_("Check if the store is open on this day.")
     )
     
     open_time = models.TimeField(
-        _("Horário de Abertura"),
+        _("Opening time"),
         null=True,
         blank=True,
-        help_text=_("Formato: HH:MM")
+        help_text=_("Format: HH:MM")
     )
     
     close_time = models.TimeField(
-        _("Horário de Fechamento"),
+        _("Closing time"),
         null=True,
         blank=True,
-        help_text=_("Formato: HH:MM")
+        help_text=_("Format: HH:MM")
     )
 
     class Meta:
-        verbose_name = _("Horário de Funcionamento")
-        verbose_name_plural = _("Horários de Funcionamento")
+        verbose_name = _("Opening hours")
+        verbose_name_plural = _("Opening hours")
         ordering = ['day_of_week']
 
     def __str__(self):
@@ -49,20 +49,20 @@ class HorarioDeFuncionamento(models.Model):
         if self.is_open and self.open_time and self.close_time:
             return f"{day_name}: {self.open_time.strftime('%H:%M')} - {self.close_time.strftime('%H:%M')}"
         elif self.is_open:
-            return f"{day_name}: Aberto (Horário pendente)"
+            return f"{day_name}: Open (hours not set)"
         else:
-            return f"{day_name}: Fechado"
+            return f"{day_name}: Closed"
 
     def clean(self):
         if self.is_open:
             if not self.open_time or not self.close_time:
                 raise ValidationError(
-                    _("Para um dia 'Aberto', os horários de abertura e fechamento são obrigatórios.")
+                    _("Opening and closing times are required for an open day.")
                 )
             
             if self.close_time <= self.open_time:
                 raise ValidationError(
-                    _("O horário de fechamento não pode ser anterior ou igual ao de abertura.")
+                    _("Closing time must be later than opening time.")
                 )
         
         if not self.is_open:

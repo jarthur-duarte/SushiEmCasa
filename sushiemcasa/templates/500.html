@@ -1,0 +1,36 @@
+{% load static %}<!DOCTYPE html>
+{# Página de erro 500: renderizada pelo Django sem contexto (sem usuário nem sessão), por isso não estende o base.html. #}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Server error · Sushi em Casa</title>
+    <meta name="theme-color" content="#17110f">
+    <link rel="icon" type="image/png" href="{% static 'sushiemcasa/images/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'sushiemcasa/css/base.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container site-header__inner">
+            <a href="/" class="marca">
+                <img src="{% static 'sushiemcasa/images/logo-marca.webp' %}" alt="" width="54" height="36">
+                <span>Sushi em Casa</span>
+            </a>
+        </div>
+    </header>
+    <main class="conteudo">
+        <div class="container container--estreito">
+            <div class="vazio">
+                <div class="vazio__icone" aria-hidden="true">!</div>
+                <p class="texto-suave">Error 500</p>
+                <h1>Something went wrong on our end</h1>
+                <p>Please try again in a few minutes. If you need help, reach us on WhatsApp or Instagram.</p>
+                <div class="acoes">
+                    <a href="/" class="btn btn--primario">Back to the menu</a>
+                    <a href="/contato/" class="btn">Contact</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

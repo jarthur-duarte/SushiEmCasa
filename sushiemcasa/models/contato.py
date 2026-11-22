@@ -7,5 +7,5 @@ class MensagemFeedback(models.Model):
     data_envio = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Mensagem de {self.nome or 'Anônimo'}"
+        return f"Message from {self.nome or 'Anonymous'}"
 
